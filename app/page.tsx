@@ -1,0 +1,327 @@
+"use client";
+
+import { useMemo } from "react";
+import { Mail, Phone, Linkedin, Github, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function Page() {
+  const links = useMemo(
+    () => ({
+      email: "meeravshah29@gmail.com",
+      phone: "+1 (814) 280-8312",
+      site: "https://sites.google.com/psu.edu/meeravshah",
+      linkedin: "https://www.linkedin.com/in/meeravshah/",
+      github: "https://github.com/Meerav29",
+      resume: "/resume.pdf",
+    }),
+    []
+  );
+
+  const projects = [
+    {
+      title: "Academic Advising Chatbot (College of IST)",
+      tags: ["LLM", "OpenAI API", "Python", "Prompting"],
+      summary:
+        "Built an advising assistant that answers routine queries and supports course planning; reduced advising load and improved answer depth.",
+      link: "https://github.com/Meerav29?tab=repositories",
+    },
+    {
+      title: "Autonomous UAV Icing Research (MCREU)",
+      tags: ["UAV", "Torque/RPM", "Data Analysis"],
+      summary:
+        "Studied how cloud/icing conditions affect UAV performance using onboard telemetry; proposed real-time mitigation algorithms.",
+      link: "#",
+    },
+    {
+      title: "Autonomous Vehicle Behavior Study (HTI Lab)",
+      tags: ["Simulation", "STISIM3", "Human Factors"],
+      summary:
+        "Designed driving-sim scenarios to analyze interactions between AVs and human-driven vehicles at varying market penetrations.",
+      link: "#",
+    },
+    {
+      title: "NASA Big Idea Challenge — Lunar Regolith Construction",
+      tags: ["Aerospace", "Systems Engineering", "Leadership"],
+      summary:
+        "Led a 15-member team exploring inflatable tech to 3D-print structures on the Moon using lunar regolith.",
+      link: "#",
+    },
+  ];
+
+  const experience = [
+    {
+      org: "Penn State — MCREU",
+      role: "Undergraduate Researcher (PI)",
+      time: "Jun 2024 – Aug 2024",
+      points: [
+        "Analyzed UAV propeller performance under icing/cloud conditions via torque & RPM telemetry.",
+        "Outlined real-time processing to detect and mitigate icing effects in flight.",
+      ],
+    },
+    {
+      org: "Penn State — HTI Lab",
+      role: "Undergraduate Researcher",
+      time: "Sep 2023 – May 2024",
+      points: [
+        "Developed STISIM3 scenarios; evaluated driver behavior with mixed AV/HV traffic.",
+      ],
+    },
+    {
+      org: "IST 130: AI & Art",
+      role: "Lead Learning Assistant",
+      time: "Jan 2024 – Present",
+      points: ["Mentor 14+ LAs; design coursework and documentation for 400+ students/semester."],
+    },
+    {
+      org: "SSPL — NASA Big Idea",
+      role: "Team Lead; Researcher",
+      time: "Oct 2023 – Feb 2024",
+      points: ["Coordinated 15-member effort on lunar regolith additive construction systems."],
+    },
+  ];
+
+  const skills = [
+    "Python",
+    "Java",
+    "C/C++",
+    "JavaScript",
+    "HTML/CSS",
+    "SQL",
+    "NoSQL",
+    "PyTorch",
+    "NumPy",
+    "Linux",
+    "Git",
+    "Cloud",
+    "Data Science",
+  ];
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-200">
+      <Header links={links} />
+      <main className="mx-auto max-w-6xl px-6">
+        <Hero links={links} />
+        <About />
+        <Projects projects={projects} />
+        <Experience items={experience} />
+        <Skills items={skills} />
+        <Contact links={links} />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function Header({ links }: { links: any }) {
+  return (
+    <div className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
+      <nav className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
+        <a href="#top" className="font-semibold tracking-tight text-slate-900">
+          Meerav Shah
+        </a>
+        <div className="hidden md:flex gap-6 text-sm">
+          {[
+            ["About", "#about"],
+            ["Projects", "#projects"],
+            ["Experience", "#experience"],
+            ["Skills", "#skills"],
+            ["Contact", "#contact"],
+          ].map(([label, href]) => (
+            <a key={label} href={href as string} className="hover:text-blue-700 transition-colors">
+              {label}
+            </a>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-slate-100">
+            <Linkedin size={18} />
+          </a>
+          <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-slate-100">
+            <Github size={18} />
+          </a>
+          <a
+            href={links.resume}
+            className="inline-flex items-center gap-2 text-sm rounded-xl border px-3 py-1.5 bg-black text-white hover:bg-slate-900"
+          >
+            Resume <ExternalLink size={14} />
+          </a>
+        </div>
+      </nav>
+    </div>
+  );
+}
+
+function Hero({ links }: { links: any }) {
+  return (
+    <section id="top" className="py-16 md:py-24">
+      <div className="grid md:grid-cols-2 gap-10 items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-6"
+        >
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
+            Building AI-powered tools for education and space tech.
+          </h1>
+          <p className="text-slate-600 text-lg">
+            CS @ Penn State · Minor in Astrophysics. Researching advising chatbots, UAV performance in icing, and human-AV
+            interactions.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href="#projects" className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700">
+              See Projects
+            </a>
+            <a href={`mailto:${links.email}`} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">
+              Contact Me
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+            <span className="inline-flex items-center gap-2">
+              <Mail size={16} /> {links.email}
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Phone size={16} /> {links.phone}
+            </span>
+          </div>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm bg-gradient-to-br from-slate-50 via-white to-blue-50">
+            <div className="absolute inset-0 grid place-content-center">
+              <div className="text-center">
+                <div className="text-7xl md:text-8xl font-black tracking-tight text-slate-900">MS</div>
+                <div className="mt-3 text-sm text-slate-500">Personal Portfolio</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Section({ id, title, children }: any) {
+  return (
+    <section id={id} className="py-14 md:py-20 border-t">
+      <div className="flex items-end justify-between mb-8">
+        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
+        <a href="#top" className="text-sm text-slate-500 hover:text-slate-700">
+          Back to top
+        </a>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <Section id="about" title="About">
+      <p className="text-slate-700 leading-relaxed max-w-3xl">
+        I’m an undergraduate senior in Computer Science at Penn State, minoring in Astrophysics. I build practical, minimal tools—
+        from advising assistants that free up faculty time to UAV analytics that make flight safer in icing conditions. I care about
+        clean design, clear impact, and shipping real things.
+      </p>
+    </Section>
+  );
+}
+
+function Projects({ projects }: { projects: any[] }) {
+  return (
+    <Section id="projects" title="Featured Projects">
+      <div className="grid md:grid-cols-2 gap-6">
+        {projects.map((p) => (
+          <a key={p.title} href={(p.link as string) || "#"} className="group rounded-2xl border p-6 hover:shadow-sm transition-shadow bg-white">
+            <div className="flex items-start justify-between gap-6">
+              <h3 className="text-lg font-medium leading-snug group-hover:text-blue-700">{p.title}</h3>
+              <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
+            </div>
+            <p className="mt-3 text-slate-600 text-sm leading-relaxed">{p.summary}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {p.tags?.map((t: string) => (
+                <span key={t} className="text-xs rounded-full border px-2 py-1 bg-slate-50">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Experience({ items }: { items: any[] }) {
+  return (
+    <Section id="experience" title="Experience">
+      <div className="grid gap-4">
+        {items.map((job) => (
+          <div key={job.org + job.time} className="rounded-2xl border p-6 bg-white">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h3 className="font-medium">
+                  {job.role} · <span className="text-slate-600">{job.org}</span>
+                </h3>
+                <div className="text-sm text-slate-500">{job.time}</div>
+              </div>
+            </div>
+            <ul className="mt-3 space-y-2 list-disc pl-5 text-slate-700 text-sm">
+              {job.points.map((pt: string) => (
+                <li key={pt}>{pt}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Skills({ items }: { items: string[] }) {
+  return (
+    <Section id="skills" title="Skills">
+      <div className="flex flex-wrap gap-2">
+        {items.map((s) => (
+          <span key={s} className="text-sm rounded-full border px-3 py-1.5 bg-slate-50">
+            {s}
+          </span>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Contact({ links }: { links: any }) {
+  return (
+    <Section id="contact" title="Get in touch">
+      <div className="rounded-2xl border p-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
+        <h3 className="text-xl font-semibold">Let’s build something.</h3>
+        <p className="mt-2 text-white/80 max-w-2xl">
+          I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a href={`mailto:${links.email}`} className="rounded-xl bg-white text-slate-900 px-4 py-2 text-sm hover:bg-slate-100">
+            Email Me
+          </a>
+          <a href={links.linkedin} className="rounded-xl border border-white/30 px-4 py-2 text-sm hover:bg-white/10">
+            LinkedIn
+          </a>
+          <a href={links.site} className="rounded-xl border border-white/30 px-4 py-2 text-sm hover:bg-white/10">
+            Current Site
+          </a>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="mt-16 border-t">
+      <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-slate-500 flex flex-col md:flex-row items-center justify-between gap-3">
+        <span>© {new Date().getFullYear()} Meerav Shah</span>
+        <span className="opacity-80">Built with Next.js + Tailwind · Minimal, blue/black/white.</span>
+      </div>
+    </footer>
+  );
+}
