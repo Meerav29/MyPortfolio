@@ -155,37 +155,50 @@ function Hero({ links }: { links: any }) {
   return (
     <section id="top" className="py-16 md:py-24">
       <div className="grid md:grid-cols-2 gap-10 items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-6"
-        >
+        <div className="space-y-6">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            Building AI-powered tools for education and space tech.
+            Research scientist & builder — AI for education and space tech
           </h1>
+
           <p className="text-slate-600 text-lg">
-            CS @ Penn State · Minor in Astrophysics. Researching advising chatbots, UAV performance in icing, and human-AV
-            interactions.
+            Senior CS @ Penn State (Astrophysics minor). Recent work: advising chatbots,
+            UAV icing analytics, and human–AV behavior studies.
           </p>
+
+          <p className="text-slate-700">
+            My process is a rally car: a product builder at the wheel, an obsessive research
+            scientist calling the route. Fast ideas, reliable findings.
+          </p>
+
           <div className="flex flex-wrap gap-3">
-            <a href="#projects" className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700">
+            <a
+              href="#projects"
+              className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700"
+            >
               See Projects
             </a>
-            <a href={`mailto:${links.email}`} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">
-              Contact Me
+            <a
+              href={`mailto:${links.email}`}
+              className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              Get in Touch
+            </a>
+            <a
+              href={links.resume}
+              className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              Download Resume
             </a>
           </div>
+
           <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-            <span className="inline-flex items-center gap-2">
-              <Mail size={16} /> {links.email}
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Phone size={16} /> {links.phone}
-            </span>
+            <span className="inline-flex items-center gap-2">📧 {links.email}</span>
+            <span className="inline-flex items-center gap-2">📱 {links.phone}</span>
           </div>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+        </div>
+
+        {/* Keep your visual block; swap with Image later if you add a headshot */}
+        <div>
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm bg-gradient-to-br from-slate-50 via-white to-blue-50">
             <div className="absolute inset-0 grid place-content-center">
               <div className="text-center">
@@ -194,11 +207,12 @@ function Hero({ links }: { links: any }) {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
+
 
 function Section({ id, title, children }: any) {
   return (
