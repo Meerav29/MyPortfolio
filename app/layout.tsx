@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Meerav Shah — Portfolio",
   description: "CS @ Penn State (Astrophysics minor). Research scientist & builder for AI in education and space tech.",
-  metadataBase: new URL("https://<your-vercel-subdomain>.vercel.app"),
+  metadataBase: new URL("https://meeravshah.vercel.app"),
   openGraph: {
     title: "Meerav Shah — Portfolio",
     description: "AI x EdTech x SpaceTech.",
