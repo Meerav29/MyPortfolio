@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import { Mail, Phone, Linkedin, Github, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+
 
 export default function Page() {
   const links = useMemo(
@@ -197,16 +199,15 @@ function Hero({ links }: { links: any }) {
           </div>
         </div>
 
-        {/* Keep your visual block; swap with Image later if you add a headshot */}
-        <div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm bg-gradient-to-br from-slate-50 via-white to-blue-50">
-            <div className="absolute inset-0 grid place-content-center">
-              <div className="text-center">
-                <div className="text-7xl md:text-8xl font-black tracking-tight text-slate-900">MS</div>
-                <div className="mt-3 text-sm text-slate-500">Personal Portfolio</div>
-              </div>
-            </div>
-          </div>
+         {/* Headshot block */}
+        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm">
+          <Image
+            src="/headshot.jpg"
+            alt="Meerav Shah"
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
       </div>
     </section>
