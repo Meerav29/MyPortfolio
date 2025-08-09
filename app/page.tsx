@@ -20,14 +20,14 @@ export default function Page() {
   const projects = [
     {
       title: "Academic Advising Chatbot (College of IST)",
-      tags: ["LLM", "OpenAI API", "Python", "Prompting"],
+      tags: ["LLM", "OpenAI API", "Python", "Prompting", "Research", "Machine Learning"],
       summary:
         "Built an advising assistant that answers routine queries and supports course planning; reduced advising load and improved answer depth.",
       link: "https://github.com/Meerav29?tab=repositories",
     },
     {
       title: "Autonomous UAV Icing Research (MCREU)",
-      tags: ["UAV", "Torque/RPM", "Data Analysis"],
+      tags: ["UAV", "Torque/RPM", "Data Analysis", "Research", "Machine Learning"],
       summary:
         "Studied how cloud/icing conditions affect UAV performance using onboard telemetry; proposed real-time mitigation algorithms.",
       link: "#",
@@ -299,14 +299,53 @@ function Contact({ links }: { links: any }) {
         <p className="mt-2 text-white/80 max-w-2xl">
           I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <a href={`mailto:${links.email}`} className="rounded-xl bg-white text-slate-900 px-4 py-2 text-sm hover:bg-slate-100">
+
+        {/* Contact Form */}
+        <form
+          action="https://formspree.io/f/mrblrpnp"
+          method="POST"
+          className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center"
+        >
+          <input
+            type="email"
+            name="email"
+            placeholder="Your email"
+            required
+            className="flex-1 rounded-xl px-4 py-2 text-slate-900 placeholder-slate-500"
+          />
+          <input
+            type="text"
+            name="message"
+            placeholder="Say hello..."
+            required
+            className="flex-1 rounded-xl px-4 py-2 text-slate-900 placeholder-slate-500"
+          />
+          <button
+            type="submit"
+            className="rounded-xl bg-white text-slate-900 px-4 py-2 text-sm hover:bg-slate-100 transition-colors"
+          >
+            Send
+          </button>
+        </form>
+
+        {/* Optional quick links */}
+        <div className="mt-6 flex flex-wrap gap-3 text-sm">
+          <a
+            href={`mailto:${links.email}`}
+            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+          >
             Email Me
           </a>
-          <a href={links.linkedin} className="rounded-xl border border-white/30 px-4 py-2 text-sm hover:bg-white/10">
+          <a
+            href={links.linkedin}
+            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+          >
             LinkedIn
           </a>
-          <a href={links.site} className="rounded-xl border border-white/30 px-4 py-2 text-sm hover:bg-white/10">
+          <a
+            href={links.site}
+            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+          >
             Current Site
           </a>
         </div>
@@ -314,6 +353,7 @@ function Contact({ links }: { links: any }) {
     </Section>
   );
 }
+
 
 function Footer() {
   return (
