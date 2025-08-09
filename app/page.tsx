@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { Mail, Phone, Linkedin, Github, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import OrbitalHero from "@/components/OrbitalHero";
+
 
 
 export default function Page() {
@@ -157,58 +159,28 @@ function Hero({ links }: { links: any }) {
   return (
     <section id="top" className="py-16 md:py-24">
       <div className="grid md:grid-cols-2 gap-10 items-center">
+        {/* left: your text stays the same */}
         <div className="space-y-6">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
             Research scientist & builder — AI for education and space tech
           </h1>
-
           <p className="text-slate-600 text-lg">
             Senior CS @ Penn State (Astrophysics minor). Recent work: advising chatbots,
             UAV icing analytics, and human–AV behavior studies.
           </p>
-
           <p className="text-slate-700">
-            My process is a rally car: a product builder at the wheel, an obsessive research
-            scientist calling the route. Fast ideas, reliable findings.
+            My process is a rally car: a product builder at the wheel, an obsessive research scientist calling the route.
+            Fast ideas, reliable findings.
           </p>
-
           <div className="flex flex-wrap gap-3">
-            <a
-              href="#projects"
-              className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700"
-            >
-              See Projects
-            </a>
-            <a
-              href={`mailto:${links.email}`}
-              className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
-            >
-              Get in Touch
-            </a>
-            <a
-              href={links.resume}
-              className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
-            >
-              Download Resume
-            </a>
-          </div>
-
-          <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-            <span className="inline-flex items-center gap-2">📧 {links.email}</span>
-            <span className="inline-flex items-center gap-2">📱 {links.phone}</span>
+            <a href="#projects" className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700">See Projects</a>
+            <a href={`mailto:${links.email}`} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">Get in Touch</a>
+            <a href={links.resume} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">Download Resume</a>
           </div>
         </div>
 
-         {/* Headshot block */}
-        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm">
-          <Image
-            src="/headshot.png"
-            alt="Meerav Shah"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        {/* right: interactive scene */}
+        <OrbitalHero />
       </div>
     </section>
   );
