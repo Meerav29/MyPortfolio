@@ -202,7 +202,7 @@ function Hero({ links }: { links: any }) {
          {/* Headshot block */}
         <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border shadow-sm">
           <Image
-            src="/headshot.jpg"
+            src="/headshot.png"
             alt="Meerav Shah"
             fill
             className="object-cover"
