@@ -99,8 +99,8 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 selection:bg-blue-200">
-      <Header links={links} />
       <OrbitalHero id="top" className="h-screen rounded-none border-none shadow-none" />
+      <Header links={links} />
       <main className="mx-auto max-w-6xl px-6 pt-24">
         <About />
         <Projects projects={projects} />
@@ -115,7 +115,7 @@ export default function Page() {
 
 function Header({ links }: { links: any }) {
   return (
-    <div className="fixed top-0 w-full z-50 backdrop-blur bg-slate-950/60 border-b border-white/10">
+    <div className="sticky top-0 w-full z-50 backdrop-blur bg-slate-950/60 border-b border-white/10">
       <nav className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between text-slate-100">
         <a href="#top" className="font-semibold tracking-tight text-slate-100">
           Meerav Shah
