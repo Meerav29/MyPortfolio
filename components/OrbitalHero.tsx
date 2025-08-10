@@ -1,21 +1,20 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { Suspense } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useRef } from "react";
 
 // --- Planet
 function Planet() {
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#1d4ed8", metalness: 0.2, roughness: 0.4 }),
-    []
-  );
+  const texture = useLoader(THREE.TextureLoader, "/planet.png");
+  texture.colorSpace = THREE.SRGBColorSpace;
   return (
-    <mesh castShadow receiveShadow material={mat}>
+    <mesh castShadow receiveShadow>
       <sphereGeometry args={[1.2, 64, 64]} />
+      <meshStandardMaterial map={texture} metalness={0.2} roughness={0.8} />
     </mesh>
   );
 }
@@ -33,35 +32,13 @@ function Satellite() {
 
   return (
     <group ref={groupRef}>
-      <group>
-        <mesh position={[2.1, 0.4, 0]} castShadow>
-          <boxGeometry args={[0.18, 0.18, 0.4]} />
-          <meshStandardMaterial color="#93c5fd" />
+      <Trail width={0.01} length={6} color="#f0f9ff" decay={8}>
+        <mesh position={[2.2, 0.4, 0]} castShadow>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.4} />
         </mesh>
-
-        {/* solar panels */}
-        <mesh position={[2.1, 0.4, -0.35]}>
-          <boxGeometry args={[0.02, 0.5, 0.7]} />
-          <meshStandardMaterial color="#60a5fa" />
-        </mesh>
-        <mesh position={[2.1, 0.4, 0.35]}>
-          <boxGeometry args={[0.02, 0.5, 0.7]} />
-          <meshStandardMaterial color="#60a5fa" />
-        </mesh>
-      </group>
+      </Trail>
     </group>
-  );
-}
-
-// export default Satellite;
-
-// --- Glow ring
-function Halo() {
-  return (
-    <mesh rotation={[1.2, 0, 0]}>
-      <ringGeometry args={[1.6, 1.9, 96]} />
-      <meshBasicMaterial color="#2563eb" transparent opacity={0.25} side={THREE.DoubleSide} />
-    </mesh>
   );
 }
 
@@ -71,7 +48,6 @@ function Scene() {
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <Planet />
-      <Halo />
       <Satellite />
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
       <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
