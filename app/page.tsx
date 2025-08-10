@@ -100,8 +100,8 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-200">
       <Header links={links} />
-      <main className="mx-auto max-w-6xl px-6">
-        <Hero links={links} />
+      <OrbitalHero id="top" className="h-screen rounded-none border-none shadow-none" />
+      <main className="mx-auto max-w-6xl px-6 pt-24">
         <About />
         <Projects projects={projects} />
         <Experience items={experience} />
@@ -115,7 +115,7 @@ export default function Page() {
 
 function Header({ links }: { links: any }) {
   return (
-    <div className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
+    <div className="fixed top-0 w-full z-50 backdrop-blur bg-white/70 border-b">
       <nav className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
         <a href="#top" className="font-semibold tracking-tight text-slate-900">
           Meerav Shah
@@ -151,38 +151,6 @@ function Header({ links }: { links: any }) {
     </div>
   );
 }
-
-function Hero({ links }: { links: any }) {
-  return (
-    <section id="top" className="py-16 md:py-24">
-      <div className="grid md:grid-cols-2 gap-10 items-center">
-        {/* left: your text stays the same */}
-        <div className="space-y-6">
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            Research scientist & builder — AI for education and space tech
-          </h1>
-          <p className="text-slate-600 text-lg">
-            Senior CS @ Penn State (Astrophysics minor). Recent work: advising chatbots,
-            UAV icing analytics, and human–AV behavior studies.
-          </p>
-          <p className="text-slate-700">
-            My process is a rally car: a product builder at the wheel, an obsessive research scientist calling the route.
-            Fast ideas, reliable findings.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <a href="#projects" className="rounded-xl bg-blue-600 text-white px-4 py-2 text-sm hover:bg-blue-700">See Projects</a>
-            <a href={`mailto:${links.email}`} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">Get in Touch</a>
-            <a href={links.resume} className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">Download Resume</a>
-          </div>
-        </div>
-
-        {/* right: 3D orbital hero */}
-        <OrbitalHero />
-      </div>
-    </section>
-  );
-}
-
 
 function Section({ id, title, children }: any) {
   return (
