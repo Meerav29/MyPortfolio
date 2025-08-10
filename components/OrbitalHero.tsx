@@ -1,63 +1,46 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useMemo } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Trail } from "@react-three/drei";
+import { OrbitControls, Stars, Trail, MeshDistortMaterial } from "@react-three/drei";
 import * as THREE from "three";
-import { useRef } from "react";
 
-// --- Planet
+// --- Planet: surreal distorted sphere with soft glow
 function Planet() {
-  const texture = useMemo(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext("2d")!;
-
-    // base ocean gradient with a subtle terminator
-    const ocean = ctx.createLinearGradient(0, 0, 512, 0);
-    ocean.addColorStop(0, "#0a2a6b");
-    ocean.addColorStop(1, "#0d47a1");
-    ctx.fillStyle = ocean;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // rough "continents"
-    ctx.fillStyle = "#2e7d32";
-    ctx.beginPath();
-    ctx.moveTo(180, 110);
-    ctx.bezierCurveTo(150, 90, 210, 60, 200, 110);
-    ctx.bezierCurveTo(210, 140, 160, 140, 180, 110);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(340, 80);
-    ctx.bezierCurveTo(360, 60, 360, 100, 340, 80);
-    ctx.bezierCurveTo(320, 90, 320, 70, 340, 80);
-    ctx.fill();
-
-    // faint clouds
-    ctx.globalAlpha = 0.15;
-    ctx.fillStyle = "#fff";
-    for (let i = 0; i < 25; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 256;
-      const r = Math.random() * 15 + 5;
-      ctx.beginPath();
-      ctx.ellipse(x, y, r * 2, r, Math.random() * Math.PI, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ map: texture, metalness: 0.1, roughness: 0.6 }),
-    [texture]
-  );
   return (
-    <mesh castShadow receiveShadow material={mat}>
-      <sphereGeometry args={[1.2, 64, 64]} />
-    </mesh>
+    <group>
+      {/* thin outline */}
+      <mesh scale={1.03} castShadow receiveShadow>
+        <sphereGeometry args={[1.2, 64, 64]} />
+        <meshBasicMaterial color="#080b12" side={THREE.BackSide} />
+      </mesh>
+
+      {/* distorted body */}
+      <mesh castShadow receiveShadow>
+        <sphereGeometry args={[1.2, 64, 64]} />
+        <MeshDistortMaterial
+          color="#4c1d95"
+          roughness={0.2}
+          metalness={0.1}
+          speed={1.2}
+          distort={0.3}
+          emissive="#c084fc"
+          emissiveIntensity={0.25}
+        />
+      </mesh>
+
+      {/* atmosphere */}
+      <mesh scale={1.1}>
+        <sphereGeometry args={[1.2, 64, 64]} />
+        <meshBasicMaterial
+          color="#a78bfa"
+          transparent
+          opacity={0.1}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </group>
   );
 }
 
