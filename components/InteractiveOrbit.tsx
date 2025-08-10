@@ -1,92 +1,148 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stars, useTexture } from "@react-three/drei";
+import { Suspense, useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 
-/** Flat planet as a plane (keeps your illustrated style) */
-function PlanetPlane() {
-  const tex = useTexture("/planet.png");
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-
-  // A simple plane (NOT billboarded), so rotating the camera gives parallax
-  return (
-    <mesh position={[0, 0, 0]} rotation={[-0.12, 0.25, 0]}>
-      <planeGeometry args={[3.2, 3.2]} />
-      <meshBasicMaterial map={tex} transparent alphaTest={0.5} depthWrite={false} />
-    </mesh>
-  );
+/** Tiny helper: build a 1×N grayscale gradient texture for toon steps */
+function useToonGradient(steps = 4) {
+  return useMemo(() => {
+    const size = steps;
+    const data = new Uint8Array(size * 3);
+    for (let i = 0; i < size; i++) {
+      const v = Math.floor((i / (size - 1)) * 255);
+      data[i * 3 + 0] = v;
+      data[i * 3 + 1] = v;
+      data[i * 3 + 2] = v;
+    }
+    const tex = new THREE.DataTexture(data, size, 1, THREE.RGBFormat);
+    tex.needsUpdate = true;
+    tex.minFilter = THREE.NearestFilter;
+    tex.magFilter = THREE.NearestFilter;
+    tex.generateMipmaps = false;
+    return tex;
+  }, [steps]);
 }
 
-/** Satellite orbiting in 3D around the origin with a slight inclination */
-function SatelliteOrbit() {
-  const tex = useTexture("/satellite.png");
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
+/** Planet: toon sphere + outline shell */
+function PlanetSphere() {
+  const gradient = useToonGradient(5);
 
-  const satelliteRef = useRef<THREE.Mesh>(null!);
-  // Group that we rotate to tilt the orbital plane
-  const orbitPlaneRef = useRef<THREE.Group>(null!);
+  // colors tuned for your blue/black aesthetic
+  const base = new THREE.Color("#1e3a8a"); // indigo-800
+  const highlight = new THREE.Color("#3b82f6"); // blue-500
 
-  // Tilt the orbit plane (so it’s not perfectly flat to camera)
-  const inclination = THREE.MathUtils.degToRad(25); // 25° tilt
-  const r = 4;                                      // orbit radius
-  const speed = 0.4;                                // radians/sec
-
-  useFrame(({ clock, camera }) => {
-    const t = clock.getElapsedTime();
-    if (!satelliteRef.current || !orbitPlaneRef.current) return;
-
-    // position on orbit in its local plane
-    const x = Math.cos(t * speed) * r;
-    const z = Math.sin(t * speed) * r;
-    const y = Math.sin(t * speed * 2) * 0.25; // gentle bob
-
-    // apply inclination by rotating the local vector
-    const p = new THREE.Vector3(x, y, z);
-    p.applyEuler(new THREE.Euler(inclination, 0, 0, "XYZ"));
-
-    satelliteRef.current.position.copy(p);
-
-    // Make the satellite face the camera so the icon stays crisp
-    satelliteRef.current.lookAt(camera.position);
+  // slow idle spin
+  const planetRef = useRef<THREE.Group>(null!);
+  useFrame((_, dt) => {
+    if (planetRef.current) planetRef.current.rotation.y += dt * 0.08;
   });
 
   return (
-    <group ref={orbitPlaneRef}>
-      {/* optional faint orbit ring for depth cue */}
-      <mesh rotation={[inclination, 0, 0]}>
-        <torusGeometry args={[r, 0.005, 8, 128]} />
-        <meshBasicMaterial color="#93c5fd" transparent opacity={0.25} />
+    <group ref={planetRef} position={[0, 0, 0]}>
+      {/* Outline: slightly bigger, rendered on the back side */}
+      <mesh scale={1.03}>
+        <sphereGeometry args={[1.8, 64, 64]} />
+        <meshBasicMaterial color="#0b1020" side={THREE.BackSide} />
       </mesh>
 
-      <mesh ref={satelliteRef}>
-        <planeGeometry args={[1.0, 1.0]} />
-        <meshBasicMaterial map={tex} transparent alphaTest={0.5} depthWrite={false} />
+      {/* Toon body */}
+      <mesh>
+        <sphereGeometry args={[1.75, 64, 64]} />
+        <meshToonMaterial
+          color={base}
+          gradientMap={gradient}
+          emissive={highlight.clone().multiplyScalar(0.05)}
+        />
       </mesh>
+
+      {/* A soft rim light to sell the form */}
+      <pointLight position={[2.8, 1.6, 2.2]} intensity={0.6} color={"#60a5fa"} />
+    </group>
+  );
+}
+
+/** Satellite: simple capsule + thin panels, with a white trail */
+function Satellite({ radius = 4, speed = 0.45, tiltDeg = 22 }: { radius?: number; speed?: number; tiltDeg?: number }) {
+  const group = useRef<THREE.Group>(null!);
+  const sat = useRef<THREE.Group>(null!);
+  const tilt = THREE.MathUtils.degToRad(tiltDeg);
+
+  useFrame(({ clock, camera }) => {
+    const t = clock.getElapsedTime();
+    const x = Math.cos(t * speed) * radius;
+    const z = Math.sin(t * speed) * radius;
+    const y = Math.sin(t * speed * 2) * 0.25;
+
+    // rotate vector by tilt around X
+    const p = new THREE.Vector3(x, y, z).applyEuler(new THREE.Euler(tilt, 0, 0, "XYZ"));
+
+    if (sat.current) {
+      sat.current.position.copy(p);
+      // face camera gently for readability
+      sat.current.lookAt(camera.position);
+    }
+  });
+
+  return (
+    <group ref={group}>
+      {/* faint orbit ring for depth */}
+      <mesh rotation={[tilt, 0, 0]}>
+        <torusGeometry args={[radius, 0.01, 8, 160]} />
+        <meshBasicMaterial color="#dbeafe" transparent opacity={0.22} />
+      </mesh>
+
+      {/* trail follows the satellite group */}
+      <Trail
+        width={1.6}
+        color={"#ffffff"}
+        length={12}
+        decay={0.9}
+        attenuation={(t) => t}
+      >
+        <group ref={sat}>
+          {/* body (capsule-ish using cylinder + hemispherical caps) */}
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.11, 0.11, 0.38, 24]} />
+            <meshStandardMaterial color="#f5f5f6" roughness={0.25} metalness={0.05} />
+          </mesh>
+          <mesh position={[0, 0.19, 0]}>
+            <sphereGeometry args={[0.11, 24, 24]} />
+            <meshStandardMaterial color="#f5f5f6" roughness={0.25} metalness={0.05} />
+          </mesh>
+          <mesh position={[0, -0.19, 0]}>
+            <sphereGeometry args={[0.11, 24, 24]} />
+            <meshStandardMaterial color="#f5f5f6" roughness={0.25} metalness={0.05} />
+          </mesh>
+
+          {/* solar panels */}
+          <mesh position={[0.32, 0, 0]}>
+            <boxGeometry args={[0.02, 0.32, 0.72]} />
+            <meshStandardMaterial color="#93c5fd" roughness={0.3} metalness={0.1} />
+          </mesh>
+          <mesh position={[-0.32, 0, 0]}>
+            <boxGeometry args={[0.02, 0.32, 0.72]} />
+            <meshStandardMaterial color="#93c5fd" roughness={0.3} metalness={0.1} />
+          </mesh>
+        </group>
+      </Trail>
     </group>
   );
 }
 
 function Scene() {
-  const { gl } = useThree();
-  // Better texture filtering for crisp icons
-  useMemo(() => {
-    gl.outputColorSpace = THREE.SRGBColorSpace;
-  }, [gl]);
-
   return (
     <>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[3, 5, 4]} intensity={0.6} />
+      {/* lighting that flatters toon + metal a bit */}
+      <ambientLight intensity={0.45} />
+      <directionalLight position={[3, 4, 2]} intensity={0.9} color={"#e2e8f0"} />
 
-      <PlanetPlane />
-      <SatelliteOrbit />
-      <Stars radius={50} depth={20} count={1100} factor={2} fade />
+      <PlanetSphere />
+      <Satellite />
 
+      <Stars radius={55} depth={25} count={900} factor={2} fade />
       <OrbitControls enablePan={false} enableZoom={true} />
     </>
   );
