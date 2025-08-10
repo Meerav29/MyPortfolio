@@ -1,12 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Mail, Phone, Linkedin, Github, ExternalLink } from "lucide-react";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import { Linkedin, Github, ExternalLink } from "lucide-react";
 import OrbitalHero from "@/components/OrbitalHero";
-import IllustratedOrbit from "@/components/IllustratedOrbit";
-import InteractiveOrbit from "@/components/InteractiveOrbit";
 
 
 export default function Page() {
@@ -180,8 +176,8 @@ function Hero({ links }: { links: any }) {
           </div>
         </div>
 
-        {/* right: interactive scene */}
-        <InteractiveOrbit />
+        {/* right: 3D orbital hero */}
+        <OrbitalHero />
       </div>
     </section>
   );
