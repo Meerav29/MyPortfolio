@@ -1,75 +1,97 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Billboard, useTexture } from "@react-three/drei";
+import { Suspense, useRef, useMemo } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, Stars, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
-// Planet as a billboarded plane with your PNG (stays facing the camera slightly)
-function PlanetBillboard() {
+/** Flat planet as a plane (keeps your illustrated style) */
+function PlanetPlane() {
   const tex = useTexture("/planet.png");
-  // Ensure transparency looks crisp
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
 
+  // A simple plane (NOT billboarded), so rotating the camera gives parallax
   return (
-    <Billboard position={[0, 0, 0]}>
-      <mesh>
-        <planeGeometry args={[3.2, 3.2]} />
-        <meshBasicMaterial map={tex} transparent />
-      </mesh>
-    </Billboard>
+    <mesh position={[0, 0, 0]} rotation={[-0.12, 0.25, 0]}>
+      <planeGeometry args={[3.2, 3.2]} />
+      <meshBasicMaterial map={tex} transparent alphaTest={0.5} depthWrite={false} />
+    </mesh>
   );
 }
 
-// Satellite that actually orbits around the origin in 3D
+/** Satellite orbiting in 3D around the origin with a slight inclination */
 function SatelliteOrbit() {
   const tex = useTexture("/satellite.png");
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
 
-  const groupRef = useRef<THREE.Group>(null!);
-  useFrame(({ clock }) => {
+  const satelliteRef = useRef<THREE.Mesh>(null!);
+  // Group that we rotate to tilt the orbital plane
+  const orbitPlaneRef = useRef<THREE.Group>(null!);
+
+  // Tilt the orbit plane (so it’s not perfectly flat to camera)
+  const inclination = THREE.MathUtils.degToRad(25); // 25° tilt
+  const r = 4;                                      // orbit radius
+  const speed = 0.4;                                // radians/sec
+
+  useFrame(({ clock, camera }) => {
     const t = clock.getElapsedTime();
-    // orbit radius + vertical bob
-    const r = 4.0;
-    const x = Math.cos(t * 0.4) * r;
-    const z = Math.sin(t * 0.4) * r;
-    const y = Math.sin(t * 0.8) * 0.25; // subtle bob
-    if (groupRef.current) groupRef.current.position.set(x, y, z);
+    if (!satelliteRef.current || !orbitPlaneRef.current) return;
+
+    // position on orbit in its local plane
+    const x = Math.cos(t * speed) * r;
+    const z = Math.sin(t * speed) * r;
+    const y = Math.sin(t * speed * 2) * 0.25; // gentle bob
+
+    // apply inclination by rotating the local vector
+    const p = new THREE.Vector3(x, y, z);
+    p.applyEuler(new THREE.Euler(inclination, 0, 0, "XYZ"));
+
+    satelliteRef.current.position.copy(p);
+
+    // Make the satellite face the camera so the icon stays crisp
+    satelliteRef.current.lookAt(camera.position);
   });
 
-  // Have the satellite always face the camera for a clean 2D look in 3D space
   return (
-    <group ref={groupRef}>
-      <Billboard>
-        <mesh>
-          <planeGeometry args={[1.0, 1.0]} />
-          <meshBasicMaterial map={tex} transparent />
-        </mesh>
-      </Billboard>
+    <group ref={orbitPlaneRef}>
+      {/* optional faint orbit ring for depth cue */}
+      <mesh rotation={[inclination, 0, 0]}>
+        <torusGeometry args={[r, 0.005, 8, 128]} />
+        <meshBasicMaterial color="#93c5fd" transparent opacity={0.25} />
+      </mesh>
+
+      <mesh ref={satelliteRef}>
+        <planeGeometry args={[1.0, 1.0]} />
+        <meshBasicMaterial map={tex} transparent alphaTest={0.5} depthWrite={false} />
+      </mesh>
     </group>
   );
 }
 
 function Scene() {
+  const { gl } = useThree();
+  // Better texture filtering for crisp icons
+  useMemo(() => {
+    gl.outputColorSpace = THREE.SRGBColorSpace;
+  }, [gl]);
+
   return (
     <>
-      {/* subtle lights (BasicMaterial doesn't need them, but helps if you add 3D meshes later) */}
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={0.6} />
 
-      <PlanetBillboard />
+      <PlanetPlane />
       <SatelliteOrbit />
-
-      {/* stars add depth without weight */}
-      <Stars radius={50} depth={20} count={1200} factor={2} fade />
+      <Stars radius={50} depth={20} count={1100} factor={2} fade />
 
       <OrbitControls enablePan={false} enableZoom={true} />
     </>
   );
 }
 
-// Avoid SSR issues
 const R3FCanvas = dynamic(
   () =>
     Promise.resolve(({ className }: { className?: string }) => (
@@ -77,7 +99,7 @@ const R3FCanvas = dynamic(
         className={className}
         dpr={[1, 2]}
         camera={{ position: [0, 0, 7], fov: 45 }}
-        gl={{ antialias: true }}
+        gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={null}>
           <Scene />
@@ -95,7 +117,7 @@ export default function InteractiveOrbit() {
       aria-hidden="true"
     >
       <R3FCanvas className="absolute inset-0" />
-      {/* soft vignette */}
+      {/* subtle vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>
   );
