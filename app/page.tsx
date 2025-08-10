@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import OrbitalHero from "@/components/OrbitalHero";
 import IllustratedOrbit from "@/components/IllustratedOrbit";
-
+import InteractiveOrbit from "@/components/InteractiveOrbit";
 
 
 export default function Page() {
@@ -181,7 +181,7 @@ function Hero({ links }: { links: any }) {
         </div>
 
         {/* right: interactive scene */}
-        <IllustratedOrbit />
+        <InteractiveOrbit />
       </div>
     </section>
   );
