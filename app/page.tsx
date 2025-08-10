@@ -5,6 +5,7 @@ import { Mail, Phone, Linkedin, Github, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import OrbitalHero from "@/components/OrbitalHero";
+import IllustratedOrbit from "@/components/IllustratedOrbit";
 
 
 
@@ -180,7 +181,7 @@ function Hero({ links }: { links: any }) {
         </div>
 
         {/* right: interactive scene */}
-        <OrbitalHero />
+        <IllustratedOrbit />
       </div>
     </section>
   );
