@@ -1,42 +1,78 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useRef } from "react";
+import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Trail, MeshDistortMaterial } from "@react-three/drei";
+import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 
-// --- Planet: surreal distorted sphere with soft glow
+// Generate a starry canvas texture for a more cosmic appearance
+function useCosmicTexture(size = 1024) {
+  return useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext("2d")!;
+
+    // radial gradient background
+    const g = ctx.createRadialGradient(
+      size / 2,
+      size / 2,
+      size * 0.15,
+      size / 2,
+      size / 2,
+      size / 2
+    );
+    g.addColorStop(0, "#030711");
+    g.addColorStop(1, "#0f172a");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+
+    // sprinkle random stars
+    for (let i = 0; i < 800; i++) {
+      const x = Math.random() * size;
+      const y = Math.random() * size;
+      const r = Math.random() * 2 + 0.2;
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.8})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    return new THREE.CanvasTexture(canvas);
+  }, [size]);
+}
+
+// --- Planet: cosmic sphere with subtle glow
 function Planet() {
+  const texture = useCosmicTexture();
+  const planetRef = useRef<THREE.Group>(null!);
+
+  // slow idle spin for a bit of life
+  useFrame((_, dt) => {
+    if (planetRef.current) planetRef.current.rotation.y += dt * 0.1;
+  });
+
   return (
-    <group>
+    <group ref={planetRef}>
       {/* thin outline */}
       <mesh scale={1.03} castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial color="#080b12" side={THREE.BackSide} />
       </mesh>
 
-      {/* distorted body */}
+      {/* textured body */}
       <mesh castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
-        <MeshDistortMaterial
-          color="#4c1d95"
-          roughness={0.2}
-          metalness={0.1}
-          speed={1.2}
-          distort={0.3}
-          emissive="#c084fc"
-          emissiveIntensity={0.25}
-        />
+        <meshStandardMaterial map={texture} roughness={1} metalness={0} />
       </mesh>
 
-      {/* atmosphere */}
+      {/* soft atmosphere */}
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color="#a78bfa"
+          color="#60a5fa"
           transparent
-          opacity={0.1}
+          opacity={0.08}
           blending={THREE.AdditiveBlending}
         />
       </mesh>
