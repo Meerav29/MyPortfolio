@@ -3,15 +3,40 @@
 import dynamic from "next/dynamic";
 import { Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useRef } from "react";
 
 // --- Planet
 function Planet() {
+  const texture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d")!;
+
+    // base gradient
+    const grd = ctx.createRadialGradient(256, 128, 40, 256, 128, 256);
+    grd.addColorStop(0, "#1e3a8a");
+    grd.addColorStop(0.6, "#1d4ed8");
+    grd.addColorStop(1, "#3b82f6");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // simple "continents"
+    ctx.fillStyle = "#16a34a";
+    ctx.beginPath();
+    ctx.ellipse(180, 110, 60, 30, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(340, 80, 40, 20, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    return new THREE.CanvasTexture(canvas);
+  }, []);
   const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#1d4ed8", metalness: 0.2, roughness: 0.4 }),
-    []
+    () => new THREE.MeshStandardMaterial({ map: texture, metalness: 0.2, roughness: 0.5 }),
+    [texture]
   );
   return (
     <mesh castShadow receiveShadow material={mat}>
@@ -33,22 +58,12 @@ function Satellite() {
 
   return (
     <group ref={groupRef}>
-      <group>
-        <mesh position={[2.1, 0.4, 0]} castShadow>
-          <boxGeometry args={[0.18, 0.18, 0.4]} />
-          <meshStandardMaterial color="#93c5fd" />
+      <Trail width={0.02} length={6} color="#93c5fd" decay={4}>
+        <mesh position={[2.2, 0.4, 0]} castShadow>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.5} />
         </mesh>
-
-        {/* solar panels */}
-        <mesh position={[2.1, 0.4, -0.35]}>
-          <boxGeometry args={[0.02, 0.5, 0.7]} />
-          <meshStandardMaterial color="#60a5fa" />
-        </mesh>
-        <mesh position={[2.1, 0.4, 0.35]}>
-          <boxGeometry args={[0.02, 0.5, 0.7]} />
-          <meshStandardMaterial color="#60a5fa" />
-        </mesh>
-      </group>
+      </Trail>
     </group>
   );
 }
