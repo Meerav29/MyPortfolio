@@ -135,11 +135,12 @@ const R3FCanvas = dynamic(
   { ssr: false }
 );
 
-export default function OrbitalHero() {
+export default function OrbitalHero({ className = "", id }: { className?: string; id?: string }) {
   return (
     <div
-      className="relative w-full h-[420px] md:h-[520px] rounded-2xl border shadow-sm
-                 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 overflow-hidden"
+      id={id}
+      className={`relative w-full h-[420px] md:h-[520px] rounded-2xl border shadow-sm
+                 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 overflow-hidden ${className}`}
       aria-hidden="true"
     >
       {/* prefers-reduced-motion: pause auto-rotate */}
