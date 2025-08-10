@@ -16,3 +16,16 @@ body {
   background: var(--background);
   font-feature-settings: "cv02","cv03","cv04","cv11";
 }
+
+/* === Hero orbit animation === */
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+.orbit {
+  animation: orbit 28s linear infinite;
+  transform-origin: 0 0;
+}
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .orbit { animation: none !important; }
+}
