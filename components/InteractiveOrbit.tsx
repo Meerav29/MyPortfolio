@@ -84,14 +84,8 @@ function Satellite({
 
   return (
     <group>
-      {/* faint orbit guide */}
-      <mesh rotation={[tilt, 0, 0]}>
-        <torusGeometry args={[radius, 0.006, 8, 180]} />
-        <meshBasicMaterial color="#e5ecff" transparent opacity={0.18} />
-      </mesh>
-
       {/* trail follows satellite */}
-      <Trail width={0.8} color="#ffffff" length={10} decay={0.9} attenuation={(t) => t}>
+      <Trail width={0.5} color="#e0f2fe" length={10} decay={0.9} attenuation={(t) => t}>
         <group ref={sat}>
           {/* capsule body */}
           <mesh>

@@ -15,27 +15,43 @@ function Planet() {
     canvas.height = 256;
     const ctx = canvas.getContext("2d")!;
 
-    // base gradient
-    const grd = ctx.createRadialGradient(256, 128, 40, 256, 128, 256);
-    grd.addColorStop(0, "#1e3a8a");
-    grd.addColorStop(0.6, "#1d4ed8");
-    grd.addColorStop(1, "#3b82f6");
-    ctx.fillStyle = grd;
+    // base ocean gradient with a subtle terminator
+    const ocean = ctx.createLinearGradient(0, 0, 512, 0);
+    ocean.addColorStop(0, "#0a2a6b");
+    ocean.addColorStop(1, "#0d47a1");
+    ctx.fillStyle = ocean;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // simple "continents"
-    ctx.fillStyle = "#16a34a";
+    // rough "continents"
+    ctx.fillStyle = "#2e7d32";
     ctx.beginPath();
-    ctx.ellipse(180, 110, 60, 30, Math.PI / 4, 0, Math.PI * 2);
+    ctx.moveTo(180, 110);
+    ctx.bezierCurveTo(150, 90, 210, 60, 200, 110);
+    ctx.bezierCurveTo(210, 140, 160, 140, 180, 110);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(340, 80, 40, 20, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.moveTo(340, 80);
+    ctx.bezierCurveTo(360, 60, 360, 100, 340, 80);
+    ctx.bezierCurveTo(320, 90, 320, 70, 340, 80);
     ctx.fill();
+
+    // faint clouds
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = "#fff";
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * 512;
+      const y = Math.random() * 256;
+      const r = Math.random() * 15 + 5;
+      ctx.beginPath();
+      ctx.ellipse(x, y, r * 2, r, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
     return new THREE.CanvasTexture(canvas);
   }, []);
   const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ map: texture, metalness: 0.2, roughness: 0.5 }),
+    () => new THREE.MeshStandardMaterial({ map: texture, metalness: 0.1, roughness: 0.6 }),
     [texture]
   );
   return (
@@ -58,10 +74,10 @@ function Satellite() {
 
   return (
     <group ref={groupRef}>
-      <Trail width={0.02} length={6} color="#93c5fd" decay={4}>
+      <Trail width={0.015} length={6} color="#e0f2fe" decay={4}>
         <mesh position={[2.2, 0.4, 0]} castShadow>
           <sphereGeometry args={[0.1, 16, 16]} />
-          <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.5} />
+          <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.4} />
         </mesh>
       </Trail>
     </group>
@@ -70,23 +86,12 @@ function Satellite() {
 
 // export default Satellite;
 
-// --- Glow ring
-function Halo() {
-  return (
-    <mesh rotation={[1.2, 0, 0]}>
-      <ringGeometry args={[1.6, 1.9, 96]} />
-      <meshBasicMaterial color="#2563eb" transparent opacity={0.25} side={THREE.DoubleSide} />
-    </mesh>
-  );
-}
-
 function Scene() {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <Planet />
-      <Halo />
       <Satellite />
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
       <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
