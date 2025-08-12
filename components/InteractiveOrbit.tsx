@@ -45,9 +45,9 @@ function Planet() {
       <mesh>
         <sphereGeometry args={[1.48, 64, 64]} />
         <meshToonMaterial
-          color={"#0f1f4b"}                 // deep blue
+          color={"#93c5fd"}                 // light blue tone
           gradientMap={gradient}
-          emissive={"#1f3b8a"}              // subtle inner glow
+          emissive={"#bfdbfe"}              // gentle inner glow
           emissiveIntensity={0.06}
         />
       </mesh>
@@ -55,7 +55,7 @@ function Planet() {
       {/* Atmosphere glow (additive, very subtle) */}
       <mesh scale={1.12}>
         <sphereGeometry args={[1.48, 64, 64]} />
-        <meshBasicMaterial color="#60a5fa" transparent opacity={0.08} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial color="#bfdbfe" transparent opacity={0.08} blending={THREE.AdditiveBlending} />
       </mesh>
     </group>
   );

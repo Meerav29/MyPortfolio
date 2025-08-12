@@ -22,8 +22,8 @@ function useCosmicTexture(size = 1024) {
       size / 2,
       size / 2
     );
-    g.addColorStop(0, "#030711");
-    g.addColorStop(1, "#0f172a");
+    g.addColorStop(0, "#e0f2fe");
+    g.addColorStop(1, "#93c5fd");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
 
@@ -70,7 +70,7 @@ function Planet() {
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color="#60a5fa"
+          color="#bfdbfe"
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
