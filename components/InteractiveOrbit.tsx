@@ -162,7 +162,7 @@ const R3FCanvas = dynamic(
 export default function InteractiveOrbit() {
   return (
     <div
-      className="relative w-full h-[90vh] rounded-2xl border shadow-sm overflow-hidden
+      className="relative w-full h-[85vh] rounded-2xl border shadow-sm overflow-hidden
                  bg-gradient-to-br from-[#0a0f1d] via-[#0b1120] to-[#0b1530]"
       aria-hidden="true"
     >
