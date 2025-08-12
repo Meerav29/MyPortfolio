@@ -5,6 +5,7 @@ import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
+import ScrollIndicator from "./ScrollIndicator";
 
 // Generate a starry canvas texture for a more cosmic appearance
 function useCosmicTexture(size = 1024) {
@@ -152,6 +153,7 @@ export default function OrbitalHero({ className = "", id }: { className?: string
       <R3FCanvas className="absolute inset-0" />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
+      <ScrollIndicator />
     </div>
   );
 }
