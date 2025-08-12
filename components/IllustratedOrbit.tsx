@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function IllustratedOrbit() {
   return (
     <div
-      className="relative w-full h-[420px] md:h-[520px] rounded-2xl border shadow-sm
+      className="relative w-full h-[90vh] rounded-2xl border shadow-sm
                  overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50"
       aria-hidden="true"
     >
