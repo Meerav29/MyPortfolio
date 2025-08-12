@@ -99,9 +99,9 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 selection:bg-blue-200">
-      <OrbitalHero id="top" className="h-screen rounded-none border-none shadow-none" />
       <Header links={links} />
-      <main className="mx-auto max-w-6xl px-6 pt-24">
+      <OrbitalHero id="top" className="h-screen rounded-none border-none shadow-none" />
+      <main className="mx-auto max-w-6xl px-6">
         <About />
         <Projects projects={projects} />
         <Experience items={experience} />
