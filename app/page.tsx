@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { Linkedin, Github, ExternalLink } from "lucide-react";
-import image from "next/image";
+import Image from "next/image";
 import OrbitalHero from "@/components/OrbitalHero";
 
 
