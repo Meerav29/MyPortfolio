@@ -140,7 +140,7 @@ export default function OrbitalHero({ className = "", id }: { className?: string
   return (
     <div
       id={id}
-      className={`relative w-full h-[85vh] rounded-2xl border shadow-sm
+      className={`relative w-full h-[80vh] rounded-2xl border shadow-sm
                  bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 overflow-hidden ${className}`}
       aria-hidden="true"
     >
