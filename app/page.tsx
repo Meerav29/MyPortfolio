@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { Linkedin, Github, ExternalLink } from "lucide-react";
+import NotionIcon from "@/components/NotionIcon";
 import OrbitalHero from "@/components/OrbitalHero";
 
 
@@ -13,6 +14,7 @@ export default function Page() {
       site: "https://sites.google.com/psu.edu/meeravshah",
       linkedin: "https://www.linkedin.com/in/meeravshah/",
       github: "https://github.com/Meerav29",
+      notion: "/notion",
       resume: "/resume.pdf",
     }),
     []
@@ -139,6 +141,9 @@ function Header({ links }: { links: any }) {
           </a>
           <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-slate-800">
             <Github size={18} />
+          </a>
+          <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-slate-800">
+            <NotionIcon size={18} />
           </a>
           <a
             href={links.resume}
