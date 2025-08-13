@@ -6,6 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import ScrollIndicator from "./ScrollIndicator";
+import TypewriterText from "./TypewriterText";
 
 // Generate a starry canvas texture for a more cosmic appearance
 function useCosmicTexture(size = 1024) {
@@ -153,6 +154,19 @@ export default function OrbitalHero({ className = "", id }: { className?: string
       <R3FCanvas className="absolute inset-0" />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
+      {/* top-centered intro text */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col items-center text-center pt-20">
+        <h1 className="text-4xl md:text-6xl font-bold mb-2">
+          <TypewriterText text="Hi! I'm Meerav" />
+        </h1>
+        <p className="text-lg md:text-xl text-slate-200">
+          <TypewriterText
+            text="Senior in CS @ Penn State w/ Astro Minor"
+            delay={1500}
+            speed={50}
+          />
+        </p>
+      </div>
       <ScrollIndicator />
     </div>
   );
