@@ -154,8 +154,8 @@ export default function OrbitalHero({ className = "", id }: { className?: string
       <R3FCanvas className="absolute inset-0" />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
-      {/* centered intro text */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center mt-12">
+      {/* top-centered intro text */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col items-center text-center pt-20">
         <h1 className="text-4xl md:text-6xl font-bold mb-2">
           <TypewriterText text="Hi! I'm Meerav" />
         </h1>
