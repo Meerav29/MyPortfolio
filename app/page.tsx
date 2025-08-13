@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import { Linkedin, Github, ExternalLink } from "lucide-react";
-import NotionIcon from "@/components/NotionIcon";
+import image from "next/image";
 import OrbitalHero from "@/components/OrbitalHero";
+
 
 
 export default function Page() {
@@ -143,7 +144,7 @@ function Header({ links }: { links: any }) {
             <Github size={18} />
           </a>
           <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-slate-800">
-            <NotionIcon size={18} />
+             <Image src="/notion-w.png" alt="Notion logo" width={18} height={18} />
           </a>
           <a
             href={links.resume}
