@@ -5,8 +5,6 @@ import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
-import ScrollIndicator from "./ScrollIndicator";
-import TypewriterText from "./TypewriterText";
 
 // Generate a starry canvas texture for a more cosmic appearance
 function useCosmicTexture(size = 1024) {
@@ -122,29 +120,25 @@ function Scene() {
 
 // dynamic to avoid SSR issues
 const R3FCanvas = dynamic(
-  () => Promise.resolve(({ className }: { className?: string }) => (
-    <Canvas
-      className={className}
-      dpr={[1, 2]}
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      gl={{ antialias: true }}
-    >
-      <Suspense fallback={null}>
-        <Scene />
-      </Suspense>
-    </Canvas>
-  )),
+  () =>
+    Promise.resolve(({ className }: { className?: string }) => (
+      <Canvas
+        className={className}
+        dpr={[1, 2]}
+        camera={{ position: [0, 0, 6], fov: 45 }}
+        gl={{ antialias: true }}
+      >
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
+      </Canvas>
+    )),
   { ssr: false }
 );
 
-export default function OrbitalHero({ className = "", id }: { className?: string; id?: string }) {
+export default function PlanetCanvas() {
   return (
-    <div
-      id={id}
-      className={`relative w-full h-[80vh] rounded-2xl border shadow-sm
-                 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
+    <div className="relative w-full h-full" aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
       <style>{`
         @media (prefers-reduced-motion: reduce) {
@@ -154,20 +148,6 @@ export default function OrbitalHero({ className = "", id }: { className?: string
       <R3FCanvas className="absolute inset-0" />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
-      {/* top-centered intro text */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col items-center text-center pt-20">
-        <h1 className="text-4xl md:text-6xl font-bold mb-2">
-          <TypewriterText text="Hi! I'm Meerav" />
-        </h1>
-        <p className="text-lg md:text-xl text-slate-200">
-          <TypewriterText
-            text="Senior in CS @ Penn State w/ Astro Minor"
-            delay={1500}
-            speed={50}
-          />
-        </p>
-      </div>
-      <ScrollIndicator />
     </div>
   );
 }

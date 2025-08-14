@@ -3,9 +3,7 @@
 import { useMemo } from "react";
 import { Linkedin, Github, ExternalLink } from "lucide-react";
 import Image from "next/image";
-import OrbitalHero from "@/components/OrbitalHero";
-
-
+import Hero from "@/components/Hero";
 
 export default function Page() {
   const links = useMemo(
@@ -103,7 +101,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 selection:bg-blue-200">
       <Header links={links} />
-      <OrbitalHero id="top" className="h-screen rounded-none border-none shadow-none" />
+      <Hero id="top" />
       <main className="mx-auto max-w-6xl px-6">
         <About />
         <Projects projects={projects} />
