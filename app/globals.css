@@ -68,8 +68,8 @@ body {
   }
 }
 
-/* Ensure all decorative layers stay back */
+/* Ensure decorative layers don't intercept clicks */
 .planet-layer, canvas, .stars {
   pointer-events: none;
-  z-index: -10;
+  z-index: 0; /* Keep above page background but behind text */
 }
