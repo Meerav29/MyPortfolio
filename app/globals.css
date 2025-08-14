@@ -29,3 +29,47 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .orbit { animation: none !important; }
 }
+
+/* Avoid glyph clipping and stacking issues */
+.type-text {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  white-space: nowrap;
+  /* reveal animation without overflow clipping */
+  -webkit-mask: linear-gradient(90deg, #000 0 0) text;
+  mask: linear-gradient(90deg, #000 0 0) text;
+  animation: reveal 2s steps(30, end) 0.2s both;
+}
+@keyframes reveal {
+  from {
+    -webkit-mask-size: 0 100%;
+    mask-size: 0 100%;
+  }
+  to {
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+}
+
+.type-caret {
+  position: absolute;
+  right: -0.2rem;
+  top: 0.2rem;
+  width: 1px;
+  height: 1.2em;
+  background: currentColor;
+  animation: blink 1s step-end infinite;
+  z-index: 0; /* behind the text */
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Ensure all decorative layers stay back */
+.planet-layer, canvas, .stars {
+  pointer-events: none;
+  z-index: -10;
+}
