@@ -18,7 +18,7 @@ export default function Hero({ id }: { id?: string }) {
       </div>
 
       {/* PLANET / CANVAS */}
-      <div className="absolute inset-0 -z-10 pointer-events-none planet-layer">
+      <div className="absolute inset-0 pointer-events-none planet-layer">
         <PlanetCanvas />
       </div>
     </section>
