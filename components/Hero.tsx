@@ -1,6 +1,7 @@
 "use client";
 
 import PlanetCanvas from "./PlanetCanvas";
+import ScrollIndicator from "./ScrollIndicator";
 import { Typewriter } from "./Typewriter";
 
 export default function Hero({ id }: { id?: string }) {
@@ -21,6 +22,7 @@ export default function Hero({ id }: { id?: string }) {
       <div className="absolute inset-0 pointer-events-none planet-layer">
         <PlanetCanvas />
       </div>
+      <ScrollIndicator />
     </section>
   );
 }
