@@ -1,24 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
-import { Linkedin, Github, ExternalLink } from "lucide-react";
-import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 import Hero from "@/components/Hero";
+import { links } from "@/lib/links";
 
 export default function Page() {
-  const links = useMemo(
-    () => ({
-      email: "meeravshah29@gmail.com",
-      phone: "+1 (814) 280-8312",
-      site: "https://sites.google.com/psu.edu/meeravshah",
-      linkedin: "https://www.linkedin.com/in/meeravshah/",
-      github: "https://github.com/Meerav29",
-      notion: "/notion",
-      resume: "/resume.pdf",
-    }),
-    []
-  );
-
   const projects = [
     {
       title: "Academic Advising Chatbot (College of IST)",
@@ -99,8 +85,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 selection:bg-blue-200">
-      <Header links={links} />
+    <div>
       <Hero id="top" />
       <main className="mx-auto max-w-6xl px-6">
         <About />
@@ -110,48 +95,6 @@ export default function Page() {
         <Contact links={links} />
       </main>
       <Footer />
-    </div>
-  );
-}
-
-function Header({ links }: { links: any }) {
-  return (
-    <div className="sticky top-0 w-full z-50 backdrop-blur bg-slate-950/60 border-b border-white/10">
-      <nav className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between text-slate-100">
-        <a href="#top" className="font-semibold tracking-tight text-slate-100">
-          Meerav Shah
-        </a>
-        <div className="hidden md:flex gap-6 text-sm">
-          {[
-            ["About", "#about"],
-            ["Projects", "#projects"],
-            ["Experience", "#experience"],
-            ["Skills", "#skills"],
-            ["Contact", "#contact"],
-          ].map(([label, href]) => (
-            <a key={label} href={href as string} className="hover:text-blue-400 transition-colors">
-              {label}
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-slate-800">
-            <Linkedin size={18} />
-          </a>
-          <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-slate-800">
-            <Github size={18} />
-          </a>
-          <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-slate-800">
-             <Image src="/notion-w.png" alt="Notion logo" width={18} height={18} />
-          </a>
-          <a
-            href={links.resume}
-            className="inline-flex items-center gap-2 text-sm rounded-xl border border-white/10 px-3 py-1.5 bg-white text-slate-900 hover:bg-slate-200"
-          >
-            Resume <ExternalLink size={14} />
-          </a>
-        </div>
-      </nav>
     </div>
   );
 }
