@@ -29,7 +29,7 @@ import Header from "@/components/Header";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 selection:bg-blue-200">
+      <body className="min-h-screen text-slate-100 selection:bg-blue-200">
         <Header />
         {children}
         <Analytics />
