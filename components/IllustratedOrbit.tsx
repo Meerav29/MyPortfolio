@@ -4,8 +4,8 @@ import Image from "next/image";
 export default function IllustratedOrbit() {
   return (
     <div
-      className="relative w-full h-[80vh] rounded-2xl border shadow-sm
-                 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50"
+      className="relative w-full h-[80vh] rounded-2xl border border-border shadow-sm
+                 overflow-hidden bg-card"
       aria-hidden="true"
     >
       {/* vignette */}

@@ -1,6 +1,6 @@
 export default function ScrollIndicator() {
   return (
-    <div className="pointer-events-none absolute bottom-14 left-1/2 z-20 -translate-x-1/2 text-slate-300">
+    <div className="pointer-events-none absolute bottom-14 left-1/2 z-20 -translate-x-1/2 text-muted">
       <div className="flex flex-col items-center gap-2">
         <svg width="28" height="44" viewBox="0 0 28 44" fill="none" aria-hidden="true">
           <rect x="1.25" y="1.25" width="25.5" height="41.5" rx="12.75" stroke="currentColor" strokeWidth="2.5" />

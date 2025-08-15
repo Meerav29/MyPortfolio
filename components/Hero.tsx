@@ -12,7 +12,7 @@ export default function Hero({ id }: { id?: string }) {
         <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight">
           Hi! I&apos;m Meerav
         </h1>
-        <p className="mt-3 text-lg md:text-xl text-slate-200">
+        <p className="mt-3 text-lg md:text-xl text-muted">
           Senior in CS @ Penn State · Astro minor
         </p>
         <Typewriter text="Building AI tools for education and space tech" />

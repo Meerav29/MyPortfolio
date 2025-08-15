@@ -37,11 +37,11 @@ export default function NotionPage() {
               href={t.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mb-4 px-4 py-2 bg-white text-slate-900 rounded-md"
+              className="inline-block mb-4 px-4 py-2 bg-card text-foreground border border-border rounded-md"
             >
               Go to FREE Template
             </a>
-            <p className="text-slate-300">{t.description}</p>
+            <p className="text-muted">{t.description}</p>
           </section>
         ))}
       </div>
@@ -49,7 +49,7 @@ export default function NotionPage() {
       <section className="mx-auto max-w-4xl flex flex-col md:flex-row items-center md:items-start md:gap-10">
         <div className="md:w-2/3">
           <h2 className="text-2xl font-semibold mb-4">Hi, I am Meerav 👋</h2>
-          <p className="text-slate-300">
+          <p className="text-muted">
             I am the creator of these Notion templates. I&apos;ve been using Notion for a long time for personal use—everything from
             planning my degree, to taking notes every day in a scratch pad, to coordinating the workloads and timelines in different
             projects that I&apos;m working on. I make templates out of my Notion workspaces to organize my academics and other
