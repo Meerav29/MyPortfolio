@@ -5,6 +5,7 @@ import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
+import { useThemeColors, lighten, darken } from "../lib/theme";
 
 /* --- Utilities --- */
 function useToonGradient(steps = 4) {
@@ -13,7 +14,9 @@ function useToonGradient(steps = 4) {
     const data = new Uint8Array(size * 3);
     for (let i = 0; i < size; i++) {
       const v = Math.floor((i / (size - 1)) * 255);
-      data[i * 3 + 0] = v; data[i * 3 + 1] = v; data[i * 3 + 2] = v;
+      data[i * 3 + 0] = v;
+      data[i * 3 + 1] = v;
+      data[i * 3 + 2] = v;
     }
     const tex = new THREE.DataTexture(data, size, 1, THREE.RGBFormat);
     tex.needsUpdate = true;
@@ -27,10 +30,11 @@ function useToonGradient(steps = 4) {
 /* --- Planet: toon sphere + thin outline + soft atmosphere --- */
 function Planet() {
   const gradient = useToonGradient(4);
+  const { accent, background } = useThemeColors();
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
-    if (planetRef.current) planetRef.current.rotation.y += dt * 0.05; // slow idle spin
+    if (planetRef.current) planetRef.current.rotation.y += dt * 0.05;
   });
 
   return (
@@ -38,16 +42,16 @@ function Planet() {
       {/* Outline (very thin) */}
       <mesh scale={1.015}>
         <sphereGeometry args={[1.5, 64, 64]} />
-        <meshBasicMaterial color="#080b12" side={THREE.BackSide} />
+        <meshBasicMaterial color={darken(background, 0.6)} side={THREE.BackSide} />
       </mesh>
 
       {/* Toon body */}
       <mesh>
         <sphereGeometry args={[1.48, 64, 64]} />
         <meshToonMaterial
-          color={"#93c5fd"}                 // light blue tone
+          color={accent}
           gradientMap={gradient}
-          emissive={"#bfdbfe"}              // gentle inner glow
+          emissive={lighten(accent, 0.2)}
           emissiveIntensity={0.06}
         />
       </mesh>
@@ -55,18 +59,24 @@ function Planet() {
       {/* Atmosphere glow (additive, very subtle) */}
       <mesh scale={1.12}>
         <sphereGeometry args={[1.48, 64, 64]} />
-        <meshBasicMaterial color="#bfdbfe" transparent opacity={0.08} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial
+          color={lighten(accent, 0.25)}
+          transparent
+          opacity={0.08}
+          blending={THREE.AdditiveBlending}
+        />
       </mesh>
     </group>
   );
 }
 
-/* --- Satellite: small capsule + slim panels + elegant white trail --- */
+/* --- Satellite: small capsule + slim panels + elegant trail --- */
 function Satellite({
   radius = 3.1,
   speed = 0.35,
-  tiltDeg = 18
+  tiltDeg = 18,
 }: { radius?: number; speed?: number; tiltDeg?: number }) {
+  const { accent } = useThemeColors();
   const sat = useRef<THREE.Group>(null!);
   const tilt = THREE.MathUtils.degToRad(tiltDeg);
 
@@ -82,32 +92,36 @@ function Satellite({
     }
   });
 
+  const trail = lighten(accent, 0.3);
+  const body = lighten(accent, 0.6);
+  const panel = lighten(accent, 0.4);
+
   return (
     <group>
       {/* trail follows satellite */}
-      <Trail width={0.5} color="#e0f2fe" length={10} decay={0.9} attenuation={(t) => t}>
+      <Trail width={0.5} color={trail} length={10} decay={0.9} attenuation={(t) => t}>
         <group ref={sat}>
           {/* capsule body */}
           <mesh>
             <cylinderGeometry args={[0.08, 0.08, 0.28, 24]} />
-            <meshStandardMaterial color="#f5f7fb" roughness={0.25} metalness={0.05} />
+            <meshStandardMaterial color={body} roughness={0.25} metalness={0.05} />
           </mesh>
           <mesh position={[0, 0.14, 0]}>
             <sphereGeometry args={[0.08, 24, 24]} />
-            <meshStandardMaterial color="#f5f7fb" roughness={0.25} metalness={0.05} />
+            <meshStandardMaterial color={body} roughness={0.25} metalness={0.05} />
           </mesh>
           <mesh position={[0, -0.14, 0]}>
             <sphereGeometry args={[0.08, 24, 24]} />
-            <meshStandardMaterial color="#f5f7fb" roughness={0.25} metalness={0.05} />
+            <meshStandardMaterial color={body} roughness={0.25} metalness={0.05} />
           </mesh>
           {/* slim panels */}
           <mesh position={[0.24, 0, 0]}>
             <boxGeometry args={[0.014, 0.26, 0.56]} />
-            <meshStandardMaterial color="#9fc5ff" roughness={0.3} metalness={0.1} />
+            <meshStandardMaterial color={panel} roughness={0.3} metalness={0.1} />
           </mesh>
           <mesh position={[-0.24, 0, 0]}>
             <boxGeometry args={[0.014, 0.26, 0.56]} />
-            <meshStandardMaterial color="#9fc5ff" roughness={0.3} metalness={0.1} />
+            <meshStandardMaterial color={panel} roughness={0.3} metalness={0.1} />
           </mesh>
         </group>
       </Trail>
@@ -117,11 +131,16 @@ function Satellite({
 
 /* --- Scene --- */
 function Scene() {
+  const { accent, background } = useThemeColors();
   return (
     <>
       {/* flattering, minimal lighting */}
-      <hemisphereLight color={"#e6eefc"} groundColor={"#0b1020"} intensity={0.35} />
-      <directionalLight position={[3, 4, 2]} intensity={0.9} color={"#ffffff"} />
+      <hemisphereLight
+        color={lighten(accent, 0.6)}
+        groundColor={darken(background, 0.6)}
+        intensity={0.35}
+      />
+      <directionalLight position={[3, 4, 2]} intensity={0.9} color={lighten(accent, 0.2)} />
 
       <Planet />
       <Satellite />
@@ -160,11 +179,13 @@ const R3FCanvas = dynamic(
 
 /* --- Exported component --- */
 export default function InteractiveOrbit() {
+  const { accent, background } = useThemeColors();
+  const bg = `linear-gradient(to bottom right, ${darken(background, 0.05)}, ${darken(accent, 0.6)})`;
   return (
     <div
-      className="relative w-full h-[80vh] rounded-2xl border shadow-sm overflow-hidden
-                 bg-gradient-to-br from-[#0a0f1d] via-[#0b1120] to-[#0b1530]"
+      className="relative w-full h-[80vh] rounded-2xl border shadow-sm overflow-hidden"
       aria-hidden="true"
+      style={{ background: bg }}
     >
       <R3FCanvas className="absolute inset-0" />
       {/* soft vignette */}

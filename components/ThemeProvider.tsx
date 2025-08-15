@@ -22,10 +22,20 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
     const stored = window.localStorage.getItem("theme") as Theme | null;
-    let initial: Theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const initial: Theme = stored || (mql.matches ? "dark" : "light");
     setTheme(initial);
     document.documentElement.classList.toggle("dark", initial === "dark");
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      const sys: Theme = e.matches ? "dark" : "light";
+      setTheme(sys);
+      document.documentElement.classList.toggle("dark", sys === "dark");
+      window.localStorage.setItem("theme", sys);
+    };
+    mql.addEventListener("change", handleChange);
+    return () => mql.removeEventListener("change", handleChange);
   }, []);
 
   const toggleTheme = () => {
@@ -37,4 +47,3 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 
   return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
-
