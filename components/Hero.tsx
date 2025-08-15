@@ -22,6 +22,8 @@ export default function Hero({ id }: { id?: string }) {
       <div className="absolute inset-0 pointer-events-none planet-layer">
         <PlanetCanvas />
       </div>
+      {/* fade from animation to page background */}
+      <div className="absolute inset-0 pointer-events-none z-10 bg-gradient-to-b from-transparent to-[var(--background)]" />
       <ScrollIndicator />
     </section>
   );
