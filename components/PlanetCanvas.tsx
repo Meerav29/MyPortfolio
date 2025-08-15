@@ -5,15 +5,15 @@ import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
+import { useThemeColors, lighten, darken } from "../lib/theme";
 
-// Generate a starry canvas texture for a more cosmic appearance
-function useCosmicTexture(size = 1024) {
+// Generate a starry canvas texture using the current accent color.
+function useCosmicTexture(accent: string, size = 1024) {
   return useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext("2d")!;
 
-    // radial gradient background
     const g = ctx.createRadialGradient(
       size / 2,
       size / 2,
@@ -22,12 +22,11 @@ function useCosmicTexture(size = 1024) {
       size / 2,
       size / 2
     );
-    g.addColorStop(0, "#e0f2fe");
-    g.addColorStop(1, "#93c5fd");
+    g.addColorStop(0, lighten(accent, 0.35));
+    g.addColorStop(1, accent);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
 
-    // sprinkle random stars
     for (let i = 0; i < 800; i++) {
       const x = Math.random() * size;
       const y = Math.random() * size;
@@ -39,15 +38,15 @@ function useCosmicTexture(size = 1024) {
     }
 
     return new THREE.CanvasTexture(canvas);
-  }, [size]);
+  }, [accent, size]);
 }
 
 // --- Planet: cosmic sphere with subtle glow
 function Planet() {
-  const texture = useCosmicTexture();
+  const { accent, background } = useThemeColors();
+  const texture = useCosmicTexture(accent);
   const planetRef = useRef<THREE.Group>(null!);
 
-  // slow idle spin for a bit of life
   useFrame((_, dt) => {
     if (planetRef.current) planetRef.current.rotation.y += dt * 0.1;
   });
@@ -57,7 +56,7 @@ function Planet() {
       {/* thin outline */}
       <mesh scale={1.03} castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
-        <meshBasicMaterial color="#080b12" side={THREE.BackSide} />
+        <meshBasicMaterial color={darken(background, 0.6)} side={THREE.BackSide} />
       </mesh>
 
       {/* textured body */}
@@ -70,7 +69,7 @@ function Planet() {
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color="#bfdbfe"
+          color={lighten(accent, 0.25)}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -82,6 +81,7 @@ function Planet() {
 
 // --- Tiny satellite orbiting
 function Satellite() {
+  const { accent } = useThemeColors();
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame(({ clock }) => {
@@ -91,19 +91,21 @@ function Satellite() {
     }
   });
 
+  const trail = lighten(accent, 0.3);
+  const body = lighten(accent, 0.6);
+  const emissive = lighten(accent, 0.4);
+
   return (
     <group ref={groupRef}>
-      <Trail width={0.015} length={6} color="#e0f2fe" decay={4}>
+      <Trail width={0.015} length={6} color={trail} decay={4}>
         <mesh position={[2.2, 0.4, 0]} castShadow>
           <sphereGeometry args={[0.1, 16, 16]} />
-          <meshStandardMaterial color="#e0f2fe" emissive="#93c5fd" emissiveIntensity={0.4} />
+          <meshStandardMaterial color={body} emissive={emissive} emissiveIntensity={0.4} />
         </mesh>
       </Trail>
     </group>
   );
 }
-
-// export default Satellite;
 
 function Scene() {
   return (
