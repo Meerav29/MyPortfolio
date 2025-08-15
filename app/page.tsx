@@ -101,10 +101,10 @@ export default function Page() {
 
 function Section({ id, title, children }: any) {
   return (
-    <section id={id} className="py-14 md:py-20 border-t border-white/10">
+    <section id={id} className="py-14 md:py-20 border-t border-border">
       <div className="flex items-end justify-between mb-8">
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
-        <a href="#top" className="text-sm text-slate-400 hover:text-slate-200">
+        <a href="#top" className="text-sm text-muted hover:text-link-hover">
           Back to top
         </a>
       </div>
@@ -116,7 +116,7 @@ function Section({ id, title, children }: any) {
 function About() {
   return (
     <Section id="about" title="About">
-      <p className="text-slate-300 leading-relaxed max-w-3xl">
+      <p className="text-muted leading-relaxed max-w-3xl">
         I’m an undergraduate senior in Computer Science at Penn State, minoring in Astrophysics. I build practical, minimal tools—
         from advising assistants that free up faculty time to UAV analytics that make flight safer in icing conditions. I care about
         clean design, clear impact, and shipping real things.
@@ -133,18 +133,18 @@ function Projects({ projects }: { projects: any[] }) {
           <a
             key={p.title}
             href={(p.link as string) || "#"}
-            className="group rounded-2xl border border-white/10 p-6 bg-slate-900/50 hover:bg-slate-800 transition-colors"
+            className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors"
           >
             <div className="flex items-start justify-between gap-6">
-              <h3 className="text-lg font-medium leading-snug text-[#64FFDA]">{p.title}</h3>
+              <h3 className="text-lg font-medium leading-snug text-accent">{p.title}</h3>
               <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
             </div>
-            <p className="mt-3 text-slate-300 text-sm leading-relaxed">{p.summary}</p>
+            <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
             <div className="mt-4 flex flex-wrap gap-2">
                 {p.tags?.map((t: string) => (
                   <span
                     key={t}
-                    className="text-xs text-[#64FFDA] rounded-full border border-[#64FFDA] px-2 py-1 bg-slate-900/40"
+                    className="text-xs text-accent rounded-full border border-accent px-2 py-1 bg-transparent"
                   >
                     {t}
                   </span>
@@ -164,17 +164,17 @@ function Experience({ items }: { items: any[] }) {
         {items.map((job) => (
           <div
             key={job.org + job.time}
-            className="rounded-2xl border border-white/10 p-6 bg-slate-900/50"
+            className="rounded-2xl border border-border p-6 bg-card"
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                  <h3 className="font-medium text-[#64FFDA]">
-                    {job.role} · <span className="text-[#64FFDA]">{job.org}</span>
+                  <h3 className="font-medium text-accent">
+                    {job.role} · <span className="text-accent">{job.org}</span>
                   </h3>
-                <div className="text-sm text-slate-400">{job.time}</div>
+                <div className="text-sm text-muted">{job.time}</div>
               </div>
             </div>
-              <ul className="mt-3 space-y-2 list-disc pl-5 text-[#64FFDA] text-sm">
+              <ul className="mt-3 space-y-2 list-disc pl-5 text-accent text-sm">
                 {job.points.map((pt: string) => (
                   <li key={pt}>{pt}</li>
                 ))}
@@ -193,7 +193,7 @@ function Skills({ items }: { items: string[] }) {
         {items.map((s) => (
               <span
                 key={s}
-                className="text-sm text-[#64FFDA] rounded-full border border-[#64FFDA] px-3 py-1.5 bg-slate-900/40"
+                className="text-sm text-accent rounded-full border border-accent px-3 py-1.5 bg-transparent"
               >
                 {s}
               </span>
@@ -206,9 +206,9 @@ function Skills({ items }: { items: string[] }) {
 function Contact({ links }: { links: any }) {
   return (
     <Section id="contact" title="Get in touch">
-      <div className="rounded-2xl border p-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
+      <div className="rounded-2xl border border-border p-6 bg-gradient-to-br from-accent to-link-hover text-background">
         <h3 className="text-xl font-semibold">Let’s build something.</h3>
-        <p className="mt-2 text-white/80 max-w-2xl">
+        <p className="mt-2 text-background opacity-80 max-w-2xl">
           I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
         </p>
 
@@ -223,18 +223,18 @@ function Contact({ links }: { links: any }) {
             name="email"
             placeholder="Your email"
             required
-            className="flex-1 rounded-xl px-4 py-2 text-slate-900 placeholder-slate-500"
+            className="flex-1 rounded-xl px-4 py-2 bg-background text-foreground placeholder-muted"
           />
           <input
             type="text"
             name="message"
             placeholder="Say hello..."
             required
-            className="flex-1 rounded-xl px-4 py-2 text-slate-900 placeholder-slate-500"
+            className="flex-1 rounded-xl px-4 py-2 bg-background text-foreground placeholder-muted"
           />
           <button
             type="submit"
-            className="rounded-xl bg-white text-slate-900 px-4 py-2 text-sm hover:bg-slate-100 transition-colors"
+            className="rounded-xl bg-background text-foreground px-4 py-2 text-sm hover:bg-card transition-colors"
           >
             Send
           </button>
@@ -244,19 +244,19 @@ function Contact({ links }: { links: any }) {
         <div className="mt-6 flex flex-wrap gap-3 text-sm">
           <a
             href={`mailto:${links.email}`}
-            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
           >
             Email Me
           </a>
           <a
             href={links.linkedin}
-            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
           >
             LinkedIn
           </a>
           <a
             href={links.site}
-            className="rounded-xl border border-white/30 px-4 py-2 hover:bg-white/10"
+            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
           >
             Current Site
           </a>
@@ -269,8 +269,8 @@ function Contact({ links }: { links: any }) {
 
 function Footer() {
   return (
-    <footer className="mt-16 border-t border-white/10">
-      <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
+    <footer className="mt-16 border-t border-border">
+      <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-muted flex flex-col md:flex-row items-center justify-between gap-3">
         <span>© {new Date().getFullYear()} Meerav Shah</span>
         <span className="opacity-80">Built with Next.js + Tailwind · Minimal, blue/black/white.</span>
       </div>

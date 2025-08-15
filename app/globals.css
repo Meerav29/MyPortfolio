@@ -3,8 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --background: #1a1a1a; /* dark gray */
-  --foreground: #f8fafc; /* slate-50 */
+  --background: #F6F8FA;
+  --foreground: #24292F;
+  --muted: #57606A;
+  --card: #FFFFFF;
+  --accent: #0969DA;
+  --border: #d0d7de;
+  --link-hover: #054DA3;
+}
+
+.dark {
+  --background: #0D1117;
+  --foreground: #E6EDF3;
+  --muted: #8B949E;
+  --card: #161B22;
+  --accent: #58A6FF;
+  --border: #30363d;
+  --link-hover: #1F6FEB;
 }
 
 html, body {
