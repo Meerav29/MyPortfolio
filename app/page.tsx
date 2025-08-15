@@ -136,7 +136,7 @@ function Projects({ projects }: { projects: any[] }) {
             className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors"
           >
             <div className="flex items-start justify-between gap-6">
-              <h3 className="text-lg font-medium leading-snug text-accent">{p.title}</h3>
+              <h3 className="text-lg font-medium leading-snug text-white">{p.title}</h3>
               <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
             </div>
             <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
@@ -144,7 +144,7 @@ function Projects({ projects }: { projects: any[] }) {
                 {p.tags?.map((t: string) => (
                   <span
                     key={t}
-                    className="text-xs text-accent rounded-full border border-accent px-2 py-1 bg-transparent"
+                    className="text-xs text-white rounded-full border border-white px-2 py-1 bg-transparent"
                   >
                     {t}
                   </span>
@@ -168,13 +168,13 @@ function Experience({ items }: { items: any[] }) {
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                  <h3 className="font-medium text-accent">
-                    {job.role} · <span className="text-accent">{job.org}</span>
+                  <h3 className="font-medium text-white">
+                    {job.role} · <span className="text-white">{job.org}</span>
                   </h3>
                 <div className="text-sm text-muted">{job.time}</div>
               </div>
             </div>
-              <ul className="mt-3 space-y-2 list-disc pl-5 text-accent text-sm">
+              <ul className="mt-3 space-y-2 list-disc pl-5 text-white text-sm">
                 {job.points.map((pt: string) => (
                   <li key={pt}>{pt}</li>
                 ))}
