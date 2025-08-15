@@ -6,6 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
+import { useTheme } from "./ThemeProvider";
 
 // Generate a starry canvas texture using the current accent color.
 function useCosmicTexture(accent: string, size = 1024) {
@@ -44,7 +45,9 @@ function useCosmicTexture(accent: string, size = 1024) {
 // --- Planet: cosmic sphere with subtle glow
 function Planet() {
   const { accent, background } = useThemeColors();
-  const texture = useCosmicTexture(accent);
+  const { theme } = useTheme();
+  const base = theme === "light" ? "#1f2937" : accent;
+  const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -69,7 +72,7 @@ function Planet() {
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color={lighten(accent, 0.25)}
+          color={lighten(base, 0.25)}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -82,6 +85,8 @@ function Planet() {
 // --- Tiny satellite orbiting
 function Satellite() {
   const { accent } = useThemeColors();
+  const { theme } = useTheme();
+  const base = theme === "light" ? "#1f2937" : accent;
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame(({ clock }) => {
@@ -91,9 +96,9 @@ function Satellite() {
     }
   });
 
-  const trail = lighten(accent, 0.3);
-  const body = lighten(accent, 0.6);
-  const emissive = lighten(accent, 0.4);
+  const trail = lighten(base, 0.3);
+  const body = lighten(base, 0.6);
+  const emissive = lighten(base, 0.4);
 
   return (
     <group ref={groupRef}>

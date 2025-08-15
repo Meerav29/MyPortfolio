@@ -6,6 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
+import { useTheme } from "./ThemeProvider";
 
 /* --- Utilities --- */
 function useToonGradient(steps = 4) {
@@ -31,6 +32,8 @@ function useToonGradient(steps = 4) {
 function Planet() {
   const gradient = useToonGradient(4);
   const { accent, background } = useThemeColors();
+  const { theme } = useTheme();
+  const base = theme === "light" ? "#1f2937" : accent;
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -49,9 +52,9 @@ function Planet() {
       <mesh>
         <sphereGeometry args={[1.48, 64, 64]} />
         <meshToonMaterial
-          color={accent}
+          color={base}
           gradientMap={gradient}
-          emissive={lighten(accent, 0.2)}
+          emissive={lighten(base, 0.2)}
           emissiveIntensity={0.06}
         />
       </mesh>
@@ -60,7 +63,7 @@ function Planet() {
       <mesh scale={1.12}>
         <sphereGeometry args={[1.48, 64, 64]} />
         <meshBasicMaterial
-          color={lighten(accent, 0.25)}
+          color={lighten(base, 0.25)}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -77,6 +80,8 @@ function Satellite({
   tiltDeg = 18,
 }: { radius?: number; speed?: number; tiltDeg?: number }) {
   const { accent } = useThemeColors();
+  const { theme } = useTheme();
+  const base = theme === "light" ? "#1f2937" : accent;
   const sat = useRef<THREE.Group>(null!);
   const tilt = THREE.MathUtils.degToRad(tiltDeg);
 
@@ -92,9 +97,9 @@ function Satellite({
     }
   });
 
-  const trail = lighten(accent, 0.3);
-  const body = lighten(accent, 0.6);
-  const panel = lighten(accent, 0.4);
+  const trail = lighten(base, 0.3);
+  const body = lighten(base, 0.6);
+  const panel = lighten(base, 0.4);
 
   return (
     <group>
@@ -132,15 +137,17 @@ function Satellite({
 /* --- Scene --- */
 function Scene() {
   const { accent, background } = useThemeColors();
+  const { theme } = useTheme();
+  const base = theme === "light" ? "#1f2937" : accent;
   return (
     <>
       {/* flattering, minimal lighting */}
       <hemisphereLight
-        color={lighten(accent, 0.6)}
+        color={lighten(base, 0.6)}
         groundColor={darken(background, 0.6)}
         intensity={0.35}
       />
-      <directionalLight position={[3, 4, 2]} intensity={0.9} color={lighten(accent, 0.2)} />
+      <directionalLight position={[3, 4, 2]} intensity={0.9} color={lighten(base, 0.2)} />
 
       <Planet />
       <Satellite />
