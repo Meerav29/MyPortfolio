@@ -136,16 +136,19 @@ function Projects({ projects }: { projects: any[] }) {
             className="group rounded-2xl border border-white/10 p-6 bg-slate-900/50 hover:bg-slate-800 transition-colors"
           >
             <div className="flex items-start justify-between gap-6">
-              <h3 className="text-lg font-medium leading-snug group-hover:text-blue-400">{p.title}</h3>
+              <h3 className="text-lg font-medium leading-snug text-[#64FFDA]">{p.title}</h3>
               <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
             </div>
             <p className="mt-3 text-slate-300 text-sm leading-relaxed">{p.summary}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {p.tags?.map((t: string) => (
-                <span key={t} className="text-xs rounded-full border border-white/10 px-2 py-1 bg-slate-900/40">
-                  {t}
-                </span>
-              ))}
+                {p.tags?.map((t: string) => (
+                  <span
+                    key={t}
+                    className="text-xs text-[#64FFDA] rounded-full border border-[#64FFDA] px-2 py-1 bg-slate-900/40"
+                  >
+                    {t}
+                  </span>
+                ))}
             </div>
           </a>
         ))}
@@ -165,17 +168,17 @@ function Experience({ items }: { items: any[] }) {
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="font-medium">
-                  {job.role} · <span className="text-slate-300">{job.org}</span>
-                </h3>
+                  <h3 className="font-medium text-[#64FFDA]">
+                    {job.role} · <span className="text-[#64FFDA]">{job.org}</span>
+                  </h3>
                 <div className="text-sm text-slate-400">{job.time}</div>
               </div>
             </div>
-            <ul className="mt-3 space-y-2 list-disc pl-5 text-slate-300 text-sm">
-              {job.points.map((pt: string) => (
-                <li key={pt}>{pt}</li>
-              ))}
-            </ul>
+              <ul className="mt-3 space-y-2 list-disc pl-5 text-[#64FFDA] text-sm">
+                {job.points.map((pt: string) => (
+                  <li key={pt}>{pt}</li>
+                ))}
+              </ul>
           </div>
         ))}
       </div>
@@ -188,12 +191,12 @@ function Skills({ items }: { items: string[] }) {
     <Section id="skills" title="Skills">
       <div className="flex flex-wrap gap-2">
         {items.map((s) => (
-          <span
-            key={s}
-            className="text-sm rounded-full border border-white/10 px-3 py-1.5 bg-slate-900/40"
-          >
-            {s}
-          </span>
+              <span
+                key={s}
+                className="text-sm text-[#64FFDA] rounded-full border border-[#64FFDA] px-3 py-1.5 bg-slate-900/40"
+              >
+                {s}
+              </span>
         ))}
       </div>
     </Section>
