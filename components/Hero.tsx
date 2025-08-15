@@ -2,7 +2,6 @@
 
 import PlanetCanvas from "./PlanetCanvas";
 import ScrollIndicator from "./ScrollIndicator";
-import { Typewriter } from "./Typewriter";
 
 export default function Hero({ id }: { id?: string }) {
   return (
@@ -15,7 +14,7 @@ export default function Hero({ id }: { id?: string }) {
         <p className="mt-3 text-lg md:text-xl text-muted">
           Senior in CS @ Penn State · Astro minor
         </p>
-        <Typewriter text="Building AI tools for education and space tech" />
+        {/* <Typewriter text="Building AI tools for education and space tech" /> */}
       </div>
 
       {/* PLANET / CANVAS */}
