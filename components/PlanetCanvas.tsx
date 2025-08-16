@@ -46,7 +46,7 @@ function useCosmicTexture(accent: string, size = 1024) {
 function Planet() {
   const { accent, background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#141414" : accent;
+  const base = theme === "light" ? "#000000" : accent;
   const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
@@ -86,7 +86,7 @@ function Planet() {
 function Satellite() {
   const { accent } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#141414" : accent;
+  const base = theme === "light" ? "#000000" : accent;
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame(({ clock }) => {
