@@ -33,7 +33,7 @@ function Planet() {
   const gradient = useToonGradient(4);
   const { accent, background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#1f2937" : accent;
+  const base = theme === "light" ? "#141414" : accent;
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -81,7 +81,7 @@ function Satellite({
 }: { radius?: number; speed?: number; tiltDeg?: number }) {
   const { accent } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#1f2937" : accent;
+  const base = theme === "light" ? "#141414" : accent;
   const sat = useRef<THREE.Group>(null!);
   const tilt = THREE.MathUtils.degToRad(tiltDeg);
 
@@ -138,7 +138,7 @@ function Satellite({
 function Scene() {
   const { accent, background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#1f2937" : accent;
+  const base = theme === "light" ? "#141414" : accent;
   return (
     <>
       {/* flattering, minimal lighting */}
