@@ -6,10 +6,9 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
-import { useTheme } from "./ThemeProvider";
 
-// Generate a starry canvas texture using the current accent color.
-function useCosmicTexture(accent: string, size = 1024) {
+// Generate a starry canvas texture using the provided base color.
+function useCosmicTexture(base: string, size = 1024) {
   return useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = size;
@@ -23,8 +22,8 @@ function useCosmicTexture(accent: string, size = 1024) {
       size / 2,
       size / 2
     );
-    g.addColorStop(0, lighten(accent, 0.35));
-    g.addColorStop(1, accent);
+    g.addColorStop(0, lighten(base, 0.1));
+    g.addColorStop(1, base);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
 
@@ -39,14 +38,13 @@ function useCosmicTexture(accent: string, size = 1024) {
     }
 
     return new THREE.CanvasTexture(canvas);
-  }, [accent, size]);
+  }, [base, size]);
 }
 
 // --- Planet: cosmic sphere with subtle glow
 function Planet() {
-  const { accent, background } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "light" ? "#000000" : accent;
+  const { background } = useThemeColors();
+  const base = "#000000";
   const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
@@ -72,7 +70,7 @@ function Planet() {
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color={lighten(base, 0.25)}
+          color={lighten(base, 0.1)}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -84,9 +82,7 @@ function Planet() {
 
 // --- Tiny satellite orbiting
 function Satellite() {
-  const { accent } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "light" ? "#000000" : accent;
+  const base = "#000000";
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame(({ clock }) => {
