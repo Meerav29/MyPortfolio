@@ -30,9 +30,8 @@ function useToonGradient(steps = 4) {
 /* --- Planet: toon sphere + thin outline + soft atmosphere --- */
 function Planet() {
   const gradient = useToonGradient(4);
-  const { accent, background } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "light" ? "#000000" : accent;
+  const { background } = useThemeColors();
+  const base = "#000000";
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
