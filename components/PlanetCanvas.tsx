@@ -1,11 +1,11 @@
 "use client";
-
 import dynamic from "next/dynamic";
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
+import { useTheme } from "./ThemeProvider";
 
 // Generate a starry canvas texture using the provided base color.
 function useCosmicTexture(base: string, size = 1024) {
@@ -44,7 +44,8 @@ function useCosmicTexture(base: string, size = 1024) {
 // --- Planet: cosmic sphere with subtle glow
 function Planet() {
   const { background } = useThemeColors();
-  const base = "#000000";
+  const { theme } = useTheme();
+  const base = theme === "dark" ? "#080B12" : "#000000";
   const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
@@ -57,7 +58,10 @@ function Planet() {
       {/* thin outline */}
       <mesh scale={1.03} castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
-        <meshBasicMaterial color={darken(background, 0.6)} side={THREE.BackSide} />
+        <meshBasicMaterial
+          color={theme === "dark" ? "#080B12" : darken(background, 0.6)}
+          side={THREE.BackSide}
+        />
       </mesh>
 
       {/* textured body */}
