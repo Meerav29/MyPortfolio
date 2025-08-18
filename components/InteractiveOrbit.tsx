@@ -33,7 +33,7 @@ function Planet() {
   const gradient = useToonGradient(4);
   const { accent, background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "light" ? "#141414" : accent;
+  const base = theme === "light" ? "#000000" : accent;
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
