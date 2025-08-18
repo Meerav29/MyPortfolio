@@ -6,7 +6,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
-import { useTheme } from "./ThemeProvider";
 
 /* --- Utilities --- */
 function useToonGradient(steps = 4) {
@@ -63,7 +62,7 @@ function Planet() {
       <mesh scale={1.12}>
         <sphereGeometry args={[1.48, 64, 64]} />
         <meshBasicMaterial
-          color={lighten(base, 0.25)}
+          color={lighten(base, 0.1)}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -79,9 +78,7 @@ function Satellite({
   speed = 0.35,
   tiltDeg = 18,
 }: { radius?: number; speed?: number; tiltDeg?: number }) {
-  const { accent } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "light" ? "#141414" : accent;
+  const base = "#000000";
   const sat = useRef<THREE.Group>(null!);
   const tilt = THREE.MathUtils.degToRad(tiltDeg);
 
@@ -136,18 +133,17 @@ function Satellite({
 
 /* --- Scene --- */
 function Scene() {
-  const { accent, background } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "light" ? "#141414" : accent;
+  const { background } = useThemeColors();
+  const base = "#000000";
   return (
     <>
       {/* flattering, minimal lighting */}
       <hemisphereLight
-        color={lighten(base, 0.6)}
+        color={lighten(base, 0.3)}
         groundColor={darken(background, 0.6)}
         intensity={0.35}
       />
-      <directionalLight position={[3, 4, 2]} intensity={0.9} color={lighten(base, 0.2)} />
+      <directionalLight position={[3, 4, 2]} intensity={0.9} color={lighten(base, 0.15)} />
 
       <Planet />
       <Satellite />
