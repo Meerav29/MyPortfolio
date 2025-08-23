@@ -45,7 +45,7 @@ function useCosmicTexture(base: string, size = 1024) {
 function Planet() {
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#080B12" : "#000000";
+  const base = theme === "dark" ? "#000000" : "#080B12";
   const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
@@ -59,7 +59,7 @@ function Planet() {
       <mesh scale={1.03} castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color={theme === "dark" ? "#080B12" : darken(background, 0.6)}
+          color={theme === "dark" ? "#000000" : darken(background, 0.6)}
           side={THREE.BackSide}
         />
       </mesh>
