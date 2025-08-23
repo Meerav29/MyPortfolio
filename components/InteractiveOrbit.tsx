@@ -6,7 +6,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
-import { useTheme } from "./ThemeProvider";
 
 /* --- Utilities --- */
 function useToonGradient(steps = 4) {
@@ -32,8 +31,7 @@ function useToonGradient(steps = 4) {
 function Planet() {
   const gradient = useToonGradient(4);
   const { background } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "dark" ? "#000000" : "#080B12";
+  const base = "#000000";
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -95,9 +93,9 @@ function Satellite({
     }
   });
 
-  const trail = lighten(base, 0.3);
-  const body = lighten(base, 0.6);
-  const panel = lighten(base, 0.4);
+  const trail = base;
+  const body = base;
+  const panel = base;
 
   return (
     <group>
@@ -135,8 +133,7 @@ function Satellite({
 /* --- Scene --- */
 function Scene() {
   const { background } = useThemeColors();
-  const { theme } = useTheme();
-  const base = theme === "dark" ? "#000000" : "#080B12";
+  const base = "#000000";
   return (
     <>
       {/* flattering, minimal lighting */}

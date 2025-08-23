@@ -4,7 +4,7 @@ import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
-import { useThemeColors, lighten, darken } from "../lib/theme";
+import { useThemeColors, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
 
 // Generate a starry canvas texture using the provided base color.
@@ -22,7 +22,7 @@ function useCosmicTexture(base: string, size = 1024) {
       size / 2,
       size / 2
     );
-    g.addColorStop(0, lighten(base, 0.1));
+    g.addColorStop(0, base);
     g.addColorStop(1, base);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
@@ -74,7 +74,7 @@ function Planet() {
       <mesh scale={1.1}>
         <sphereGeometry args={[1.2, 64, 64]} />
         <meshBasicMaterial
-          color={lighten(base, 0.1)}
+          color={base}
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
@@ -96,9 +96,9 @@ function Satellite() {
     }
   });
 
-  const trail = lighten(base, 0.3);
-  const body = lighten(base, 0.6);
-  const emissive = lighten(base, 0.4);
+  const trail = base;
+  const body = base;
+  const emissive = base;
 
   return (
     <group ref={groupRef}>
