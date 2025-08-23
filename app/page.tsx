@@ -1,40 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import Hero from "@/components/Hero";
 import { links } from "@/lib/links";
+import { projects } from "@/lib/projects";
 
 export default function Page() {
-  const projects = [
-    {
-      title: "Academic Advising Chatbot (College of IST)",
-      tags: ["LLM", "OpenAI API", "Python", "Prompting", "Research", "Machine Learning"],
-      summary:
-        "Built an advising assistant that answers routine queries and supports course planning; reduced advising load and improved answer depth.",
-      link: "https://github.com/Meerav29?tab=repositories",
-    },
-    {
-      title: "Autonomous UAV Icing Research (MCREU)",
-      tags: ["UAV", "Torque/RPM", "Data Analysis", "Research", "Machine Learning"],
-      summary:
-        "Studied how cloud/icing conditions affect UAV performance using onboard telemetry; proposed real-time mitigation algorithms.",
-      link: "#",
-    },
-    {
-      title: "Autonomous Vehicle Behavior Study (HTI Lab)",
-      tags: ["Simulation", "STISIM3", "Human Factors"],
-      summary:
-        "Designed driving-sim scenarios to analyze interactions between AVs and human-driven vehicles at varying market penetrations.",
-      link: "#",
-    },
-    {
-      title: "NASA Big Idea Challenge — Lunar Regolith Construction",
-      tags: ["Aerospace", "Systems Engineering", "Leadership"],
-      summary:
-        "Led a 15-member team exploring inflatable tech to 3D-print structures on the Moon using lunar regolith.",
-      link: "#",
-    },
-  ];
 
   const experience = [
     {
@@ -130,9 +102,9 @@ function Projects({ projects }: { projects: any[] }) {
     <Section id="projects" title="Featured Projects">
       <div className="grid md:grid-cols-2 gap-6">
         {projects.map((p) => (
-          <a
-            key={p.title}
-            href={(p.link as string) || "#"}
+          <Link
+            key={p.slug}
+            href={`/projects/${p.slug}`}
             className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors"
           >
             <div className="flex items-start justify-between gap-6">
@@ -141,16 +113,16 @@ function Projects({ projects }: { projects: any[] }) {
             </div>
             <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-                {p.tags?.map((t: string) => (
-                  <span
-                    key={t}
-                    className="text-xs text-black dark:text-white rounded-full border border-black dark:border-white px-2 py-1 bg-transparent"
-                  >
-                    {t}
-                  </span>
-                ))}
+              {p.tags?.map((t: string) => (
+                <span
+                  key={t}
+                  className="text-xs text-black dark:text-white rounded-full border border-black dark:border-white px-2 py-1 bg-transparent"
+                >
+                  {t}
+                </span>
+              ))}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </Section>
