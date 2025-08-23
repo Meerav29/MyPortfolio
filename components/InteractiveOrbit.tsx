@@ -33,7 +33,7 @@ function Planet() {
   const gradient = useToonGradient(4);
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#080B12" : "#000000";
+  const base = theme === "dark" ? "#000000" : "#080B12";
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -136,7 +136,7 @@ function Satellite({
 function Scene() {
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#080B12" : "#000000";
+  const base = theme === "dark" ? "#000000" : "#080B12";
   return (
     <>
       {/* flattering, minimal lighting */}
