@@ -45,7 +45,7 @@ function useCosmicTexture(base: string, size = 1024) {
 function Planet() {
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#000000" : "#080B12";
+  const base = theme === "dark" ? "#8EC5FC" : "#000000";
   const texture = useCosmicTexture(base);
   const planetRef = useRef<THREE.Group>(null!);
 
