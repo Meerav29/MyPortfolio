@@ -33,7 +33,7 @@ function Planet() {
   const gradient = useToonGradient(4);
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#080B12" : "#000000";
+  const base = theme === "dark" ? "#58A6FF" : "#000000";
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -45,7 +45,10 @@ function Planet() {
       {/* Outline (very thin) */}
       <mesh scale={1.015}>
         <sphereGeometry args={[1.5, 64, 64]} />
-        <meshBasicMaterial color={darken(background, 0.6)} side={THREE.BackSide} />
+        <meshBasicMaterial
+          color={theme === "dark" ? darken(background, 0.6) : "#000000"}
+          side={THREE.BackSide}
+        />
       </mesh>
 
       {/* Toon body */}
@@ -136,7 +139,7 @@ function Satellite({
 function Scene() {
   const { background } = useThemeColors();
   const { theme } = useTheme();
-  const base = theme === "dark" ? "#080B12" : "#000000";
+  const base = theme === "dark" ? "#58A6FF" : "#000000";
   return (
     <>
       {/* flattering, minimal lighting */}
