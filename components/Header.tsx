@@ -14,6 +14,7 @@ export default function Header() {
           {[
             ["About", "/#about"],
             ["Projects", "/#projects"],
+            ["Research", "/research"],
             ["Experience", "/#experience"],
             ["Skills", "/#skills"],
             ["Contact", "/#contact"],
