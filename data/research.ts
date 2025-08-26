@@ -46,9 +46,9 @@ export const research: ResearchItem[] = [
       "Designing a two-part human-centered study to evaluate the chatbot's effectiveness in both student facing and advisor-facing roles.",
       "Pursuing a research study with the College of IST, Penn State Advising and Industry Partners"
     ],
-    tags: ["AI in Education", "Chatbots", "Academic Research"],
+    tags: ["AI in Education", "Chatbots", "Academic Research", "Academic Advising", "NLP", "OpenAI API", "AI/ML", "Human-Computer Interaction"],
     image: {
-      src: "/ACM-Poster-Presentation.jpg",
+      src: "/ACMPosterPresentation.JPG",
       alt: "Picture from ACM Symposium",
       width: 1200,
       height: 800,
@@ -67,7 +67,7 @@ export const research: ResearchItem[] = [
     location: "Reading, PA",
     summary:
       "Drones struggle to fly in icing and cloudy conditions, especially when the two are combined. This research project focuses on the automation of drones for monitoring rotational speed (RPM) and torque loss when traversing cloud and icing conditions. Cameras and radar systems are either not reliable or too complicated to mount on a compact UAV. By monitoring the UAV's torque and RPM loss, the project aims to precisely measure the impact of cloud and icing environments on drone performance using the Han-Palacios correlation between icing conditions and torque loss to estimate the volume of water within the clouds and assess general icing severity.",
-    tags: ["Aviation", "Machine Learning", "Drone Engineering", "Systems Engineering", "Algorithms"],
+    tags: ["Aviation", "Machine Learning", "Drone Engineering", "Systems Engineering", "Algorithms", "Academic Research"],
     image: {
       src: "/ASEE-Poster-Presentation.jpg",
       alt: "Picture from ASEE Symposium",
