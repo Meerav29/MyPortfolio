@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Linkedin } from "lucide-react";
 import { useRef, useState } from "react";
 import Lightbox from "./Lightbox";
 import Tag from "./Tag";
@@ -86,10 +87,27 @@ export default function ResearchCard({ item }: { item: ResearchItem }) {
             {item.links.slides && <Button href={item.links.slides}>Slides</Button>}
             {item.links.poster && <Button href={item.links.poster}>Poster</Button>}
             {item.links.website && <Button href={item.links.website}>Website</Button>}
-            {item.links.notion && <Button href={item.links.notion}>Notion</Button>}
+            {item.links.notion && (
+              <Button href={item.links.notion} ariaLabel="Notion" variant="icon">
+                <Image
+                  src="/notion-w.png"
+                  alt="Notion logo"
+                  width={18}
+                  height={18}
+                  className="dark:block hidden"
+                />
+                <Image
+                  src="/notion-b.png"
+                  alt="Notion logo"
+                  width={18}
+                  height={18}
+                  className="dark:hidden block"
+                />
+              </Button>
+            )}
             {item.links.linkedin && (
-              <Button href={item.links.linkedin} variant="subtle">
-                LinkedIn
+              <Button href={item.links.linkedin} variant="icon" ariaLabel="LinkedIn">
+                <Linkedin size={18} />
               </Button>
             )}
           </div>
