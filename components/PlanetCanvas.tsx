@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Trail } from "@react-three/drei";
+import { Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
@@ -112,15 +112,17 @@ function Satellite() {
   );
 }
 
-function Scene() {
+function Scene({ offsetX = 0 }: { offsetX?: number }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
-      <Planet />
-      <Satellite />
+      <group position={[offsetX, 0, 0]}>
+        <Planet />
+        <Satellite />
+      </group>
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+      {/** Fixed camera; no manual or auto rotation */}
     </>
   );
 }
@@ -128,7 +130,7 @@ function Scene() {
 // dynamic to avoid SSR issues
 const R3FCanvas = dynamic(
   () =>
-    Promise.resolve(({ className }: { className?: string }) => (
+    Promise.resolve(({ className, offsetX = 0 }: { className?: string; offsetX?: number }) => (
       <Canvas
         className={className}
         dpr={[1, 2]}
@@ -136,14 +138,14 @@ const R3FCanvas = dynamic(
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <Scene />
+          <Scene offsetX={offsetX} />
         </Suspense>
       </Canvas>
     )),
   { ssr: false }
 );
 
-export default function PlanetCanvas() {
+export default function PlanetCanvas({ offsetX = 0 }: { offsetX?: number }) {
   return (
     <div className="relative w-full h-full" aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
@@ -152,7 +154,8 @@ export default function PlanetCanvas() {
           canvas { animation: none !important; }
         }
       `}</style>
-      <R3FCanvas className="absolute inset-0" />
+      {/* override global canvas pointer-events to allow interaction */}
+      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>

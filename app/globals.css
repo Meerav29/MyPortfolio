@@ -45,6 +45,13 @@ body {
   .orbit { animation: none !important; }
 }
 
+/* Gentle float for hero text */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
 /* Avoid glyph clipping and stacking issues */
 .type-text {
   position: relative;
