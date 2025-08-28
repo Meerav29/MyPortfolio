@@ -8,7 +8,9 @@ export default function Hero({ id }: { id?: string }) {
   return (
     <section id={id} className="relative h-screen w-full overflow-hidden">
       {/* Full-screen background animation */}
-      <PlanetCanvas offsetX={2} />
+      <div className="absolute inset-0">
+        <PlanetCanvas offsetX={2} />
+      </div>
       {/* Bottom fade to page background for cohesion */}
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent to-[var(--background)]" />
 
