@@ -421,7 +421,7 @@ export default function CareerTimeline() {
         ))}
       </div>
 
-      <p className="mt-8 text-xs text-muted-foreground">Tip: Link org names to case studies or add small logos if you want a bit more visual identity.</p>
+      <p className="mt-8 text-xs text-muted-foreground">For more information on any of my research work, or to access any of my work, please feel free to reach out.</p>
     </div>
   );
 }
