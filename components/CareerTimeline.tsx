@@ -3,21 +3,25 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Microscope, Building2, Trophy, Rocket, Search, X, CalendarDays } from "lucide-react";
+import { Microscope, Building2, Trophy, Rocket, Search, X, CalendarDays, GraduationCap } from "lucide-react";
 
 
-const CATEGORY_STYLES: Record<string, string> = {
+const CATEGORY_STYLES = {
   Research: "bg-indigo-500/15 text-indigo-600 ring-1 ring-inset ring-indigo-500/30",
   Internship: "bg-emerald-500/15 text-emerald-600 ring-1 ring-inset ring-emerald-500/30",
-  Awards: "bg-amber-500/15 text-amber-700 ring-1 ring-inset ring-amber-500/30",
+  "Awards & Milestones": "bg-amber-500/15 text-amber-700 ring-1 ring-inset ring-amber-500/30",
   "Early Projects": "bg-rose-500/15 text-rose-600 ring-1 ring-inset ring-rose-500/30",
-};
+  "Campus involvement": "bg-sky-500/15 text-sky-600 ring-1 ring-inset ring-sky-500/30",
+} as const;
 
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+type Category = keyof typeof CATEGORY_STYLES;
+
+const CATEGORY_ICONS: Record<Category, React.ReactNode> = {
   Research: <Microscope className="h-4 w-4" />,
   Internship: <Building2 className="h-4 w-4" />,
-  Awards: <Trophy className="h-4 w-4" />,
+  "Awards & Milestones": <Trophy className="h-4 w-4" />,
   "Early Projects": <Rocket className="h-4 w-4" />,
+  "Campus involvement": <GraduationCap className="h-4 w-4" />,
 };
 
 
@@ -25,7 +29,7 @@ type Section = "Recent Work Experience" | "Awards & Milestones" | "Early Project
 
 type Item = {
   section: Section;
-  category: keyof typeof CATEGORY_STYLES; // one of the 4 main categories
+  categories: Category[]; // supports multiple categories per item
   org: string; // Company/Org — shown as title
   role: string; // italic subtitle
   dateRange: string; // e.g., "Jun 2024 – Present"
@@ -39,7 +43,7 @@ const ITEMS: Item[] = [
   // Work Experience (ALL visible)
   {
     section: "Recent Work Experience",
-    category: "Research",
+    categories: ["Research", "Internship"],
     org: "College of IST, Penn State",
     role: "Undergraduate Researcher, Primary Investigator",
     dateRange: "Jun 2024 – Present",
@@ -52,7 +56,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Recent Work Experience",
-    category: "Research",
+    categories: ["Research"],
     org: "Vertical Lift Research Center of Excellence (MCREU), Penn State",
     role: "Undergraduate Researcher, Primary Investigator",
     dateRange: "Jun 2024 – Aug 2024",
@@ -64,7 +68,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Recent Work Experience",
-    category: "Research",
+    categories: ["Research"],
     org: "Human–Technology Interaction (HTI) Lab, Penn State",
     role: "Undergraduate Researcher",
     dateRange: "Sep 2023 – May 2024",
@@ -76,7 +80,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Recent Work Experience",
-    category: "Research",
+    categories: ["Campus involvement"],
     org: "IST 130 — Intro to AI & Art",
     role: "Lead Learning Assistant",
     dateRange: "Jan 2024 – Present",
@@ -86,7 +90,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Recent Work Experience",
-    category: "Research",
+    categories: ["Research", "Campus involvement"],
     org: "NASA BIG Idea Challenge — SSPL",
     role: "Team Lead; Researcher",
     dateRange: "Oct 2023 – Feb 2024",
@@ -96,7 +100,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Recent Work Experience",
-    category: "Internship",
+    categories: ["Internship", "Campus involvement"],
     org: "Perplexity",
     role: "Campus Strategist — Penn State",
     dateRange: "Jan 2024 – Present",
@@ -108,7 +112,7 @@ const ITEMS: Item[] = [
   // Awards & Milestones
   {
     section: "Awards & Milestones",
-    category: "Awards",
+    categories: ["Awards & Milestones"],
     org: "Emerging Undergraduate Researcher of the Year",
     role: "Penn State",
     dateRange: "Spring 2024",
@@ -118,7 +122,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Awards & Milestones",
-    category: "Awards",
+    categories: ["Awards & Milestones"],
     org: "MC REU (Research Experience for Undergraduates)",
     role: "Summer '24 Cohort",
     dateRange: "Jun 2024",
@@ -128,18 +132,33 @@ const ITEMS: Item[] = [
   },
   {
     section: "Awards & Milestones",
-    category: "Awards",
-    org: "Publications",
-    role: "Research Outputs",
-    dateRange: "2024–2025",
-    highlights: ["Read more about publications and works in progress."],
+    categories: ["Awards & Milestones"],
+    org: "Title: Enhancing Student Engagement through AI-driven Chatbots",
+    role: "Undergrad Researcher",
+    dateRange: "Feb 2025",
+    highlights: [
+      "Got accepted to & presented paper at ACM SIGCSE TS'25 Conference.",
+      "Read more about publications and works in progress.",
+    ],
     href: "/research",
   },
+
+  {section: "Awards & Milestones",
+  categories: ["Awards & Milestones"],
+  org: "Title: Using RPM & Torque Loss to Predict UAV Icing Effects",
+  role: "Undergrad Researcher",
+  dateRange: "Apr 2025",
+  highlights: [
+    "Got accepted to & presented UAV Icing/Drone Engineering paper at ASEE MidAtlantic'25 Conference.",
+    "Read more about publications and works in progress.",
+  ],
+  href: "/research",
+},
 
   // Early Projects
   {
     section: "Early Projects",
-    category: "Early Projects",
+    categories: ["Early Projects"],
     org: "Lirem",
     role: "Founder",
     dateRange: "2020",
@@ -150,7 +169,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Early Projects",
-    category: "Early Projects",
+    categories: ["Early Projects"],
     org: "Tide Foundation",
     role: "Contributor (Education, Ops)",
     dateRange: "2022",
@@ -160,7 +179,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Early Projects",
-    category: "Early Projects",
+    categories: ["Early Projects"],
     org: "Electrobotics, Ahmedabad",
     role: "Intern, Robocon Team Lead",
     dateRange: "Sep 2019 – Oct 2019",
@@ -170,7 +189,7 @@ const ITEMS: Item[] = [
   },
   {
     section: "Early Projects",
-    category: "Early Projects",
+    categories: ["Early Projects"],
     org: "National Robotics Finalist",
     role: "Team Lead",
     dateRange: "2019",
@@ -218,7 +237,7 @@ function parseRangeToKey(range: string) {
 }
 
 // ---------------------- UI Bits ----------------------
-function CategoryBadge({ category }: { category: Item["category"] }) {
+function CategoryBadge({ category }: { category: Category }) {
   return (
     <span className={classNames("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs", CATEGORY_STYLES[category])}>
       {CATEGORY_ICONS[category]}
@@ -227,12 +246,13 @@ function CategoryBadge({ category }: { category: Item["category"] }) {
   );
 }
 
-function TimelineDot({ category }: { category: Item["category"] }) {
+function TimelineDot({ category }: { category: Category }) {
   const color = {
     Research: "bg-indigo-500",
     Internship: "bg-emerald-500",
-    Awards: "bg-amber-500",
+    "Awards & Milestones": "bg-amber-500",
     "Early Projects": "bg-rose-500",
+    "Campus involvement": "bg-sky-500",
   }[category];
   return <span className={classNames("absolute -left-2.5 top-2 h-2.5 w-2.5 rounded-full ring-4 ring-background", color)} />;
 }
@@ -267,7 +287,7 @@ function TimelineCard({ item }: { item: Item }) {
       animate={{ opacity: 1, y: 0 }}
       className="relative ml-6 rounded-2xl border border-foreground/10 bg-card/50 p-4 shadow-sm backdrop-blur"
     >
-      <TimelineDot category={item.category} />
+      <TimelineDot category={item.categories[0]} />
 
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -324,13 +344,13 @@ function SectionBlock({ title, items }: { title: Section; items: Item[] }) {
 
 export default function CareerTimeline() {
   const [query, setQuery] = useState("");
-  const [activeCats, setActiveCats] = useState<string[]>([]);
+  const [activeCats, setActiveCats] = useState<Category[]>([]);
 
-  const categories = Object.keys(CATEGORY_STYLES);
+  const categories = Object.keys(CATEGORY_STYLES) as Category[];
 
   const filtered = useMemo(() => {
     let list = [...ITEMS];
-    if (activeCats.length) list = list.filter((i) => activeCats.includes(i.category));
+    if (activeCats.length) list = list.filter((i) => activeCats.some((c) => i.categories.includes(c)));
     if (query) {
       const q = query.toLowerCase();
       list = list.filter((i) => [i.org, i.role, i.summary, ...i.highlights]

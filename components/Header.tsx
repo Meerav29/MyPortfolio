@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Linkedin, Github, ExternalLink } from "lucide-react";
 import { links } from "@/lib/links";
 import ThemeToggle from "./ThemeToggle";
+import NavLinks from "./NavLinks";
 
 export default function Header() {
   return (
@@ -10,20 +11,7 @@ export default function Header() {
         <a href="/" className="font-semibold tracking-tight text-foreground">
           Meerav Shah
         </a>
-        <div className="hidden md:flex gap-6 text-sm">
-          {[
-            ["About", "/#about"],
-            ["Projects", "/#projects"],
-            ["Research", "/research"],
-            ["Experience", "/#experience"],
-            ["Skills", "/#skills"],
-            ["Contact", "/#contact"],
-          ].map(([label, href]) => (
-            <a key={label} href={href} className="hover:text-link-hover transition-colors">
-              {label}
-            </a>
-          ))}
-        </div>
+        <NavLinks />
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
