@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { CalendarDays, ClipboardList } from "lucide-react";
 import ResearchCard from "@/components/ResearchCard";
 
 type Props = {
@@ -12,6 +13,27 @@ export default function ResearchPageClient({ items }: Props) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [year, setYear] = useState("");
   const [sort, setSort] = useState("newest");
+
+  const lastEventDate = useMemo(() => {
+    return new Date(
+      Math.max(...items.map((r: any) => new Date(r.date).getTime()))
+    );
+  }, [items]);
+
+  const [daysSince, setDaysSince] = useState(() =>
+    Math.floor((Date.now() - lastEventDate.getTime()) / (1000 * 60 * 60 * 24))
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDaysSince(
+        Math.floor(
+          (Date.now() - lastEventDate.getTime()) / (1000 * 60 * 60 * 24)
+        )
+      );
+    }, 1000 * 60 * 60 * 24);
+    return () => clearInterval(interval);
+  }, [lastEventDate]);
 
   const allTags = useMemo(
     () => Array.from(new Set(items.flatMap((r: any) => r.tags))).sort(),
@@ -64,6 +86,16 @@ export default function ResearchPageClient({ items }: Props) {
     <main className="mx-auto max-w-5xl px-4 py-14">
       <h1 className="text-3xl font-semibold">Research</h1>
       <p className="mt-4 text-muted">Selected research outputs and publications.</p>
+      <div className="mt-6 flex flex-col sm:flex-row gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <CalendarDays className="h-4 w-4" />
+          <span>{daysSince} days since last milestone</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <ClipboardList className="h-4 w-4" />
+          <span>Current projects in queue: 3</span>
+        </div>
+      </div>
 
       <section className="mt-8 space-y-4">
         <div className="flex flex-col gap-4">
