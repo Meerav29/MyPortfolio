@@ -31,7 +31,7 @@ export const research: ResearchItem[] = [
     id: "adaptive-tutoring",
     title: "Enhancing Academic Advising using AI Chatbots",
     venue: "ACM SIGCSE Technical Symposium 2025",
-    date: "2024-02-27",
+    date: "2025-02-27",
     location: "Pittsburgh, PA",
     summary:
       "This paper investigates the implementation of AI-driven chatbots as a solution to streamline academic advising and improve the student experience. Through a review of preliminary results from the Nittany Advisor chatbot, we show how AI chatbots can boost advising efficiency, increase student satisfaction, and examine how chatbots can provide information on course requirements, prerequisites, and academic policies while suggesting the need for human intervention for more complex queries. We conclude that AI chatbots hold considerable promise for transforming academic advising by addressing routine questions, streamlining access to crucial information, and fostering a more responsive and supportive educational environment.",
