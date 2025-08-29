@@ -86,16 +86,6 @@ export default function ResearchPageClient({ items }: Props) {
     <main className="mx-auto max-w-5xl px-4 py-14">
       <h1 className="text-3xl font-semibold">Research</h1>
       <p className="mt-4 text-muted">Selected research outputs and publications.</p>
-      <div className="mt-6 flex flex-col sm:flex-row gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4" />
-          <span>{daysSince} days since last milestone</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <ClipboardList className="h-4 w-4" />
-          <span>Current projects in queue: 3</span>
-        </div>
-      </div>
 
       <section className="mt-8 space-y-4">
         <div className="flex flex-col gap-4">
@@ -184,6 +174,20 @@ export default function ResearchPageClient({ items }: Props) {
           </div>
         )}
       </section>
+
+      <div className="mt-12 flex flex-col items-center text-sm">
+        <div className="w-16 h-1 bg-accent mb-4"></div>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex items-center gap-2">
+            <CalendarDays className="h-4 w-4" />
+            <span>{daysSince} days since last milestone</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ClipboardList className="h-4 w-4" />
+            <span>Current projects in queue: 3</span>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
