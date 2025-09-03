@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links: Array<{ label: string; href: string }> = [
-  { label: "About", href: "/#about" },
-  { label: "Projects", href: "/#projects" },
+  // { label: "About", href: "/#about" },
+  // { label: "Projects", href: "/#projects" },
   { label: "Research", href: "/research" },
   { label: "Experience", href: "/experience" },
-  { label: "Skills", href: "/#skills" },
+  // { label: "Skills", href: "/#skills" },
   { label: "Contact", href: "/#contact" },
 ];
 

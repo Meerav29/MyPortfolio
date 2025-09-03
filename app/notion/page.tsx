@@ -53,12 +53,12 @@ export default function NotionPage() {
             I am the creator of these Notion templates. I&apos;ve been using Notion for a long time for personal use—everything from
             planning my degree, to taking notes every day in a scratch pad, to coordinating the workloads and timelines in different
             projects that I&apos;m working on. I make templates out of my Notion workspaces to organize my academics and other
-            opportunities. If you have any feedback or questions, please feel free to reach out 😅. This is what AI thinks I look like ;)
+            opportunities. If you have any feedback or questions, please feel free to reach out 😅. This is what AI thinks I look like ;) 
           </p>
         </div>
         <div className="mt-6 md:mt-0">
           <Image
-            src="/meerav-avatar.png"
+            src="/public/msaiart.png"
             alt="Cartoon profile picture of Meerav holding a cup"
             width={160}
             height={160}

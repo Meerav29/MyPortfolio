@@ -7,63 +7,11 @@ import { links } from "@/lib/links";
 import { projects } from "@/lib/projects";
 
 export default function Page() {
-
-  const experience = [
-    {
-      org: "Penn State — MCREU",
-      role: "Undergraduate Researcher (PI)",
-      time: "Jun 2024 – Aug 2024",
-      points: [
-        "Analyzed UAV propeller performance under icing/cloud conditions via torque & RPM telemetry.",
-        "Outlined real-time processing to detect and mitigate icing effects in flight.",
-      ],
-    },
-    {
-      org: "Penn State — HTI Lab",
-      role: "Undergraduate Researcher",
-      time: "Sep 2023 – May 2024",
-      points: [
-        "Developed STISIM3 scenarios; evaluated driver behavior with mixed AV/HV traffic.",
-      ],
-    },
-    {
-      org: "IST 130: AI & Art",
-      role: "Lead Learning Assistant",
-      time: "Jan 2024 – Present",
-      points: ["Mentor 14+ LAs; design coursework and documentation for 400+ students/semester."],
-    },
-    {
-      org: "SSPL — NASA Big Idea",
-      role: "Team Lead; Researcher",
-      time: "Oct 2023 – Feb 2024",
-      points: ["Coordinated 15-member effort on lunar regolith additive construction systems."],
-    },
-  ];
-
-  const skills = [
-    "Python",
-    "Java",
-    "C/C++",
-    "JavaScript",
-    "HTML/CSS",
-    "SQL",
-    "NoSQL",
-    "PyTorch",
-    "NumPy",
-    "Linux",
-    "Git",
-    "Cloud",
-    "Data Science",
-  ];
-
   return (
     <div>
       <Hero id="top" />
       <main className="mx-auto max-w-6xl px-6">
-        <About />
         <Projects projects={projects} />
-        <Experience items={experience} />
-        <Skills items={skills} />
         <Contact links={links} />
       </main>
       <Footer />
@@ -82,18 +30,6 @@ function Section({ id, title, children }: any) {
       </div>
       {children}
     </section>
-  );
-}
-
-function About() {
-  return (
-    <Section id="about" title="About">
-      <p className="text-muted leading-relaxed max-w-3xl">
-        I’m an undergraduate senior in Computer Science at Penn State, minoring in Astrophysics. I build practical, minimal tools—
-        from advising assistants that free up faculty time to UAV analytics that make flight safer in icing conditions. I care about
-        clean design, clear impact, and shipping real things.
-      </p>
-    </Section>
   );
 }
 
@@ -123,52 +59,6 @@ function Projects({ projects }: { projects: any[] }) {
               ))}
             </div>
           </Link>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function Experience({ items }: { items: any[] }) {
-  return (
-    <Section id="experience" title="Experience">
-      <div className="grid gap-4">
-        {items.map((job) => (
-          <div
-            key={job.org + job.time}
-            className="rounded-2xl border border-border p-6 bg-card"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                  <h3 className="font-medium text-black dark:text-white">
-                    {job.role} · <span className="text-black dark:text-white">{job.org}</span>
-                  </h3>
-                <div className="text-sm text-muted">{job.time}</div>
-              </div>
-            </div>
-              <ul className="mt-3 space-y-2 list-disc pl-5 text-black dark:text-white text-sm">
-                {job.points.map((pt: string) => (
-                  <li key={pt}>{pt}</li>
-                ))}
-              </ul>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function Skills({ items }: { items: string[] }) {
-  return (
-    <Section id="skills" title="Skills">
-      <div className="flex flex-wrap gap-2">
-        {items.map((s) => (
-              <span
-                key={s}
-                className="text-sm text-accent rounded-full border border-accent px-3 py-1.5 bg-transparent"
-              >
-                {s}
-              </span>
         ))}
       </div>
     </Section>
