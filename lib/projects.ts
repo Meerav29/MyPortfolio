@@ -5,6 +5,8 @@ export type Project = {
   summary: string;
   content: string;
   source?: string;
+  /** Path to redirect to instead of a dedicated project page */
+  redirect: string;
 };
 
 export const projects: Project[] = [
@@ -17,6 +19,7 @@ export const projects: Project[] = [
     content:
       "Built an advising assistant that answers routine queries and supports course planning. Integrated the OpenAI API with carefully designed prompts and a Python backend, reducing advising load while increasing answer depth.",
     source: "https://github.com/Meerav29?tab=repositories",
+    redirect: "/research",
   },
   {
     slug: "autonomous-uav-icing",
@@ -26,6 +29,7 @@ export const projects: Project[] = [
       "Studied how cloud/icing conditions affect UAV performance using onboard telemetry; proposed real-time mitigation algorithms.",
     content:
       "Studied how cloud and icing conditions affect UAV performance using onboard torque and RPM telemetry. Analyzed collected data and proposed real-time mitigation algorithms to maintain control authority during adverse conditions.",
+    redirect: "/research",
   },
   {
     slug: "autonomous-vehicle-behavior",
@@ -35,6 +39,7 @@ export const projects: Project[] = [
       "Designed driving-sim scenarios to analyze interactions between AVs and human-driven vehicles at varying market penetrations.",
     content:
       "Designed STISIM3 driving simulation scenarios to analyze interactions between autonomous vehicles and human-driven traffic at varying market penetrations. Evaluated driver responses and traffic flow metrics across conditions.",
+    redirect: "/experience",
   },
   {
     slug: "nasa-big-idea-lunar-regolith",
@@ -44,6 +49,7 @@ export const projects: Project[] = [
       "Led a 15-member team exploring inflatable tech to 3D-print structures on the Moon using lunar regolith.",
     content:
       "Led a 15-member team exploring inflatable technology to 3D-print structures on the Moon using lunar regolith. Coordinated research, systems engineering, and outreach for the NASA Big Idea Challenge.",
+    redirect: "/experience",
   },
 ];
 
