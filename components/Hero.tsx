@@ -16,7 +16,7 @@ export default function Hero({ id }: { id?: string }) {
 
       {/* Left-aligned content over the canvas */}
       <div className="relative z-20 flex h-full items-center">
-          <div className="pl-6 md:pl-12 pr-6 max-w-xl">
+          <div className="pl-10 md:pl-20 lg:pl-28 pr-6 max-w-xl">
             <div className="animate-[float_6s_ease-in-out_infinite]">
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-black dark:text-white">
                 Hi I&apos;m Meerav!
