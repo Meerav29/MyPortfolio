@@ -11,8 +11,8 @@ export async function mdxToContent(source: string) {
     source,
     options: {
       mdxOptions: {
-        remarkPlugins: [remarkGfm],
-        rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings],
+        remarkPlugins: [remarkGfm as unknown as any],
+        rehypePlugins: [rehypeSlug as unknown as any, rehypeAutolinkHeadings as unknown as any],
       },
     },
   });
