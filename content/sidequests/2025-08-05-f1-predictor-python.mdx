@@ -1,0 +1,26 @@
+---
+title: "F1 Racing, but with Python"
+slug: "f1-predictor-python"
+publishedAt: "2025-08-05"
+excerpt: "Can lap-time data predict podium finishes?"
+tags: ["F1 ML", "Research", "Opinion"]
+thumbnail: "/images/sidequests/f1.png"
+status: "published"
+---
+
+Formula 1 generates mountains of telemetry. During one particularly rainy weekend I wondered whether simple models could anticipate podium placements using only lap-time deltas.
+
+![F1 car sketch](/images/sidequests/f1.png)
+
+The experiment was tongue-in-cheek but instructive. After scraping race data I fed it into a scikit-learn pipeline. The results were noisy yet hinted at patterns.
+
+```python
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+```
+
+The takeaway? Even playful models reveal the influence of pit strategy and tire choices. While I wouldn't bet the house on this predictor, it sparked useful conversations with friends who follow the sport religiously.
