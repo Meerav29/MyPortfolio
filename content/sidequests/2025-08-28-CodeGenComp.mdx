@@ -2,82 +2,79 @@
 title: "Sidequest: Pitting Code-Gen Tools Against Each Other"
 slug: "codegen-showdown-bolt-lovable-base44"
 publishedAt: "2025-09-04"
-excerpt: "I let three code-gen platforms fight it out — Bolt.new, Lovable.dev, and Base44. Spoiler: one gave me a product I couldn’t keep, one gave me errors I couldn’t fix, and one gave me yellow borders I definitely didn’t ask for."
+excerpt: "I let three code-gen platforms fight it out — Bolt.new, Lovable.dev, and Base44."
 tags: ["AI", "Code-Gen", "Tools", "Opinion"]
 thumbnail: "/images/sidequests/codegen.png"
 status: "published"
 ---
 
-Every once in a while, I get curious about whether these flashy “AI code-gen platforms” are actually useful or just another way to waste an afternoon. So, in the spirit of scientific inquiry (and also because I had other work to procrastinate), I decided to **throw three of them into the ring**:  
+# Pitting Three Code-Gen Tools Against Each Other
 
-- **Base44**  
-- **Bolt.new**  
-- **Lovable.dev**  
+Lately, I have been fascinated by the growing number of code-gen tools in the market and have always wondered how good they could really be. I use Codex often, even more now since they have added a VSCode extension, so I thought I would give some of these a shot.
 
-The idea was simple: same general prompts, same expectations, let’s see what they do.  
+I didn’t really have a product launch in mind that I wanted to build for, but I did have a foolish idea, and an awful lot of time on my hands over the weekend. 
 
-Spoiler: I got three very different flavors of frustration.  
+For the IST 130 Teaching Team, we recently had an LA design some merch and instead of using a google/microsoft form, I thought it would be fun to try out a storefront using one of these tools.
 
----
+So, I decided to run a small experiment: take three of them: **Bolt.new**, **Lovable.dev**, and **Base44 and** throw them at the same idea.
 
-## Base44 — The One-Shot Wonder (That You Can’t Actually Use)
+I gave them all the same prompt (mainly to test if any of these could really one-shot it) but I also figured most people would not be using refined near-perfect prompts from a different AI tool, so I decided to just type out my requirements loosely and give it creative leeway to see what the normal user would be using it like. Prompt:
 
-Base44 came out swinging. It basically produced the **best version of my project in one shot**. Okay, maybe not one — but by prompt number four, I had something shockingly close to perfect.  
-
-Naturally, I started to get excited. *“Wow, maybe this thing is actually going to replace me. Maybe I’ll have to pivot to basket weaving or goat farming after all.”*  
-
-And then reality set in.  
-
-You can’t export the code. At all.  
-Not to GitHub. Not to a zip file. Not even a sad little `.txt` dump.  
-
-It’s like ordering the best burger of your life and being told you can only eat it in the restaurant — and also they’re closing in 10 minutes.  
-
-**Verdict:** Technically brilliant, practically useless.  
+> I just want to build a simple looking internal website for my team to place merch orders for a limited merch line we are doing. I just want it to have a basic front end where they can see different cards for different items, we have Hoodies ($35.23), Quarter Zips ($31.37), Tshirts ($8.44), Polo Shirt ($17.23) and stickers (Free). On top of the value of the item add a $1.25 Screen setup fee to their order value that is a setup fee the printing company is going to take from us. Once the order is placed I want that order information to go into a spreadsheet or some form of database (Ideally a database style view that the admin login can view) - so they can take that order information and actually place the order.
+> 
 
 ---
 
-## Bolt.new — Death by Error Messages
+## Base44: The Overachiever With Handcuffs
 
-Next up was Bolt.new. I went in optimistic — the branding is slick, the pitch sounds good. And then… nothing.  
+Base44 impressed me immediately. Within four prompts, I had something that felt dangerously close to a finished product. 
 
-I never even got a basic front end to run. The platform stumbled on trivial builds, tossed out vague error messages, and offered no way to actually fix them. Think of it as being given a locked car with no keys — and when you ask for help, they say, “Have you tried turning the ignition?”  
+But here’s the catch: **you can’t export the code.** Unless you upgrade to a premium plan. The platform allows you to look at some codefiles but not all, and I thought maybe they’re just targeting an audience that does not really care about how the backend works as long as the front-end works but then I stumbled upon r/base44 on reddit. Wow. So many users have been complaining about being locked in and not being able to own their ideas/apps, while there were some that were appreciative of the platform to help them prototype and visualize some ideas - that’s where I think the main advantage is for seasoned users: using these tools as a testing bench..
 
-So yeah, no product, no learning, just vibes.  
-
-**Verdict:** Bolt didn’t bolt. It limped off the track before the race began.  
+Verdict: brilliant results, but the lack of code export makes it more demo toy than real tool.
 
 ---
 
-## Lovable.dev — The Ugly Duckling with GitHub Integration
+## Bolt.new: What Even?
 
-Lovable’s first impression? Let’s just say it lived up to its name *ironically*.  
+Then there was Bolt. I wanted to root for it, but Bolt had one major issue: it couldn’t even generate a basic frontend. Every attempt led to inexplicable issues that the platform couldn’t explain or fix. I never actually got to see the code running in any meaningful way.
 
-The app it generated was a weird mess:  
-- Light mode only.  
-- Random yellow borders like someone spilled mustard in the CSS.  
-- Buttons that were literally invisible unless you hovered on them (white text on a white button, chef’s kiss).  
+Could I have tried to fix it myself? Yes - but an amateur wouldn’t and by this point I was watching a movie on my iPad while these tools were running on my computer so the laziness might have swayed the results away from bolt.
 
-So, no — not “lovable.” At least not initially.  
+I’ll be honest though, I did see some projects in the Bolt gallery and they looked really good, and also noticed bolt lets you import a project from github so that’s a plus since a github connection means transparency with code (something Base44 has made me look for everywhere)
 
-But here’s where it pulled ahead: **GitHub integration**. I could push the repo out, clone it locally, and actually start fixing things. Which I did — with a *lot* of Codex babysitting. Eventually, I wrangled it into something that actually deployed and worked.  
-
-And that felt good. It wasn’t clean, it wasn’t elegant, but it was mine.  
-
-**Verdict:** Starts like a bad blind date, ends like a decent friendship.  
+Verdict: frustrating. Potential, but nothing I can give feedback about because I didn’t get to see it in action.
 
 ---
 
-## Takeaways
+## Lovable.dev: The Messy but Forgivable One
 
-Here’s how I’d sum it up:  
+Lovable’s first impression? Chaos. It dropped me into a project with light mode but yellow everywhere instead of white, yellow borders, and buttons that were literally invisible since they were also yellow. Not off to a great start but a few frustrating iterations later - I saw a GitHub icon.
 
-- **Base44**: Made me the best product but locked me in like an overprotective parent.  
-- **Bolt.new**: Promised fireworks, gave me damp matches.  
-- **Lovable.dev**: Served me chaos, but at least let me carry the mess home and make it better.  
+Lovable had something the others didn’t: **GitHub integration** (to be fair Bolt did have it, but I just didn’t get to that point with Bolt so  **¯\_(ツ)_/¯** )
 
-If you’re serious about building, my advice is this: **pick the tool that gives you freedom, not the one that gives you perfection.** Because “perfect” doesn’t mean much if you can’t actually take it with you.  
+That meant I could import the repo, and start fixing things myself. Myself is a misrepresentation actually - I was still watching Keanu reeves be an alien messenger sent to save the Earth, Codex was being given voice commands to work on fixes :)
+
+Was it a clean repo? Not exactly. Let’s just say Codex and I spent a lot of quality time untangling the mess. But at least I *could* untangle it. And once the fixes were in, I actually had a working, deployable product.
+
+That alone gave Lovable the edge. It didn’t hand me perfection, but it gave me ownership. And sometimes, fixable code is far better than locked-down code. 
+
+However, that being said, I also understand that every user does not want to export to GitHub and make changes to code - but I don't believe the number of people using Code-gen tools that don’t even want to touch the codebase is big enough in the current market to justify closed ecosystems for code and website hosting.
+
+Verdict: imperfect and messy, but with the flexibility and ownership. Makes 
 
 ---
 
-*Sidequest complete. The next one might involve combining the outputs of all three tools into one Franken-app. Worst case, I learn what happens when you let three different AIs argue inside the same repo.*  
+## Final Thoughts
+
+After testing all three, here’s the breakdown:
+
+- **Base44**: Creates the best product, but you’ll never actually *own* it.
+- **Bolt.new**: Couldn’t deliver something usable, at least not for me.
+- **Lovable.dev**: Started rough, but ended up in my GitHub repo, deployable and editable.
+
+If I had to pick a winner, it’d be **Lovable**. Not because it built the most polished product, that award goes to Base44; but because Lovable gave me the freedom to iterate, debug, and eventually make something I was happy to put out into the world. Flexibility matters more than perfection in my book at least. Especially for an internal tool that could have been an email thread (don’t tell my team, I made them praise me for this)
+
+In the end, this little experiment confirmed what I suspected: AI code-gen tools are exciting, but none of them are magic bullets yet. They’re like over-eager interns, some brilliant, some unreliable, and all in need of supervision. The real test is whether they help you *ship*. And on that front, Lovable gets my vote.
+
+(Note to self: I will add the link to my lovable app here once we’re done using it internally in case anyone wants to take a look)
