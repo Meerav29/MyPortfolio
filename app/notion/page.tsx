@@ -4,17 +4,17 @@ export default function NotionPage() {
   const templates = [
     {
       title: "Notion Degree Planner Template",
-      image: "/degree-planner-template.png",
+      image: "/DegreePlanner-template.png",
       alt: "Notion Degree Planner template screenshot",
-      link: "#",
+      link: "https://meerav.notion.site/Degree-Planner-e898a23f91624fafbeda2a1976932d99?source=copy_link",
       description:
         "Plan your degree with ease. Pursuing a 4 year degree? Planning to double major or add a minor? Program planning across disciplines can be a chaotic mess. Use this straightforward template to map out your entire curriculum and make sure you don't miss any requirements.",
     },
     {
       title: "Notes & Reminders Organizer",
-      image: "/notes-reminders-organizer.png",
+      image: "/notepad-org-template.png",
       alt: "Notes and reminders organizer screenshot",
-      link: "#",
+      link: "https://meerav.notion.site/NotePad-Organizer-Template-9f5388c607914fecbb648be02c0abc9c?source=copy_link",
       description:
         "Take too many notes? Try organizing them so they're easier to access and more useful. Use this template to seamlessly categorize notes and reminders into distinct sections—Work, Classes, Research, Projects and more—offering a structured approach to task management.",
     },
@@ -58,7 +58,7 @@ export default function NotionPage() {
         </div>
         <div className="mt-6 md:mt-0">
           <Image
-            src="/public/msaiart.png"
+            src="/msaiart.png"
             alt="Cartoon profile picture of Meerav holding a cup"
             width={160}
             height={160}
