@@ -8,10 +8,13 @@ export function SidequestCard({ post }: { post: Sidequest }) {
   return (
     <Link
       href={`/sidequests/${post.slug}`}
-      className="flex rounded-lg border hover:ring overflow-hidden"
+      className="flex flex-col rounded-lg border hover:ring overflow-hidden h-full"
     >
       {post.thumbnail ? (
-        <div className="relative w-1/2 h-48">
+        <div
+          className="relative w-full"
+          style={{ aspectRatio: "3 / 2" }}
+        >
           <Image
             src={post.thumbnail}
             alt="thumbnail"
@@ -20,7 +23,7 @@ export function SidequestCard({ post }: { post: Sidequest }) {
           />
         </div>
       ) : null}
-      <div className={post.thumbnail ? "w-1/2 p-6 flex flex-col" : "w-full p-6 flex flex-col"}>
+      <div className="p-6 flex flex-col flex-grow">
         <h3 className="font-semibold line-clamp-2">{post.title}</h3>
         <p className="text-sm text-muted line-clamp-3 mt-2 flex-grow">
           {post.excerpt}
