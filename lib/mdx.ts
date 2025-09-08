@@ -1,6 +1,7 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import remarkFootnotes from "remark-footnotes";
 
 /**
  * Compile an MDX string to a React component for server rendering.
@@ -16,7 +17,10 @@ export async function mdxToContent(source: string) {
         // error `this.getData is not a function`. The blog content does not
         // rely on GFM-specific features, so we omit the plugin to avoid the
         // crash.
-        remarkPlugins: [],
+        remarkPlugins: [
+          // Enable Markdown footnotes: [^1] references and inline ^[notes]
+          [remarkFootnotes as unknown as any, { inlineNotes: true }],
+        ],
         rehypePlugins: [
           rehypeSlug as unknown as any,
           rehypeAutolinkHeadings as unknown as any,
