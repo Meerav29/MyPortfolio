@@ -1,26 +1,16 @@
 ---
-title: "Mapping Asteroids with Python"
+title: "Mapping Asteroids in our Solar system"
 slug: "asteroids-dashboard"
 publishedAt: "2025-08-20"
-excerpt: "Building a quick asteroid visualization pipeline."
-tags: ["Space-Tech", "Astro Stats"]
-thumbnail: "/images/sidequests/space.png"
+excerpt: "Building a quick asteroid visualization pipeline using Julia and NASA-JPL's small body databse"
+tags: ["Space-Tech", "Astro-Statistics"]
+thumbnail: "/images/sidequests/stargazing.png"
 status: "published"
 ---
 
-Tracking near-Earth objects used to require specialized software. With modern APIs the barrier to entry is much lower. For a weekend hack I pulled orbital data from NASA and rendered it in a small dashboard.
+As part of an Astrostatistics course, I learnt Julia and played around with small nueral networks and regression models trained on a few different publicly available datasets like the small-body dataset by NASA JPL that has a record of almost all asteroids and comets in our solar system.
 
-![Asteroid sketch](/images/sidequests/space.png)
 
-The core of the pipeline was a simple Pandas script that shaped JSON into something chartable.
-
-```python
-import pandas as pd
-import requests
-
-resp = requests.get("https://api.nasa.gov/neo/rest/v1/neo/3542519?api_key=DEMO_KEY")
-data = pd.json_normalize(resp.json()["close_approach_data"])
-print(data.head())
 ```
-
-The prototype ran entirely on the client using WebGL for the 3D plot. Although the model lacked precision, it demonstrated how approachable space data has become for hobbyists.
+Full blog to be posted soon; pending permission from Professor.
+```

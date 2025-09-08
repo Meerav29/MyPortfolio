@@ -1,26 +1,20 @@
 ---
-title: "F1 Racing, but with Python"
+title: "Predictions for F1 Grand Prix Results"
 slug: "f1-predictor-python"
 publishedAt: "2025-08-05"
-excerpt: "Can lap-time data predict podium finishes?"
-tags: ["F1 ML", "Research", "Opinion"]
+excerpt: "Can lap-time & historical performance data predict race winners?"
+tags: ["F1", "AI", "Opinion"]
 thumbnail: "/images/sidequests/f1.png"
 status: "published"
 ---
 
-Formula 1 generates mountains of telemetry. During one particularly rainy weekend I wondered whether simple models could anticipate podium placements using only lap-time deltas.
+Over the last few months I have experimented with a few different ways to predict the winner of an upcoming F1 race based on historical data of that track and driver perfomances fetched using the FastF1 api.
 
-![F1 car sketch](/images/sidequests/f1.png)
+While a more deatiled post for this is being written and reivewed, here are some links: 
 
-The experiment was tongue-in-cheek but instructive. After scraping race data I fed it into a scikit-learn pipeline. The results were noisy yet hinted at patterns.
+### LinkedIn Posts about F1 Predictions 
 
-```python
-from sklearn.linear_model import LinearRegression
-import numpy as np
+1. Monaco GP'25: [LinkedIn](https://www.linkedin.com/posts/meeravshah_its-past-midnight-but-the-code-finally-activity-7357641634517311490-0rLL?utm_source=share&utm_medium=member_desktop&rcm=ACoAADvZo-EBeEg_48V28eqh1bQkgeQKjL8MFE4) , [Github](https://github.com/Meerav29/F1Mon25)
+2. Hungary GP'25: [LinkedIn](https://www.linkedin.com/posts/meeravshah_github-meerav29f1mon25-lets-see-if-we-activity-7332045722281840640-t8pO?utm_source=share&utm_medium=member_desktop&rcm=ACoAADvZo-EBeEg_48V28eqh1bQkgeQKjL8MFE4) , [Github](https://github.com/Meerav29/Hungary-25-Predictor)
 
-model = LinearRegression()
-model.fit(X_train, y_train)
-pred = model.predict(X_test)
-```
-
-The takeaway? Even playful models reveal the influence of pit strategy and tire choices. While I wouldn't bet the house on this predictor, it sparked useful conversations with friends who follow the sport religiously.
+More Coming Soon!
