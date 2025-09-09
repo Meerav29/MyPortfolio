@@ -32,7 +32,7 @@ export default function Header() {
   useEffect(() => {
     function trapFocus(e: KeyboardEvent) {
       if (!open || !menuRef.current) return;
-      const focusable = menuRef.current.querySelectorAll<HTMLElement>("a");
+      const focusable = menuRef.current.querySelectorAll<HTMLElement>("a, button");
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -61,7 +61,7 @@ export default function Header() {
 
   useEffect(() => {
     if (open) {
-      const first = menuRef.current?.querySelector<HTMLElement>("a");
+      const first = menuRef.current?.querySelector<HTMLElement>("a, button");
       first?.focus();
     }
   }, [open]);
@@ -84,17 +84,19 @@ export default function Header() {
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <ThemeToggle />
-          <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
-            <Linkedin size={18} />
-          </a>
-          <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-card">
-            <Github size={18} />
-          </a>
-          <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-card">
-            <Image src="/notion-w.png" alt="Notion logo" width={18} height={18} className="dark:block hidden" />
-            <Image src="/notion-b.png" alt="Notion logo" width={18} height={18} className="dark:hidden block" />
-          </a>
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
+            <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
+              <Linkedin size={18} />
+            </a>
+            <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-card">
+              <Github size={18} />
+            </a>
+            <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-card">
+              <Image src="/notion-w.png" alt="Notion logo" width={18} height={18} className="dark:block hidden" />
+              <Image src="/notion-b.png" alt="Notion logo" width={18} height={18} className="dark:hidden block" />
+            </a>
+          </div>
           <a
             href={links.resume}
             className="inline-flex items-center gap-2 text-sm rounded-xl border border-accent px-3 py-1.5 bg-accent text-background hover:bg-link-hover"
@@ -115,6 +117,15 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+            <div className="flex items-center gap-3 pt-4 border-t border-border">
+              <ThemeToggle />
+              <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
+                <Linkedin size={18} />
+              </a>
+              <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-card">
+                <Github size={18} />
+              </a>
+            </div>
           </div>
         </div>
       )}
