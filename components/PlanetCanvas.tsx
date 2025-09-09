@@ -112,12 +112,12 @@ function Satellite() {
   );
 }
 
-function Scene({ offsetX = 0 }: { offsetX?: number }) {
+function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
-      <group position={[offsetX, 0, 0]}>
+      <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
         <Planet />
         <Satellite />
       </group>
@@ -130,7 +130,8 @@ function Scene({ offsetX = 0 }: { offsetX?: number }) {
 // dynamic to avoid SSR issues
 const R3FCanvas = dynamic(
   () =>
-    Promise.resolve(({ className, offsetX = 0 }: { className?: string; offsetX?: number }) => (
+    Promise.resolve(
+      ({ className, offsetX = 0, scale = 1 }: { className?: string; offsetX?: number; scale?: number }) => (
       <Canvas
         className={className}
         dpr={[1, 2]}
@@ -138,14 +139,15 @@ const R3FCanvas = dynamic(
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <Scene offsetX={offsetX} />
+          <Scene offsetX={offsetX} scale={scale} />
         </Suspense>
       </Canvas>
-    )),
+      )
+    ),
   { ssr: false }
 );
 
-export default function PlanetCanvas({ offsetX = 0 }: { offsetX?: number }) {
+export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
   return (
     <div className="relative w-full h-full" aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
@@ -155,7 +157,7 @@ export default function PlanetCanvas({ offsetX = 0 }: { offsetX?: number }) {
         }
       `}</style>
       {/* override global canvas pointer-events to allow interaction */}
-      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} />
+      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} scale={scale} />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>
