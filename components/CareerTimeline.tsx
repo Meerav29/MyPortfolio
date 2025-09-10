@@ -27,20 +27,51 @@ const CATEGORY_ICONS: Record<Category, React.ReactNode> = {
 
 type Section = "Recent Work Experience" | "Awards & Milestones" | "Early Projects";
 
+type Role = {
+  title: string;
+  dateRange: string;
+  highlights: string[];
+};
+
 type Item = {
   section: Section;
   categories: Category[]; // supports multiple categories per item
   org: string; // Company/Org — shown as title
-  role: string; // italic subtitle
-  dateRange: string; // e.g., "Jun 2024 – Present"
+  role?: string; // italic subtitle
+  dateRange?: string; // e.g., "Jun 2024 – Present"
   summary?: string; // muted one-liner (e.g., project name)
-  highlights: string[]; // bullets
+  highlights?: string[]; // bullets
   href?: string; // optional link
+  roles?: Role[]; // multiple roles under same org
 };
 
 // ---------------------- Data ----------------------
 const ITEMS: Item[] = [
   // Work Experience (ALL visible)
+  {
+    section: "Recent Work Experience",
+    categories: ["Research", "Internship"],
+    org: "Rolai, New York, NY",
+    dateRange: "Jun 2025 – Present",
+    roles: [
+      {
+        title: "AI Engineering & Applied Research Intern",
+        dateRange: "Sep 2025 – Present",
+        highlights: [
+          "Collaborating with product and research teams & contributing to platform feature development and academic outputs.",
+          "Leading a human-centered research study to evaluate the effectiveness of the academic advising chatbot and measure its impact in improving advising outcomes in real-world higher education contexts for >50 students.",
+        ],
+      },
+      {
+        title: "AI Engineering Intern",
+        dateRange: "Jun 2025 – Aug 2025",
+        highlights: [
+          "Deployed an academic advising chatbot on the Rolai platform, integrated live web-scraping to dynamically update its knowledge base with relevant web sources, reducing manual content maintenance by ~50%.",
+          "Co-authored 3 white papers on AI in education and worked with applied research to design a human-centered research study on impact of agentic workflows and retrieval-augmented generation (RAG) in academic advising.",
+        ],
+      },
+    ],
+  },
   {
     section: "Recent Work Experience",
     categories: ["Research", "Internship"],
@@ -224,7 +255,8 @@ const MONTHS: Record<string, number> = {
   spring: 4, summer: 7, fall: 10, autumn: 10, winter: 1,
 };
 
-function parseRangeToKey(range: string) {
+function parseRangeToKey(range?: string) {
+  if (!range) return 0;
   // Prefer the end date; treat "Present" as far future.
   const parts = range.split("–").map((s) => s.trim());
   let right = parts[1] || parts[0];
@@ -280,6 +312,48 @@ function Chip({
 }
 
 function TimelineCard({ item }: { item: Item }) {
+  if (item.roles) {
+    return (
+      <motion.li
+        layout
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative ml-6 rounded-2xl border border-foreground/10 bg-card/50 p-4 shadow-sm backdrop-blur"
+      >
+        <TimelineDot category={item.categories[0]} />
+
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <h3 className="text-base font-semibold leading-tight">{item.org}</h3>
+          {item.dateRange && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <CalendarDays className="h-3.5 w-3.5" /> {item.dateRange}
+            </div>
+          )}
+        </div>
+
+        {/* Nested roles */}
+        <ol className="relative ml-6 mt-4">
+          <span className="absolute left-0 top-0 bottom-0 w-px bg-foreground/10" />
+          {item.roles.map((r, i) => (
+            <li key={r.title} className="relative pl-4 pb-6">
+              {i !== item.roles.length - 1 && (
+                <span className="absolute left-[-6px] top-5 bottom-[-6px] w-px bg-foreground/10" />
+              )}
+              <h4 className="font-medium">{r.title}</h4>
+              <p className="text-sm text-muted-foreground">{r.dateRange}</p>
+              <ul className="mt-1 list-disc pl-4 text-sm text-foreground/90">
+                {r.highlights.map((h, idx) => (
+                  <li key={idx}>{h}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </motion.li>
+    );
+  }
+
   return (
     <motion.li
       layout
@@ -305,7 +379,7 @@ function TimelineCard({ item }: { item: Item }) {
 
       {/* Bullets */}
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-foreground/90">
-        {item.highlights.map((h, i) => (
+        {item.highlights?.map((h, i) => (
           <li key={i}>{h}</li>
         ))}
       </ul>
@@ -324,7 +398,11 @@ function TimelineCard({ item }: { item: Item }) {
 
 function SectionBlock({ title, items }: { title: Section; items: Item[] }) {
   // Always sort newest-first within section using parsed end-date key
-  const sorted = [...items].sort((a, b) => parseRangeToKey(b.dateRange) - parseRangeToKey(a.dateRange));
+  const sorted = [...items].sort(
+    (a, b) =>
+      parseRangeToKey(b.dateRange || b.roles?.[0]?.dateRange) -
+      parseRangeToKey(a.dateRange || a.roles?.[0]?.dateRange)
+  );
   return (
     <section>
       <h2 className="sticky top-0 z-10 mb-3 bg-background/60 px-1 py-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur">
@@ -334,7 +412,10 @@ function SectionBlock({ title, items }: { title: Section; items: Item[] }) {
         <div className="absolute -left-[1px] top-0 h-full w-px bg-gradient-to-b from-transparent via-foreground/20 to-transparent" />
         <div className="ml-1 space-y-4">
           {sorted.map((it) => (
-            <TimelineCard key={`${title}-${it.org}-${it.dateRange}`} item={it} />
+            <TimelineCard
+              key={`${title}-${it.org}-${it.dateRange || it.roles?.[0]?.dateRange}`}
+              item={it}
+            />
           ))}
         </div>
       </ol>
@@ -353,11 +434,19 @@ export default function CareerTimeline() {
     if (activeCats.length) list = list.filter((i) => activeCats.some((c) => i.categories.includes(c)));
     if (query) {
       const q = query.toLowerCase();
-      list = list.filter((i) => [i.org, i.role, i.summary, ...i.highlights]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(q));
+      list = list.filter((i) =>
+        [
+          i.org,
+          i.role,
+          i.summary,
+          ...(i.highlights || []),
+          ...(i.roles ? i.roles.flatMap((r) => [r.title, ...r.highlights]) : []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(q)
+      );
     }
     return list;
   }, [activeCats, query]);
