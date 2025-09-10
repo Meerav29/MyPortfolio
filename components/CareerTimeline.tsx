@@ -312,7 +312,8 @@ function Chip({
 }
 
 function TimelineCard({ item }: { item: Item }) {
-  if (item.roles) {
+  // If the item does not have nested roles, render a simple card and return early.
+  if (!item.roles) {
     return (
       <motion.li
         layout
@@ -323,37 +324,40 @@ function TimelineCard({ item }: { item: Item }) {
         <TimelineDot category={item.categories[0]} />
 
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <h3 className="text-base font-semibold leading-tight">{item.org}</h3>
-          {item.dateRange && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <CalendarDays className="h-3.5 w-3.5" /> {item.dateRange}
-            </div>
-          )}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold leading-tight">{item.org}</h3>
+            <p className="text-sm italic text-muted-foreground">{item.role}</p>
+            {item.summary && (
+              <p className="mt-1 text-xs text-muted-foreground">{item.summary}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5" /> {item.dateRange}
+          </div>
         </div>
 
-        {/* Nested roles */}
-        <ol className="relative ml-6 mt-4">
-          <span className="absolute left-0 top-0 bottom-0 w-px bg-foreground/10" />
-          {item.roles.map((r, i) => (
-            <li key={r.title} className="relative pl-4 pb-6">
-              {i !== item.roles.length - 1 && (
-                <span className="absolute left-[-6px] top-5 bottom-[-6px] w-px bg-foreground/10" />
-              )}
-              <h4 className="font-medium">{r.title}</h4>
-              <p className="text-sm text-muted-foreground">{r.dateRange}</p>
-              <ul className="mt-1 list-disc pl-4 text-sm text-foreground/90">
-                {r.highlights.map((h, idx) => (
-                  <li key={idx}>{h}</li>
-                ))}
-              </ul>
-            </li>
+        {/* Bullets */}
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-foreground/90">
+          {item.highlights?.map((h, i) => (
+            <li key={i}>{h}</li>
           ))}
-        </ol>
+        </ul>
+
+        {/* Optional link */}
+        {item.href && (
+          <div className="mt-3">
+            <Link href={item.href} className="text-sm underline underline-offset-4 hover:opacity-90">
+              Read more here →
+            </Link>
+          </div>
+        )}
       </motion.li>
     );
   }
 
+  // At this point roles is guaranteed to be defined.
+  const roles = item.roles;
   return (
     <motion.li
       layout
@@ -364,34 +368,33 @@ function TimelineCard({ item }: { item: Item }) {
       <TimelineDot category={item.categories[0]} />
 
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="text-base font-semibold leading-tight">{item.org}</h3>
-          <p className="text-sm italic text-muted-foreground">{item.role}</p>
-          {item.summary && (
-            <p className="mt-1 text-xs text-muted-foreground">{item.summary}</p>
-          )}
-        </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <CalendarDays className="h-3.5 w-3.5" /> {item.dateRange}
-        </div>
+      <div className="flex items-start justify-between">
+        <h3 className="text-base font-semibold leading-tight">{item.org}</h3>
+        {item.dateRange && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5" /> {item.dateRange}
+          </div>
+        )}
       </div>
 
-      {/* Bullets */}
-      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-foreground/90">
-        {item.highlights?.map((h, i) => (
-          <li key={i}>{h}</li>
+      {/* Nested roles */}
+      <ol className="relative ml-6 mt-4">
+        <span className="absolute left-0 top-0 bottom-0 w-px bg-foreground/10" />
+        {roles.map((r, i) => (
+          <li key={r.title} className="relative pl-4 pb-6">
+            {i !== roles.length - 1 && (
+              <span className="absolute left-[-6px] top-5 bottom-[-6px] w-px bg-foreground/10" />
+            )}
+            <h4 className="font-medium">{r.title}</h4>
+            <p className="text-sm text-muted-foreground">{r.dateRange}</p>
+            <ul className="mt-1 list-disc pl-4 text-sm text-foreground/90">
+              {r.highlights.map((h, idx) => (
+                <li key={idx}>{h}</li>
+              ))}
+            </ul>
+          </li>
         ))}
-      </ul>
-
-      {/* Optional link */}
-      {item.href && (
-        <div className="mt-3">
-          <Link href={item.href} className="text-sm underline underline-offset-4 hover:opacity-90">
-            Read more here →
-          </Link>
-        </div>
-      )}
+      </ol>
     </motion.li>
   );
 }
