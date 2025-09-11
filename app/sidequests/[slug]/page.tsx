@@ -34,7 +34,7 @@ export default async function SidequestPage({
   const next = index < all.length - 1 ? all[index + 1] : undefined;
 
   return (
-    <main className="mx-auto max-w-prose px-4 py-14">
+    <main className="mx-auto max-w-4xl px-4 py-14">
       <PostHeader post={post} />
       <Prose>{post.body}</Prose>
       <div className="mt-8 flex justify-between text-sm">
