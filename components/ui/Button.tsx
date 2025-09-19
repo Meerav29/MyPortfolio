@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export type ButtonProps = {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "secondary" | "subtle" | "icon";
+  variant?: "primary" | "secondary" | "subtle" | "icon" | "neutral";
   ariaLabel?: string;
   className?: string;
 };
@@ -26,7 +26,10 @@ export function Button({
     subtle:
       "px-4 py-2 bg-transparent text-muted hover:bg-foreground/5 border-transparent",
     icon: "p-2 bg-transparent text-foreground hover:bg-foreground/5 border-border",
+    neutral:
+      "px-3 py-1 bg-foreground text-background hover:bg-foreground/90 border-transparent text-xs rounded-lg",
   };
+  const variantClass = variants[variant] ?? variants.secondary;
 
   return (
     <Link
@@ -34,7 +37,7 @@ export function Button({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ariaLabel}
-      className={`${base} ${variants[variant]} ${className ?? ""}`}
+      className={`${base} ${variantClass} ${className ?? ""}`}
     >
       {children}
     </Link>
@@ -42,4 +45,3 @@ export function Button({
 }
 
 export default Button;
-
