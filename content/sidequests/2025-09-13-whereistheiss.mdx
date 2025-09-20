@@ -1,0 +1,42 @@
+---
+title: "Where are is the ISS?"
+slug: "where-isthe-iss"
+publishedAt: "2025-09-04"
+excerpt: "I had the same question!! Here's how I track it"
+tags: ["Project", "Space"]
+thumbnail: "/images/sidequests/Whereistheiss.png"
+status: "published"
+---
+
+import { Github, Satellite } from "lucide-react";
+
+I have always wanted to buy a smart-telescope and have it track objects in the night sky. While I can't afford one of those right now, I wanted to see if there was any data available publicly that I could play around with. Ofcourse, I started by asking Gemini and it helped me visualize this problem. 
+This was also around a time when I was planning to go stargazing so I deployed it on Github Pages so I could check it on my phone and quickly get a direction and elevation reading - but my friends liked it too so I have kept it on there and also added other objects it can track (more coming soon).
+
+When you open the page, the app immediately asks for your location. With that, it:
+
+1. Pulls in the TLE data of satellites (ISS, Tiangong, Hubble, NOAA-19, Starlink, and GPS).
+2. Propagates their orbits forward minute-by-minute using satellite.js.
+3. Filters out the passes where the satellite is below 10° elevation, not sunlit, or not visible from the observer’s dark sky.
+4. Displays the passes in a card layout: date, time, max elevation, where it appears/disappears, and how long it’s visible.
+
+I added some subtle UI touches too like a violet hover glow on pass cards, a custom dropdown icon for satellite selection, and a dark theme to keep the vibe astronomy-night friendly. 
+
+## Explore the Project
+
+<div className="mt-10 flex flex-col gap-3 sm:flex-row">
+  <Button href="https://github.com/Meerav29/WhereistheISS" variant="secondary" className="w-full sm:w-auto bg-foreground/5 dark:bg-foreground/10 border-border hover:bg-foreground/10 dark:hover:bg-foreground/20 transform transform-gpu transition-transform duration-200 hover:-translate-y-1 dark:hover:-translate-y-1 hover:shadow-md dark:hover:shadow-md">
+    <Github size={28} />
+    Check out the Github Repo
+  </Button>
+
+  <Button
+    href="https://meerav29.github.io/WhereistheISS/"
+    variant="secondary"
+    className="w-full sm:w-auto bg-foreground/5 dark:bg-foreground/10 border-border hover:bg-foreground/10 dark:hover:bg-foreground/20 transform transform-gpu transition-transform duration-200 hover:-translate-y-1 dark:hover:-translate-y-1 hover:shadow-md dark:hover:shadow-md"
+  >
+    <Satellite size={28} />
+    Launch Live Tracker
+  </Button>
+</div>
+

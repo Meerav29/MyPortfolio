@@ -2,6 +2,14 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkFootnotes from "remark-footnotes";
+import { Button } from "@/components/ui/Button";
+import { Github, Satellite } from "lucide-react";
+
+const mdxComponents = {
+  Button,
+  Github,
+  Satellite,
+};
 
 /**
  * Compile an MDX string to a React component for server rendering.
@@ -9,6 +17,7 @@ import remarkFootnotes from "remark-footnotes";
 export async function mdxToContent(source: string) {
   const { content } = await compileMDX({
     source,
+    components: mdxComponents,
     options: {
       mdxOptions: {
         // `remark-gfm` pulls in the GFM footnotes HTML extension which expects
@@ -30,3 +39,4 @@ export async function mdxToContent(source: string) {
   });
   return content;
 }
+

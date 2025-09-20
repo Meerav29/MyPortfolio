@@ -3,12 +3,20 @@ import Image from "next/image";
 export default function NotionPage() {
   const templates = [
     {
-      title: "Notion Degree Planner Template",
-      image: "/DegreePlanner-template.png",
-      alt: "Notion Degree Planner template screenshot",
-      link: "https://meerav.notion.site/Degree-Planner-e898a23f91624fafbeda2a1976932d99?source=copy_link",
+      title: "Grad School Application Tracker",
+      image: "/Grad-schl-tracker.png",
+      alt: "Grad School Application Tracker screenshot",
+      link: "https://meerav.notion.site/Grad-School-Tracker-Template-273c954ecea180669b9dfe846e56edd6?source=copy_link",
       description:
-        "Plan your degree with ease. Pursuing a 4 year degree? Planning to double major or add a minor? Program planning across disciplines can be a chaotic mess. Use this straightforward template to map out your entire curriculum and make sure you don't miss any requirements.",
+        "Stay on top of your grad school applications with ease. This template helps you organize universities, track deadlines, manage recommendation letters, and keep notes on professors you may want to work with. Use built-in views like calendar, board, and timeline to stay on track and reduce the stress of application season.",
+    },
+    {
+      title: "Task Manager Template",
+      image: "/CTM-Template.png",
+      alt: "Task Manager template screenshot",
+      link: "https://meerav.notion.site/Task-Manager-Template-CTM-274c954ecea1803fb74ccf333119da5a?source=copy_link",
+      description:
+        "I have personally been using this for the last 2 years. A simple yet powerful system to keep your work and personal tasks organized. This template helps you capture to-dos, set priorities, and track progress with board, calendar, and list views. Whether it’s assignments, projects, or daily habits, everything stays in one place so nothing slips through the cracks.",
     },
     {
       title: "Notes & Reminders Organizer",
@@ -18,30 +26,43 @@ export default function NotionPage() {
       description:
         "Take too many notes? Try organizing them so they're easier to access and more useful. Use this template to seamlessly categorize notes and reminders into distinct sections—Work, Classes, Research, Projects and more—offering a structured approach to task management.",
     },
+    {
+      title: "Notion Degree Planner Template",
+      image: "/DegreePlanner-template.png",
+      alt: "Notion Degree Planner template screenshot",
+      link: "https://meerav.notion.site/Degree-Planner-e898a23f91624fafbeda2a1976932d99?source=copy_link",
+      description:
+        "Plan your degree with ease. Pursuing a 4 year degree? Planning to double major or add a minor? Program planning across disciplines can be a chaotic mess. Use this straightforward template to map out your entire curriculum and make sure you don't miss any requirements.",
+    }
   ];
 
   return (
     <div className="px-6 py-20 space-y-24">
       <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12">
         {templates.map((t) => (
-          <section key={t.title} className="flex flex-col">
+          <section
+            key={t.title}
+            className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md"
+          >
             <Image
               src={t.image}
               alt={t.alt}
               width={1200}
               height={675}
-              className="rounded-lg shadow-lg"
+              className="w-full object-cover"
             />
-            <h2 className="text-2xl font-semibold mt-6 mb-4">{t.title}</h2>
-            <a
-              href={t.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mb-4 px-4 py-2 bg-card text-foreground border border-border rounded-md"
-            >
-              Go to FREE Template
-            </a>
-            <p className="text-muted">{t.description}</p>
+            <div className="flex flex-col gap-4 p-6">
+              <h2 className="text-2xl font-semibold">{t.title}</h2>
+              <a
+                href={t.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="self-start inline-flex items-center px-4 py-2 bg-card text-foreground border border-border rounded-md"
+              >
+                Go to FREE Template
+              </a>
+              <p className="text-muted">{t.description}</p>
+            </div>
           </section>
         ))}
       </div>
@@ -69,4 +90,6 @@ export default function NotionPage() {
     </div>
   );
 }
+
+
 
