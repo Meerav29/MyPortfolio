@@ -3,12 +3,13 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkFootnotes from "remark-footnotes";
 import { Button } from "@/components/ui/Button";
-import { Github, Satellite } from "lucide-react";
+import { Github, Satellite, Map } from "lucide-react";
 
 const mdxComponents = {
   Button,
   Github,
   Satellite,
+  Map,
 };
 
 /**

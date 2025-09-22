@@ -1,0 +1,52 @@
+---
+title: "I tried making a cool Map App "
+slug: "tail-trail-grail"
+publishedAt: "2025-09-13"
+excerpt: "Loved the trails around State College, thought I should map them out!"
+tags: ["Project"]
+thumbnail: "/images/sidequests/tailtrailgrail.png"
+status: "published"
+---
+
+import { Github, Map } from "lucide-react";
+
+If you haven't read about the story behind this sidequest, start with it, go check it out here: <Button href="/sidequests/storytime-bike-accident" variant="neutral" className="ml-2 align-middle">Storytime Blog </Button> !!!
+
+After that accident, I started exploring the trails around State College and while I initially wanted to make a trail map - I wanted to experiment with Leaflet.js before I did and that's how I made this project. 
+
+Map Dash began as a weekend experiment and the result is a single-page application that layers weather, air quality, satellite, and storm intelligence on top of an interactive Leaflet map. 
+
+### Designing the Interface
+I wanted the interface to feel like a mini control room. Tailwind’s utility classes made it easy to compose a dark-themed layout with a left-hand dashboard selector, geolocation and fullscreen shortcuts, and a responsive map viewport that expands on larger screens. Custom CSS polishes the experience with a pulsing “you are here” marker, harmonized Leaflet controls, and a fullscreen mode that hides surrounding chrome when you need an immersive view. 
+
+### Bringing the Dashboards to Life
+Each dashboard activation leans on Leaflet events and overlays to give immediate feedback. Clicking a card runs the corresponding activate* function, updates the info panel docked to the map, and, when appropriate, paints markers or tile layers directly on the map canvas.
+
+1. Air Quality: Open-Meteo’s air-quality API feeds hourly AQI, PM2.5, and PM10 data; a color-coded circle marker highlights the reading right on the map, so air conditions are instantly visible.
+
+2. Storm Tracker: The National Weather Service GeoJSON feed is parsed into Leaflet layers, and a small Haversine helper estimates how close the nearest alert sits relative to the map center, translating distances into “no threat,” “low threat,” or “high alert” messaging.
+
+3. Satellite Explorer: A custom Leaflet control lets you toggle between Esri, USGS, and Sentinel-2 imagery. Layer changes refresh the info panel so you always know which provider you’re viewing.
+
+### Work in Progress
+There's a few features I want to add and I'm still figuring out:
+1. Real-Time Weather: A call to Open-Meteo retrieves the latest temperature and wind readings for the current map center, while an optional OpenWeatherMap cloud layer adds visual context for atmospheric coverage.
+2. Precipitation Map: If you drop in an OpenWeatherMap key, the app overlays both cloud and precipitation tiles, giving a quick glance at active systems sweeping the area.
+
+## Explore the Project
+
+<div className="mt-10 flex flex-col gap-3 sm:flex-row">
+  <Button href="https://github.com/Meerav29/tailtrailgrail" variant="secondary" className="w-full sm:w-auto bg-foreground/5 dark:bg-foreground/10 border-border hover:bg-foreground/10 dark:hover:bg-foreground/20 transform transform-gpu transition-transform duration-200 hover:-translate-y-1 dark:hover:-translate-y-1 hover:shadow-md dark:hover:shadow-md">
+    <Github size={28} />
+    Check out the Github Repo
+  </Button>
+
+  <Button
+    href="https://meerav29.github.io/tailtrailgrail/"
+    variant="secondary"
+    className="w-full sm:w-auto bg-foreground/5 dark:bg-foreground/10 border-border hover:bg-foreground/10 dark:hover:bg-foreground/20 transform transform-gpu transition-transform duration-200 hover:-translate-y-1 dark:hover:-translate-y-1 hover:shadow-md dark:hover:shadow-md"
+  >
+    <Map size={28} />
+    Launch MapDash
+  </Button>
+</div>

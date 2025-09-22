@@ -27,7 +27,7 @@ export function Button({
       "px-4 py-2 bg-transparent text-muted hover:bg-foreground/5 border-transparent",
     icon: "p-2 bg-transparent text-foreground hover:bg-foreground/5 border-border",
     neutral:
-      "px-3 py-1 bg-foreground text-background hover:bg-foreground/90 border-transparent text-xs rounded-lg",
+      "px-4 py-2 bg-card text-foreground hover:bg-card/80 border-border rounded-md",
   };
   const variantClass = variants[variant] ?? variants.secondary;
 
