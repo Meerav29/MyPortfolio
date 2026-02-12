@@ -177,11 +177,37 @@ function Spaceship({ isHovering }: { isHovering: boolean }) {
   );
 }
 
+// --- Light that follows the cursor to illuminate the planet interactivey
+function CursorLight({ isHovering }: { isHovering: boolean }) {
+  const lightRef = useRef<THREE.PointLight>(null!);
+
+  useFrame((state) => {
+    if (!lightRef.current) return;
+
+    // Target position: follow mouse, but stay in front (z > 0)
+    const targetX = state.mouse.x * 5;
+    const targetY = state.mouse.y * 5;
+    const targetZ = 4;
+
+    // Smooth movement
+    lightRef.current.position.x = THREE.MathUtils.lerp(lightRef.current.position.x, targetX, 0.1);
+    lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, targetY, 0.1);
+    lightRef.current.position.z = THREE.MathUtils.lerp(lightRef.current.position.z, targetZ, 0.1);
+
+    // Smooth intensity transition
+    const targetIntensity = isHovering ? 2 : 0;
+    lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, targetIntensity, 0.05);
+  });
+
+  return <pointLight ref={lightRef} distance={10} decay={2} color="#ffffff" />;
+}
+
 function Scene({ offsetX = 0, scale = 1, isHovering = false }: { offsetX?: number; scale?: number; isHovering?: boolean }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
+      <CursorLight isHovering={isHovering} />
 
       <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
         <Planet />
