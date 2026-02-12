@@ -112,15 +112,41 @@ function Satellite() {
   );
 }
 
+// --- Interactive wrapper that rotates based on mouse position
+function InteractiveGroup({ children }: { children: React.ReactNode }) {
+  const groupRef = useRef<THREE.Group>(null!);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+
+    // Smoothly interpolate rotation based on mouse position
+    // mouse.x/y are normalized coordinates (-1 to 1)
+    const targetRotX = -state.mouse.y * 0.2; // Tilt up/down
+    const targetRotY = state.mouse.x * 0.2;  // Rotate left/right
+
+    // Use MathUtils from THREE (imported as * as THREE)
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.1);
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.1);
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
 function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
+
+      {/* Position and scale are handled by the outer group */}
       <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <Planet />
-        <Satellite />
+        {/* Interaction is handled by the inner group */}
+        <InteractiveGroup>
+          <Planet />
+          <Satellite />
+        </InteractiveGroup>
       </group>
+
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
       {/** Fixed camera; no manual or auto rotation */}
     </>
@@ -132,16 +158,16 @@ const R3FCanvas = dynamic(
   () =>
     Promise.resolve(
       ({ className, offsetX = 0, scale = 1 }: { className?: string; offsetX?: number; scale?: number }) => (
-      <Canvas
-        className={className}
-        dpr={[1, 2]}
-        camera={{ position: [0, 0, 6], fov: 45 }}
-        gl={{ antialias: true }}
-      >
-        <Suspense fallback={null}>
-          <Scene offsetX={offsetX} scale={scale} />
-        </Suspense>
-      </Canvas>
+        <Canvas
+          className={className}
+          dpr={[1, 2]}
+          camera={{ position: [0, 0, 6], fov: 45 }}
+          gl={{ antialias: true }}
+        >
+          <Suspense fallback={null}>
+            <Scene offsetX={offsetX} scale={scale} />
+          </Suspense>
+        </Canvas>
       )
     ),
   { ssr: false }
