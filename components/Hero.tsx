@@ -31,8 +31,8 @@ export default function Hero({ id }: { id?: string }) {
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent to-[var(--background)]" />
 
       {/* Left-aligned content over the canvas */}
-      <div className="relative z-20 flex h-full items-start md:items-center">
-        <div className="pl-10 md:pl-20 lg:pl-28 pr-6 max-w-xl pt-24 md:pt-0">
+      <div className="relative z-20 flex h-full items-start md:items-center pointer-events-none">
+        <div className="pl-10 md:pl-20 lg:pl-28 pr-6 max-w-xl pt-24 md:pt-0 pointer-events-auto">
           <div>
             <h1 className="text-xl md:text-3xl font-normal leading-tight text-muted tracking-tight">
               Hi, I&apos;m Meerav Shah! An <span className="text-foreground font-semibold">undergraduate senior in Computer Science</span> at Penn State, minoring in <span className="text-foreground font-semibold">Astrophysics</span>.
