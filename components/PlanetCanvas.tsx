@@ -113,23 +113,50 @@ function Satellite() {
 }
 
 // --- Interactive wrapper that rotates based on mouse position
-function InteractiveGroup({ children }: { children: React.ReactNode }) {
-  const groupRef = useRef<THREE.Group>(null!);
+// --- Spaceship that flies in and follows cursor
+function Spaceship() {
+  const meshRef = useRef<THREE.Mesh>(null!);
+  const { theme } = useTheme();
+
+  // Initial position behind the planet
+  // We'll use a ref to track "entrance" state if we wanted complex logic, 
+  // but a simple lerp from a far Z will act like a fly-in on load.
+  // Actually, to make it "fly in", we can just initialize it far away.
 
   useFrame((state) => {
-    if (!groupRef.current) return;
+    if (!meshRef.current) return;
 
-    // Smoothly interpolate rotation based on mouse position
-    // mouse.x/y are normalized coordinates (-1 to 1)
-    const targetRotX = -state.mouse.y * 0.2; // Tilt up/down
-    const targetRotY = state.mouse.x * 0.2;  // Rotate left/right
+    // Target position based on mouse
+    // x range: -1.5 to 1.5 approx
+    // y range: -1 to 1 approx
+    // z: fixed at 2 (in front of planet)
+    const targetX = state.mouse.x * 3;
+    const targetY = state.mouse.y * 3;
+    const targetZ = 2;
 
-    // Use MathUtils from THREE (imported as * as THREE)
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.1);
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.1);
+    // Smooth lerp
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.05);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.05);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.02); // Slower Z approach for "fly in" feel
+
+    // Tilt ship towards movement
+    meshRef.current.rotation.z = -state.mouse.x * 0.5;
+    meshRef.current.rotation.x = -state.mouse.y * 0.5;
   });
 
-  return <group ref={groupRef}>{children}</group>;
+  return (
+    <mesh ref={meshRef} position={[0, 0, -5]} castShadow receiveShadow>
+      {/* Simple sleek spaceship shape - a tetrahedron or cone */}
+      <coneGeometry args={[0.08, 0.3, 8]} />
+      <meshStandardMaterial
+        color={theme === "dark" ? "#ffffff" : "#000000"}
+        emissive={theme === "dark" ? "#aaaaff" : "#555555"}
+        emissiveIntensity={0.5}
+        roughness={0.2}
+        metalness={0.8}
+      />
+    </mesh>
+  );
 }
 
 function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
@@ -138,17 +165,15 @@ function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number })
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
 
-      {/* Position and scale are handled by the outer group */}
+      {/* Main Group: Planet + Satellite (Non-interactive orbit) */}
       <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        {/* Interaction is handled by the inner group */}
-        <InteractiveGroup>
-          <Planet />
-          <Satellite />
-        </InteractiveGroup>
+        <Planet />
+        <Satellite />
+        {/* Spaceship is also scaled/positioned relative to the scene anchor */}
+        <Spaceship />
       </group>
 
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
-      {/** Fixed camera; no manual or auto rotation */}
     </>
   );
 }
