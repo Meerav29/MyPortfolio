@@ -203,13 +203,30 @@ function CursorLight({ isHovering }: { isHovering: boolean }) {
 }
 
 function Scene({ offsetX = 0, scale = 1, isHovering = false }: { offsetX?: number; scale?: number; isHovering?: boolean }) {
+  const groupRef = useRef<THREE.Group>(null!);
+
+  useFrame((state, delta) => {
+    if (!groupRef.current) return;
+
+    // Subtle zoom effect on hover
+    // Target scale: slightly larger if hovering
+    const targetScale = isHovering ? scale * 1.1 : scale;
+
+    // Smoothly interpolate current scale to target
+    // We assume uniform scaling (x=y=z)
+    const currentScale = groupRef.current.scale.x;
+    const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.1);
+
+    groupRef.current.scale.set(newScale, newScale, newScale);
+  });
+
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <CursorLight isHovering={isHovering} />
 
-      <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
+      <group ref={groupRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
         <Planet />
         <Satellite />
         <Spaceship isHovering={isHovering} />
