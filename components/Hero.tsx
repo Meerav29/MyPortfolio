@@ -34,20 +34,12 @@ export default function Hero({ id }: { id?: string }) {
       <div className="relative z-20 flex h-full items-start md:items-center">
         <div className="pl-10 md:pl-20 lg:pl-28 pr-6 max-w-xl pt-24 md:pt-0">
           <div>
-            <div className="flex items-center gap-4 mb-6">
-              {/* Optional: Avatar or small identifier if desired, matching the 'Rifath' style slightly */}
-              {/* For now keeping it text-based as per instructions to just change text */}
-              <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent hover:bg-accent/20 transition-colors cursor-default">
-                Meerav Shah
-              </span>
-            </div>
-
             <h1 className="text-xl md:text-3xl font-normal leading-tight text-muted tracking-tight">
-              An <span className="text-foreground font-semibold">undergraduate senior in Computer Science</span> at Penn State, minoring in <span className="text-foreground font-semibold">Astrophysics</span>.
+              Hi, I&apos;m Meerav Shah! An <span className="text-foreground font-semibold">undergraduate senior in Computer Science</span> at Penn State, minoring in <span className="text-foreground font-semibold">Astrophysics</span>.
 
               <br className="hidden md:block" />
               <span className="block mt-4">
-                I build <span className="text-foreground font-semibold">practical, minimal tools</span>—from <span className="text-foreground font-semibold">advising assistants</span> that free up faculty time to <span className="text-foreground font-semibold">UAV analytics</span> that make flight safer.
+                I build <span className="text-foreground font-semibold">practical, minimal tools</span>: from <span className="text-foreground font-semibold">advising assistants</span> that free up faculty time to <span className="text-foreground font-semibold">UAV analytics</span> that make flight safer.
               </span>
 
               <span className="block mt-4">
