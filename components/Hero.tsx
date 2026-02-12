@@ -42,7 +42,7 @@ export default function Hero({ id }: { id?: string }) {
               </span>
             </div>
 
-            <h1 className="text-2xl md:text-4xl font-normal leading-tight text-muted tracking-tight">
+            <h1 className="text-xl md:text-3xl font-normal leading-tight text-muted tracking-tight">
               An <span className="text-foreground font-semibold">undergraduate senior in Computer Science</span> at Penn State, minoring in <span className="text-foreground font-semibold">Astrophysics</span>.
 
               <br className="hidden md:block" />
