@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
@@ -112,41 +112,59 @@ function Satellite() {
   );
 }
 
-// --- Interactive wrapper that rotates based on mouse position
-// --- Spaceship that flies in and follows cursor
-function Spaceship() {
+// --- Spaceship that orbits by default, follows mouse on hover
+function Spaceship({ isHovering }: { isHovering: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const { theme } = useTheme();
 
-  // Initial position behind the planet
-  // We'll use a ref to track "entrance" state if we wanted complex logic, 
-  // but a simple lerp from a far Z will act like a fly-in on load.
-  // Actually, to make it "fly in", we can just initialize it far away.
-
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Target position based on mouse
-    // x range: -1.5 to 1.5 approx
-    // y range: -1 to 1 approx
-    // z: fixed at 2 (in front of planet)
-    const targetX = state.mouse.x * 3;
-    const targetY = state.mouse.y * 3;
-    const targetZ = 2;
+    // 1. Calculate Orbit Position (Idle)
+    // Different orbit params than satellite to avoid collision visually
+    const t = state.clock.getElapsedTime() * 0.4;
+    const orbitRadius = 3.2;
+    const orbitX = Math.cos(t) * orbitRadius;
+    const orbitZ = Math.sin(t) * orbitRadius;
+    const orbitY = Math.sin(t * 0.5) * 1.0;
 
-    // Smooth lerp
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.05);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.05);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.02); // Slower Z approach for "fly in" feel
+    // 2. Calculate Active Position (Mouse Follow)
+    // Multipliers tuned for screen coverage
+    const followX = state.mouse.x * 4;
+    const followY = state.mouse.y * 3;
+    const followZ = 2; // In front
 
-    // Tilt ship towards movement
-    meshRef.current.rotation.z = -state.mouse.x * 0.5;
-    meshRef.current.rotation.x = -state.mouse.y * 0.5;
+    // 3. Determine Target
+    const target = new THREE.Vector3(
+      isHovering ? followX : orbitX,
+      isHovering ? followY : orbitY,
+      isHovering ? followZ : orbitZ
+    );
+
+    // 4. Move
+    const speed = isHovering ? 0.1 : 0.05;
+    meshRef.current.position.lerp(target, speed);
+
+    // 5. Rotate
+    if (isHovering) {
+      // Bank towards mouse movement
+      const targetRotZ = -state.mouse.x * 0.5;
+      const targetRotX = -state.mouse.y * 0.5;
+      meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.1);
+      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.1);
+      // Reset Y
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, 0, 0.1);
+    } else {
+      // Forward facing along orbit
+      // Tangent angle + small tumble
+      meshRef.current.rotation.y -= delta * 0.5;
+      meshRef.current.rotation.z = Math.sin(t * 2) * 0.2;
+      meshRef.current.rotation.x = Math.cos(t) * 0.2;
+    }
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0, -5]} castShadow receiveShadow>
-      {/* Simple sleek spaceship shape - a tetrahedron or cone */}
+    <mesh ref={meshRef} position={[3, 0, 0]} castShadow receiveShadow>
       <coneGeometry args={[0.08, 0.3, 8]} />
       <meshStandardMaterial
         color={theme === "dark" ? "#ffffff" : "#000000"}
@@ -159,18 +177,16 @@ function Spaceship() {
   );
 }
 
-function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+function Scene({ offsetX = 0, scale = 1, isHovering = false }: { offsetX?: number; scale?: number; isHovering?: boolean }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
 
-      {/* Main Group: Planet + Satellite (Non-interactive orbit) */}
       <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
         <Planet />
         <Satellite />
-        {/* Spaceship is also scaled/positioned relative to the scene anchor */}
-        <Spaceship />
+        <Spaceship isHovering={isHovering} />
       </group>
 
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
@@ -182,7 +198,7 @@ function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number })
 const R3FCanvas = dynamic(
   () =>
     Promise.resolve(
-      ({ className, offsetX = 0, scale = 1 }: { className?: string; offsetX?: number; scale?: number }) => (
+      ({ className, offsetX = 0, scale = 1, isHovering = false }: { className?: string; offsetX?: number; scale?: number; isHovering?: boolean }) => (
         <Canvas
           className={className}
           dpr={[1, 2]}
@@ -190,7 +206,7 @@ const R3FCanvas = dynamic(
           gl={{ antialias: true }}
         >
           <Suspense fallback={null}>
-            <Scene offsetX={offsetX} scale={scale} />
+            <Scene offsetX={offsetX} scale={scale} isHovering={isHovering} />
           </Suspense>
         </Canvas>
       )
@@ -199,17 +215,27 @@ const R3FCanvas = dynamic(
 );
 
 export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+  const [isHovering, setIsHovering] = useState(false);
+
   return (
-    <div className="relative w-full h-full" aria-hidden="true">
+    <div
+      className="relative w-full h-full"
+      aria-hidden="true"
+      onPointerEnter={() => setIsHovering(true)}
+      onPointerLeave={() => setIsHovering(false)}
+    >
       {/* prefers-reduced-motion: pause auto-rotate */}
       <style>{`
         @media (prefers-reduced-motion: reduce) {
           canvas { animation: none !important; }
         }
       `}</style>
-      {/* override global canvas pointer-events to allow interaction */}
-      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} scale={scale} />
-      {/* soft vignette */}
+      <R3FCanvas
+        className="absolute inset-0 pointer-events-auto"
+        offsetX={offsetX}
+        scale={scale}
+        isHovering={isHovering}
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>
   );
