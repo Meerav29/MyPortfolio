@@ -112,72 +112,7 @@ function Satellite() {
   );
 }
 
-// --- Spaceship that orbits by default, follows mouse on hover
-function Spaceship({ isHovering }: { isHovering: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const { theme } = useTheme();
 
-  useFrame((state, delta) => {
-    if (!meshRef.current) return;
-
-    // 1. Calculate Orbit Position (Idle)
-    // Different orbit params than satellite to avoid collision visually
-    const t = state.clock.getElapsedTime() * 0.4;
-    const orbitRadius = 3.2;
-    const orbitX = Math.cos(t) * orbitRadius;
-    const orbitZ = Math.sin(t) * orbitRadius;
-    const orbitY = Math.sin(t * 0.5) * 1.0;
-
-    // 2. Calculate Active Position (Mouse Follow)
-    // Multipliers tuned for screen coverage
-    const followX = state.mouse.x * 4;
-    const followY = state.mouse.y * 3;
-    const followZ = 2; // In front
-
-    // 3. Determine Target
-    const target = new THREE.Vector3(
-      isHovering ? followX : orbitX,
-      isHovering ? followY : orbitY,
-      isHovering ? followZ : orbitZ
-    );
-
-    // 4. Move
-    const speed = isHovering ? 0.1 : 0.05;
-    meshRef.current.position.lerp(target, speed);
-
-    // 5. Rotate
-    if (isHovering) {
-      // Bank towards mouse movement
-      const targetRotZ = -state.mouse.x * 0.5;
-      const targetRotX = -state.mouse.y * 0.5;
-      meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.1);
-      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.1);
-      // Reset Y
-      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, 0, 0.1);
-    } else {
-      // Forward facing along orbit
-      // Tangent angle + small tumble
-      meshRef.current.rotation.y -= delta * 0.5;
-      meshRef.current.rotation.z = Math.sin(t * 2) * 0.2;
-      meshRef.current.rotation.x = Math.cos(t) * 0.2;
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} position={[3, 0, 0]} castShadow receiveShadow>
-      <coneGeometry args={[0.08, 0.3, 8]} />
-      <meshStandardMaterial
-        color={theme === "dark" ? "#ffffff" : "#000000"}
-        emissive={theme === "dark" ? "#aaaaff" : "#555555"}
-        emissiveIntensity={0.5}
-        roughness={0.2}
-        metalness={0.8}
-      />
-    </mesh>
-  );
-}
-
-// --- Light that follows the cursor to illuminate the planet interactivey
 function CursorLight({ isHovering }: { isHovering: boolean }) {
   const lightRef = useRef<THREE.PointLight>(null!);
 
@@ -229,7 +164,6 @@ function Scene({ offsetX = 0, scale = 1, isHovering = false }: { offsetX?: numbe
       <group ref={groupRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
         <Planet />
         <Satellite />
-        <Spaceship isHovering={isHovering} />
       </group>
 
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
