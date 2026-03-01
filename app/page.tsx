@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Mail, Linkedin, Github, FileText } from "lucide-react";
 import Hero from "@/components/Hero";
 import { links } from "@/lib/links";
 import { projects } from "@/lib/projects";
@@ -66,63 +66,54 @@ function Projects({ projects }: { projects: any[] }) {
 }
 
 function Contact({ links }: { links: any }) {
+  const contactLinks = [
+    {
+      icon: <Mail size={20} />,
+      label: "Email",
+      value: links.email,
+      href: `mailto:${links.email}`,
+    },
+    {
+      icon: <Linkedin size={20} />,
+      label: "LinkedIn",
+      value: "@meeravshah",
+      href: links.linkedin,
+    },
+    {
+      icon: <Github size={20} />,
+      label: "GitHub",
+      value: "@Meerav29",
+      href: links.github,
+    },
+    {
+      icon: <FileText size={20} />,
+      label: "Resume",
+      value: "View PDF",
+      href: links.resume,
+    },
+  ];
+
   return (
     <Section id="contact" title="Get in touch">
-      <div className="rounded-2xl border border-border p-6 bg-gradient-to-br from-accent to-link-hover text-background">
-        <h3 className="text-xl font-semibold">Let’s build something.</h3>
-        <p className="mt-2 text-background opacity-80 max-w-2xl">
-          I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
-        </p>
-
-        {/* Contact Form */}
-        <form
-          action="https://formspree.io/f/mrblrpnp"
-          method="POST"
-          className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center"
-        >
-          <input
-            type="email"
-            name="email"
-            placeholder="Your email"
-            required
-            className="flex-1 rounded-xl px-4 py-2 bg-background text-foreground placeholder-muted"
-          />
-          <input
-            type="text"
-            name="message"
-            placeholder="Say hello..."
-            required
-            className="flex-1 rounded-xl px-4 py-2 bg-background text-foreground placeholder-muted"
-          />
-          <button
-            type="submit"
-            className="rounded-xl bg-background text-foreground px-4 py-2 text-sm hover:bg-card transition-colors"
-          >
-            Send
-          </button>
-        </form>
-
-        {/* Optional quick links */}
-        <div className="mt-6 flex flex-wrap gap-3 text-sm">
+      <p className="text-muted max-w-2xl mb-8">
+        I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
+      </p>
+      <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+        {contactLinks.map((link) => (
           <a
-            href={`mailto:${links.email}`}
-            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
+            key={link.label}
+            href={link.href}
+            target={link.href.startsWith("mailto") ? undefined : "_blank"}
+            rel="noopener noreferrer"
+            className="group flex flex-col gap-3 rounded-2xl border border-border p-5 bg-card hover:border-accent transition-colors"
           >
-            Email Me
+            <div className="text-accent">{link.icon}</div>
+            <div>
+              <div className="text-sm font-medium">{link.label}</div>
+              <div className="text-xs text-muted mt-0.5">{link.value}</div>
+            </div>
           </a>
-          <a
-            href={links.linkedin}
-            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
-          >
-            LinkedIn
-          </a>
-          <a
-            href={links.site}
-            className="rounded-xl border border-background px-4 py-2 hover:bg-background text-background"
-          >
-            Current Site
-          </a>
-        </div>
+        ))}
       </div>
     </Section>
   );
