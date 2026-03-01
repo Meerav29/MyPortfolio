@@ -96,7 +96,7 @@ function Contact({ links }: { links: any }) {
   return (
     <Section id="contact" title="Get in touch">
       <p className="text-muted max-w-2xl mb-8">
-        I’m open to research collaborations, product work, and internships in AI, aerospace, and ed-tech.
+        Graduating May 2026 and actively looking for full-time roles. Open to opportunities in AI, aerospace, and ed-tech — research, product, or engineering.
       </p>
       <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
         {contactLinks.map((link) => (
