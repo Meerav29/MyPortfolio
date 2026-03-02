@@ -23,10 +23,12 @@ export default function Hero({ id }: { id?: string }) {
   const isMobile = useMediaQuery("(max-width: 767px)");
   return (
     <section id={id} className="relative h-screen w-full overflow-hidden">
-      {/* Full-screen background animation */}
-      <div className="absolute inset-0">
-        <PlanetCanvas offsetX={isMobile ? 0.5 : 2} scale={isMobile ? 0.8 : 1} />
-      </div>
+      {/* Full-screen 3D background — desktop only; skipped on mobile for performance */}
+      {!isMobile && (
+        <div className="absolute inset-0">
+          <PlanetCanvas offsetX={2} scale={1} />
+        </div>
+      )}
       {/* Bottom fade to page background for cohesion */}
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent to-[var(--background)]" />
 

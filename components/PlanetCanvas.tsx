@@ -1,11 +1,23 @@
 "use client";
 import dynamic from "next/dynamic";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
+
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const listener = () => setMatches(media.matches);
+    listener();
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [query]);
+  return matches;
+}
 
 // Generate a starry canvas texture using the provided base color.
 function useCosmicTexture(base: string, size = 1024) {
@@ -42,7 +54,7 @@ function useCosmicTexture(base: string, size = 1024) {
 }
 
 // --- Planet: cosmic sphere with subtle glow
-function Planet() {
+function Planet({ segs = 64 }: { segs?: number }) {
   const { background } = useThemeColors();
   const { theme } = useTheme();
   const base = theme === "dark" ? "#8EC5FC" : "#000000";
@@ -57,7 +69,7 @@ function Planet() {
     <group ref={planetRef}>
       {/* thin outline */}
       <mesh scale={1.03} castShadow receiveShadow>
-        <sphereGeometry args={[1.2, 64, 64]} />
+        <sphereGeometry args={[1.2, segs, segs]} />
         <meshBasicMaterial
           color={theme === "dark" ? "#000000" : darken(background, 0.6)}
           side={THREE.BackSide}
@@ -66,13 +78,13 @@ function Planet() {
 
       {/* textured body */}
       <mesh castShadow receiveShadow>
-        <sphereGeometry args={[1.2, 64, 64]} />
+        <sphereGeometry args={[1.2, segs, segs]} />
         <meshStandardMaterial map={texture} roughness={1} metalness={0} />
       </mesh>
 
       {/* soft atmosphere */}
       <mesh scale={1.1}>
-        <sphereGeometry args={[1.2, 64, 64]} />
+        <sphereGeometry args={[1.2, segs, segs]} />
         <meshBasicMaterial
           color={lighten(base, 0.1)}
           transparent
@@ -112,16 +124,16 @@ function Satellite() {
   );
 }
 
-function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+function Scene({ offsetX = 0, scale = 1, lowPerf = false }: { offsetX?: number; scale?: number; lowPerf?: boolean }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <Planet />
+        <Planet segs={lowPerf ? 32 : 64} />
         <Satellite />
       </group>
-      <Stars radius={50} depth={30} count={1200} factor={2} fade />
+      <Stars radius={50} depth={30} count={lowPerf ? 400 : 1200} factor={2} fade />
       {/** Fixed camera; no manual or auto rotation */}
     </>
   );
@@ -131,15 +143,15 @@ function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number })
 const R3FCanvas = dynamic(
   () =>
     Promise.resolve(
-      ({ className, offsetX = 0, scale = 1 }: { className?: string; offsetX?: number; scale?: number }) => (
+      ({ className, offsetX = 0, scale = 1, lowPerf = false }: { className?: string; offsetX?: number; scale?: number; lowPerf?: boolean }) => (
       <Canvas
         className={className}
-        dpr={[1, 2]}
+        dpr={lowPerf ? [1, 1] : [1, 2]}
         camera={{ position: [0, 0, 6], fov: 45 }}
-        gl={{ antialias: true }}
+        gl={{ antialias: !lowPerf }}
       >
         <Suspense fallback={null}>
-          <Scene offsetX={offsetX} scale={scale} />
+          <Scene offsetX={offsetX} scale={scale} lowPerf={lowPerf} />
         </Suspense>
       </Canvas>
       )
@@ -148,6 +160,7 @@ const R3FCanvas = dynamic(
 );
 
 export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+  const lowPerf = useMediaQuery("(max-width: 767px)");
   return (
     <div className="relative w-full h-full" aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
@@ -157,7 +170,7 @@ export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: num
         }
       `}</style>
       {/* override global canvas pointer-events to allow interaction */}
-      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} scale={scale} />
+      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} scale={scale} lowPerf={lowPerf} />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>

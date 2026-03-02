@@ -25,11 +25,11 @@ export default function IllustratedOrbit() {
 
       {/* satellite on circular path */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="relative w-[480px] h-[480px] md:w-[620px] md:h-[620px]">
+        <div className="relative w-64 h-64 sm:w-[480px] sm:h-[480px] md:w-[620px] md:h-[620px]">
           <div className="absolute left-1/2 top-1/2 orbit">
-            {/* radius: adjust the translate values */}
-            <div className="translate-x-[220px] -translate-y-[20px]">
-              <div className="relative w-[90px] h-[90px]">
+            {/* radius scales with container: 100px mobile / 220px sm / 280px md */}
+            <div className="translate-x-[100px] -translate-y-[8px] sm:translate-x-[220px] sm:-translate-y-[20px] md:translate-x-[280px]">
+              <div className="relative w-[60px] h-[60px] md:w-[90px] md:h-[90px]">
                 <Image src="/satellite.png" alt="Satellite" fill className="object-contain drop-shadow-[0_6px_14px_rgba(2,6,23,0.15)]" />
               </div>
             </div>
