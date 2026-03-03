@@ -10,7 +10,6 @@ type Props = {
 
 export default function ResearchPageClient({ items }: Props) {
   const [query, setQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [year, setYear] = useState("");
   const [sort, setSort] = useState("newest");
 
@@ -35,11 +34,6 @@ export default function ResearchPageClient({ items }: Props) {
     return () => clearInterval(interval);
   }, [lastEventDate]);
 
-  const allTags = useMemo(
-    () => Array.from(new Set(items.flatMap((r: any) => r.tags))).sort(),
-    [items]
-  );
-
   const years = useMemo(() => {
     return Array.from(
       new Set(
@@ -57,14 +51,10 @@ export default function ResearchPageClient({ items }: Props) {
           .toLowerCase()
           .includes(q);
 
-        const matchesTags = selectedTags.every((t) =>
-          (item.tags ?? []).includes(t)
-        );
-
         const itemYear = new Date(item.date).getFullYear().toString();
         const matchesYear = year ? itemYear === year : true;
 
-        return matchesQuery && matchesTags && matchesYear;
+        return matchesQuery && matchesYear;
       })
       .sort((a: any, b: any) => {
         if (sort === "newest")
@@ -74,13 +64,7 @@ export default function ResearchPageClient({ items }: Props) {
         if (sort === "az") return a.title.localeCompare(b.title);
         return 0;
       });
-  }, [items, query, selectedTags, year, sort]);
-
-  function toggleTag(tag: string) {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
-  }
+  }, [items, query, year, sort]);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-14">
@@ -137,27 +121,6 @@ export default function ResearchPageClient({ items }: Props) {
               </select>
             </div>
           </div>
-
-          {allTags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => {
-                const selected = selectedTags.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className={`inline-flex items-center rounded-full border px-3 py-1 text-sm focus:outline-none focus-visible:ring-2 ring-accent ${
-                      selected
-                        ? "bg-accent text-white border-accent"
-                        : "text-foreground border-border hover:bg-foreground/5"
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
-          )}
 
           <p aria-live="polite" className="text-sm text-muted">
             Showing {filtered.length} results
