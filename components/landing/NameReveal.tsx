@@ -1,44 +1,44 @@
 "use client";
 
-import { RefObject, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { MotionValue, motion, useTransform } from "framer-motion";
 
 const FIRST = "MEERAV";
 const LAST = "SHAH";
 const ALL_LETTERS = [...FIRST.split(""), " ", ...LAST.split("")];
-const TOTAL = ALL_LETTERS.length; // 11 characters including space
+const TOTAL = ALL_LETTERS.length; // 11 chars incl. space
+
+// ─── Global scroll ranges for Screen 2 ───────────────────────────────────────
+// Page layout (300vh name section): 100vh + 300vh + ~100vh + ~120vh = ~620vh
+// Scrollable height ≈ 520vh  →  Screen 2 active window ≈ [0.19, 0.57]
+// Letters stagger within [NAME_START, NAME_END] of total page scroll.
+const NAME_START = 0.20;
+const NAME_END   = 0.54;
+const SPAN       = NAME_END - NAME_START; // 0.34
+const STEP       = SPAN / TOTAL;          // per-letter stride
 
 function LetterSpan({
   char,
   index,
-  scrollProgress,
+  scrollYProgress,
 }: {
   char: string;
   index: number;
-  scrollProgress: ReturnType<typeof useScroll>["scrollYProgress"];
+  scrollYProgress: MotionValue<number>;
 }) {
-  const step = 0.7 / TOTAL; // spread letters across 0–0.7 of scroll range
-  const start = index * step;
-  const end = start + step * 3; // overlap for smooth cascade
+  // Each letter's window in global scroll space, with 3× overlap for cascade
+  const start = NAME_START + index * STEP;
+  const end   = Math.min(start + STEP * 3, NAME_END + STEP * 2);
 
-  const letterProgress = useTransform(scrollProgress, [start, end], [0, 1]);
-  const rotateX = useTransform(letterProgress, [0, 1], [-90, 0]);
-  const opacity = useTransform(letterProgress, [0, 0.5], [0, 1]);
-  const y = useTransform(letterProgress, [0, 1], [20, 0]);
+  const rotateX = useTransform(scrollYProgress, [start, end], [-90, 0]);
+  const opacity = useTransform(scrollYProgress, [start, start + STEP * 1.5], [0, 1]);
+  const y       = useTransform(scrollYProgress, [start, end], [24, 0]);
 
-  if (char === " ") {
-    return <span className="inline-block w-[0.3em]" />;
-  }
+  if (char === " ") return <span className="inline-block w-[0.3em]" />;
 
   return (
     <motion.span
       className="inline-block origin-top"
-      style={{
-        rotateX,
-        opacity,
-        y,
-        transformStyle: "preserve-3d",
-      }}
+      style={{ rotateX, opacity, y, transformStyle: "preserve-3d" }}
     >
       {char}
     </motion.span>
@@ -46,36 +46,26 @@ function LetterSpan({
 }
 
 export default function NameReveal({
-  scrollContainer,
+  scrollYProgress,
 }: {
-  scrollContainer: RefObject<HTMLDivElement>;
+  scrollYProgress: MotionValue<number>;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Track scroll position within the sticky section relative to the
-  // fixed overlay container (the window never scrolls on this page).
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    container: scrollContainer,
-    offset: ["start start", "end end"],
-  });
-
-  // Glow expands as more letters are revealed
-  const glowOpacity = useTransform(scrollYProgress, [0.1, 0.6], [0, 0.35]);
-  const glowScale = useTransform(scrollYProgress, [0.1, 0.7], [0.3, 1.2]);
+  // Glow builds as letters appear
+  const glowOpacity = useTransform(scrollYProgress, [NAME_START, NAME_END], [0, 0.35]);
+  const glowScale   = useTransform(scrollYProgress, [NAME_START, NAME_END], [0.3, 1.2]);
 
   return (
-    <div ref={containerRef} className="relative h-[150vh]">
-      {/* Sticky frame keeps the name centered while scrolling drives animation */}
+    // Tall section = lots of scroll room for the animation to breathe
+    <div className="relative h-[300vh]">
+      {/* Sticky frame — stays in view while outer div scrolls */}
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        {/* Accent glow behind the text */}
+        {/* Accent glow */}
         <motion.div
           className="absolute rounded-full"
           style={{
             width: "60vw",
             height: "30vh",
-            background:
-              "radial-gradient(ellipse, var(--accent) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse, var(--accent) 0%, transparent 70%)",
             opacity: glowOpacity,
             scale: glowScale,
             filter: "blur(60px)",
@@ -102,7 +92,7 @@ export default function NameReveal({
               key={i}
               char={char}
               index={i}
-              scrollProgress={scrollYProgress}
+              scrollYProgress={scrollYProgress}
             />
           ))}
         </h1>

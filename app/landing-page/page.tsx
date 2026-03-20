@@ -97,7 +97,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Screen 2: Name Reveal ── */}
-      <NameReveal scrollContainer={overlayRef} />
+      <NameReveal scrollYProgress={scrollYProgress} />
 
       {/* ── Screen 3: Identity / Tagline ── */}
       <section className="relative flex min-h-screen flex-col items-center justify-center px-6">
