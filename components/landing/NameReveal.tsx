@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const FIRST = "MEERAV";
@@ -45,10 +45,18 @@ function LetterSpan({
   );
 }
 
-export default function NameReveal() {
+export default function NameReveal({
+  scrollContainer,
+}: {
+  scrollContainer: RefObject<HTMLDivElement>;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track scroll position within the sticky section relative to the
+  // fixed overlay container (the window never scrolls on this page).
   const { scrollYProgress } = useScroll({
     target: containerRef,
+    container: scrollContainer,
     offset: ["start start", "end end"],
   });
 
