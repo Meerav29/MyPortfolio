@@ -39,13 +39,13 @@ function useCosmicTexture(base: string, size = 1024) {
 const PLANET_RADIUS = 1.2;
 const SEGMENTS = 64;
 // How close (in world units) the cursor must be to the planet center to trigger morphing
-const INTERACTION_RADIUS = 3.5;
+const INTERACTION_RADIUS = 4.0;
 // Maximum vertex displacement
-const MAX_BULGE = 0.25;
+const MAX_BULGE = 0.35;
 // How tight the bulge cone is (higher = tighter). Controls the angular falloff.
-const BULGE_FOCUS = 3.0;
+const BULGE_FOCUS = 2.5;
 
-function MorphPlanet({ groupPosition }: { groupPosition: THREE.Vector3 }) {
+function MorphPlanet({ parentGroupRef }: { parentGroupRef: React.RefObject<THREE.Group> }) {
   const { background } = useThemeColors();
   const { theme } = useTheme();
   const base = theme === "dark" ? "#8EC5FC" : "#000000";
@@ -63,61 +63,67 @@ function MorphPlanet({ groupPosition }: { groupPosition: THREE.Vector3 }) {
     atmo: Float32Array | null;
   }>({ main: null, outline: null, atmo: null });
 
+  // Track whether originals have been captured
+  const originalsReady = useRef(false);
+
   const { camera, pointer } = useThree();
 
   // Smoothed bulge strength for organic feel
   const smoothBulge = useRef(0);
-  // Smoothed cursor direction
+  // Smoothed cursor direction (in local space of the rotating group)
   const smoothDir = useRef(new THREE.Vector3(0, 0, 1));
 
-  // Raycaster + plane for projecting cursor into 3D at planet depth
-  const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const planeNormal = useMemo(() => new THREE.Vector3(0, 0, 1), []);
-
-  // Clone original positions on first frame
-  useEffect(() => {
-    const storeOriginals = () => {
-      if (mainMeshRef.current?.geometry) {
-        const pos = mainMeshRef.current.geometry.attributes.position;
-        originals.current.main = new Float32Array(pos.array as Float32Array);
-      }
-      if (outlineMeshRef.current?.geometry) {
-        const pos = outlineMeshRef.current.geometry.attributes.position;
-        originals.current.outline = new Float32Array(pos.array as Float32Array);
-      }
-      if (atmoMeshRef.current?.geometry) {
-        const pos = atmoMeshRef.current.geometry.attributes.position;
-        originals.current.atmo = new Float32Array(pos.array as Float32Array);
-      }
-    };
-    // Small delay to ensure geometries are ready
-    const id = requestAnimationFrame(storeOriginals);
-    return () => cancelAnimationFrame(id);
-  }, []);
+  // Reusable temp objects to avoid GC
+  const _raycaster = useMemo(() => new THREE.Raycaster(), []);
+  const _plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), []);
+  const _cursorWorld = useMemo(() => new THREE.Vector3(), []);
+  const _planetWorldPos = useMemo(() => new THREE.Vector3(), []);
+  const _localDir = useMemo(() => new THREE.Vector3(), []);
+  const _invQuat = useMemo(() => new THREE.Quaternion(), []);
+  const _vertDir = useMemo(() => new THREE.Vector3(), []);
 
   useFrame((_, dt) => {
-    if (!planetGroupRef.current) return;
+    if (!planetGroupRef.current || !parentGroupRef.current) return;
+
+    // Capture originals on first valid frame
+    if (!originalsReady.current) {
+      if (mainMeshRef.current?.geometry?.attributes?.position) {
+        originals.current.main = new Float32Array(
+          mainMeshRef.current.geometry.attributes.position.array as Float32Array
+        );
+        originals.current.outline = new Float32Array(
+          outlineMeshRef.current.geometry.attributes.position.array as Float32Array
+        );
+        originals.current.atmo = new Float32Array(
+          atmoMeshRef.current.geometry.attributes.position.array as Float32Array
+        );
+        originalsReady.current = true;
+      }
+      return;
+    }
 
     // Slow rotation (same as original)
     planetGroupRef.current.rotation.y += dt * 0.1;
 
-    // Project cursor onto a plane at the planet's z-depth
-    raycaster.setFromCamera(pointer, camera);
-    const plane = new THREE.Plane(planeNormal, -groupPosition.z);
-    const cursorWorld = new THREE.Vector3();
-    raycaster.ray.intersectPlane(plane, cursorWorld);
+    // Get planet world position (accounts for parent group offset + scale)
+    parentGroupRef.current.getWorldPosition(_planetWorldPos);
 
-    if (!cursorWorld) return;
+    // Project cursor onto a plane at the planet's z-depth
+    _raycaster.setFromCamera(pointer, camera);
+    _plane.normal.set(0, 0, 1);
+    _plane.constant = -_planetWorldPos.z;
+    const hit = _raycaster.ray.intersectPlane(_plane, _cursorWorld);
+
+    if (!hit) return;
 
     // Distance from cursor to planet center (in world XY)
-    const planetCenter2D = new THREE.Vector2(groupPosition.x, groupPosition.y);
-    const cursor2D = new THREE.Vector2(cursorWorld.x, cursorWorld.y);
-    const dist = planetCenter2D.distanceTo(cursor2D);
+    const dx = _cursorWorld.x - _planetWorldPos.x;
+    const dy = _cursorWorld.y - _planetWorldPos.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
     // Target bulge strength: 1 at planet surface, 0 at INTERACTION_RADIUS
     let targetStrength = 0;
     if (dist < INTERACTION_RADIUS) {
-      // Smooth falloff: strong near surface, fades to zero at edge
       const t = 1 - dist / INTERACTION_RADIUS;
       targetStrength = t * t; // quadratic ease
     }
@@ -125,61 +131,62 @@ function MorphPlanet({ groupPosition }: { groupPosition: THREE.Vector3 }) {
     // Smooth the strength over time
     smoothBulge.current += (targetStrength - smoothBulge.current) * Math.min(dt * 4, 1);
 
-    // Direction from planet center toward cursor (in local space)
-    const targetDir = new THREE.Vector3(
-      cursorWorld.x - groupPosition.x,
-      cursorWorld.y - groupPosition.y,
-      0
-    );
-    if (targetDir.length() > 0.001) targetDir.normalize();
+    // Direction from planet center toward cursor — in WORLD space
+    _localDir.set(dx, dy, 0);
+    if (_localDir.length() > 0.001) {
+      _localDir.normalize();
 
-    // Smooth the direction
-    smoothDir.current.lerp(targetDir, Math.min(dt * 5, 1));
-    smoothDir.current.normalize();
+      // Transform direction into the planet's LOCAL space (undo rotation)
+      // Get the world quaternion of the rotating group, invert it
+      planetGroupRef.current.getWorldQuaternion(_invQuat);
+      _invQuat.invert();
+      _localDir.applyQuaternion(_invQuat);
+      _localDir.normalize();
+    }
+
+    // Smooth the direction in local space
+    smoothDir.current.lerp(_localDir, Math.min(dt * 5, 1));
+    if (smoothDir.current.length() > 0.001) smoothDir.current.normalize();
 
     const strength = smoothBulge.current * MAX_BULGE;
 
     // Apply deformation to each mesh
     const meshes = [
-      { ref: mainMeshRef, orig: originals.current.main, baseRadius: PLANET_RADIUS },
-      { ref: outlineMeshRef, orig: originals.current.outline, baseRadius: PLANET_RADIUS * 1.03 },
-      { ref: atmoMeshRef, orig: originals.current.atmo, baseRadius: PLANET_RADIUS * 1.1 },
+      { ref: mainMeshRef, orig: originals.current.main!, scl: 1 },
+      { ref: outlineMeshRef, orig: originals.current.outline!, scl: 1.03 },
+      { ref: atmoMeshRef, orig: originals.current.atmo!, scl: 1.1 },
     ];
 
-    for (const { ref, orig, baseRadius } of meshes) {
-      if (!ref.current?.geometry || !orig) continue;
+    for (const { ref, orig, scl } of meshes) {
+      if (!ref.current?.geometry) continue;
 
       const posAttr = ref.current.geometry.attributes.position;
       const arr = posAttr.array as Float32Array;
-      const vertDir = new THREE.Vector3();
 
       for (let i = 0; i < posAttr.count; i++) {
-        const ox = orig[i * 3];
-        const oy = orig[i * 3 + 1];
-        const oz = orig[i * 3 + 2];
+        const i3 = i * 3;
+        const ox = orig[i3];
+        const oy = orig[i3 + 1];
+        const oz = orig[i3 + 2];
 
         // Vertex normal (direction from center, since it's a sphere)
-        vertDir.set(ox, oy, oz).normalize();
+        _vertDir.set(ox, oy, oz).normalize();
 
-        // How much this vertex faces the cursor direction
-        // dot = 1 when vertex points directly at cursor, -1 when away
-        const dot = vertDir.dot(smoothDir.current);
+        // How much this vertex faces the cursor direction (in local space)
+        const dot = _vertDir.dot(smoothDir.current);
 
-        // Only displace vertices that face toward the cursor
-        if (dot > 0) {
-          // Focused falloff: pow raises it to narrow the cone
+        if (dot > 0 && strength > 0.001) {
+          // Focused falloff: pow narrows the cone
           const influence = Math.pow(dot, BULGE_FOCUS);
-          const scale = baseRadius / PLANET_RADIUS; // scale displacement for outline/atmo
-          const displacement = strength * influence * scale;
+          const displacement = strength * influence * scl;
 
-          arr[i * 3] = ox + vertDir.x * displacement;
-          arr[i * 3 + 1] = oy + vertDir.y * displacement;
-          arr[i * 3 + 2] = oz + vertDir.z * displacement;
+          arr[i3] = ox + _vertDir.x * displacement;
+          arr[i3 + 1] = oy + _vertDir.y * displacement;
+          arr[i3 + 2] = oz + _vertDir.z * displacement;
         } else {
-          // Reset to original
-          arr[i * 3] = ox;
-          arr[i * 3 + 1] = oy;
-          arr[i * 3 + 2] = oz;
+          arr[i3] = ox;
+          arr[i3 + 1] = oy;
+          arr[i3 + 2] = oz;
         }
       }
 
@@ -243,14 +250,14 @@ function Satellite() {
 }
 
 function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
-  const groupPos = useMemo(() => new THREE.Vector3(offsetX, 0, 0), [offsetX]);
+  const parentRef = useRef<THREE.Group>(null!);
 
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
-      <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <MorphPlanet groupPosition={groupPos} />
+      <group ref={parentRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
+        <MorphPlanet parentGroupRef={parentRef} />
         <Satellite />
       </group>
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
