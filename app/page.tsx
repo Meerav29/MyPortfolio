@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink, Mail, Linkedin, Github, FileText } from "lucide-react";
 import Hero from "@/components/Hero";
+import ScrollReveal from "@/components/ScrollReveal";
 import { links } from "@/lib/links";
 import { projects } from "@/lib/projects";
 
@@ -21,15 +22,17 @@ export default function Page() {
 
 function Section({ id, title, children }: any) {
   return (
-    <section id={id} className="py-14 md:py-20 border-t border-border">
-      <div className="flex items-end justify-between mb-8">
-        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
-        <a href="#top" className="text-sm text-muted hover:text-link-hover">
-          Back to top
-        </a>
-      </div>
-      {children}
-    </section>
+    <ScrollReveal className="scroll-reveal-section">
+      <section id={id} className="py-14 md:py-20 border-t border-border">
+        <div className="flex items-end justify-between mb-8">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
+          <a href="#top" className="text-sm text-muted hover:text-link-hover">
+            Back to top
+          </a>
+        </div>
+        {children}
+      </section>
+    </ScrollReveal>
   );
 }
 
@@ -37,28 +40,29 @@ function Projects({ projects }: { projects: any[] }) {
   return (
     <Section id="projects" title="Featured Projects">
       <div className="grid md:grid-cols-2 gap-6">
-        {projects.map((p) => (
-          <Link
-            key={p.slug}
-            href={`/projects/${p.slug}`}
-            className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors"
-          >
-            <div className="flex items-start justify-between gap-6">
-              <h3 className="text-lg font-medium leading-snug text-black dark:text-white">{p.title}</h3>
-              <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
-            </div>
-            <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {p.tags?.map((t: string) => (
-                <span
-                  key={t}
-                  className="text-xs text-black dark:text-white rounded-full border border-black dark:border-white px-2 py-1 bg-transparent"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </Link>
+        {projects.map((p, idx) => (
+          <ScrollReveal key={p.slug} delay={90 * idx} distance={18}>
+            <Link
+              href={`/projects/${p.slug}`}
+              className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors scroll-reveal-card"
+            >
+              <div className="flex items-start justify-between gap-6">
+                <h3 className="text-lg font-medium leading-snug text-black dark:text-white">{p.title}</h3>
+                <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {p.tags?.map((t: string) => (
+                  <span
+                    key={t}
+                    className="text-xs text-black dark:text-white rounded-full border border-black dark:border-white px-2 py-1 bg-transparent"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          </ScrollReveal>
         ))}
       </div>
     </Section>
@@ -99,20 +103,21 @@ function Contact({ links }: { links: any }) {
         Graduating May 2026 and actively looking for full-time roles. Open to opportunities in AI, aerospace, and ed-tech — research, product, or engineering.
       </p>
       <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {contactLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            target={link.href.startsWith("mailto") ? undefined : "_blank"}
-            rel="noopener noreferrer"
-            className="group flex flex-col gap-3 rounded-2xl border border-border p-5 bg-card hover:border-accent transition-colors"
-          >
-            <div className="text-accent">{link.icon}</div>
-            <div>
-              <div className="text-sm font-medium">{link.label}</div>
-              <div className="text-xs text-muted mt-0.5">{link.value}</div>
-            </div>
-          </a>
+        {contactLinks.map((link, idx) => (
+          <ScrollReveal key={link.label} delay={80 * idx} distance={16}>
+            <a
+              href={link.href}
+              target={link.href.startsWith("mailto") ? undefined : "_blank"}
+              rel="noopener noreferrer"
+              className="group flex flex-col gap-3 rounded-2xl border border-border p-5 bg-card hover:border-accent transition-colors"
+            >
+              <div className="text-accent">{link.icon}</div>
+              <div>
+                <div className="text-sm font-medium">{link.label}</div>
+                <div className="text-xs text-muted mt-0.5">{link.value}</div>
+              </div>
+            </a>
+          </ScrollReveal>
         ))}
       </div>
     </Section>
