@@ -41,21 +41,23 @@ function Projects({ projects }: { projects: any[] }) {
     <Section id="projects" title="Featured Projects">
       <div className="grid md:grid-cols-2 gap-6">
         {projects.map((p, idx) => (
-          <ScrollReveal key={p.slug} delay={90 * idx} distance={18}>
+          <ScrollReveal key={p.slug} className="h-full" delay={90 * idx} distance={18}>
             <Link
               href={`/projects/${p.slug}`}
-              className="group rounded-2xl border border-border p-6 bg-card hover:bg-card transition-colors scroll-reveal-card"
+              className="scroll-reveal-card group flex h-full min-h-[17rem] flex-col rounded-[28px] border border-border bg-card p-6 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_22px_50px_-34px_rgba(15,23,42,0.5)]"
             >
-              <div className="flex items-start justify-between gap-6">
-                <h3 className="text-lg font-medium leading-snug text-black dark:text-white">{p.title}</h3>
-                <ExternalLink size={16} className="shrink-0 opacity-70 group-hover:opacity-100" />
+              <div className="flex flex-1 flex-col">
+                <div className="flex items-start justify-between gap-6">
+                  <h3 className="text-lg font-medium leading-snug text-black dark:text-white">{p.title}</h3>
+                  <ExternalLink size={16} className="mt-1 shrink-0 opacity-70 transition-opacity duration-300 group-hover:opacity-100" />
+                </div>
+                <p className="mt-3 max-w-[52ch] text-sm leading-relaxed text-muted">{p.summary}</p>
               </div>
-              <p className="mt-3 text-muted text-sm leading-relaxed">{p.summary}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-2">
                 {p.tags?.map((t: string) => (
                   <span
                     key={t}
-                    className="text-xs text-black dark:text-white rounded-full border border-black dark:border-white px-2 py-1 bg-transparent"
+                    className="rounded-full border border-black/80 bg-transparent px-3 py-1 text-xs text-black dark:border-white/80 dark:text-white"
                   >
                     {t}
                   </span>

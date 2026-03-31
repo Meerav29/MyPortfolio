@@ -101,19 +101,16 @@ body {
   --reveal-delay: 0ms;
   --reveal-distance: 24px;
   opacity: 0;
-  transform: translate3d(0, var(--reveal-distance), 0) scale(0.985);
-  filter: blur(6px);
+  transform: translate3d(0, var(--reveal-distance), 0);
   transition:
-    opacity 650ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay),
-    transform 650ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay),
-    filter 650ms ease-out var(--reveal-delay);
-  will-change: opacity, transform, filter;
+    opacity 560ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay),
+    transform 560ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay);
+  will-change: opacity, transform;
 }
 
 .scroll-reveal.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
-  filter: blur(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .scroll-reveal-section {
@@ -129,7 +126,6 @@ body {
   .scroll-reveal.is-visible {
     opacity: 1;
     transform: none;
-    filter: none;
     transition: none;
   }
 }
