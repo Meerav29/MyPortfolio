@@ -11,7 +11,7 @@ interface WorkRowProps {
 export function WorkRow({ item, linked = true }: WorkRowProps) {
   const inner = (
     <div className="group flex items-start gap-4 py-5 border-t border-border">
-      <div className="w-0.5 h-full min-h-[2.5rem] bg-border rounded-full shrink-0 mt-1" />
+      <div className="w-0.5 min-h-[2.5rem] bg-border rounded-full shrink-0 mt-1" />
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -41,5 +41,5 @@ export function WorkRow({ item, linked = true }: WorkRowProps) {
     );
   }
 
-  return inner;
+  return <div className="rounded-sm -mx-2 px-2">{inner}</div>;
 }

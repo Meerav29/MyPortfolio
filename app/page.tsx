@@ -3,6 +3,7 @@ import Link from "next/link";
 import StatementHero from "@/components/StatementHero";
 import { WorkRow } from "@/components/WorkRow";
 import { workItems } from "@/data/work";
+import { links } from "@/lib/links";
 
 const featured = workItems.filter((w) => w.featured);
 
@@ -26,7 +27,7 @@ export default function Page() {
       <footer className="border-t border-border">
         <div className="mx-auto max-w-3xl px-6 py-6 flex items-center justify-between text-xs text-muted/50">
           <span>© {new Date().getFullYear()} Meerav Shah</span>
-          <span>meeravshah29@gmail.com</span>
+          <span>{links.email}</span>
         </div>
       </footer>
     </div>

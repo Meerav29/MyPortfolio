@@ -38,7 +38,7 @@ export default function Page({
   const { items, pages } = paginate(posts, page, 9);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-14">
+    <main className="mx-auto max-w-3xl px-4 py-14">
       <h1 className="text-3xl font-semibold">Sidequests</h1>
       <p className="text-muted mb-6">Explorations off the main path.</p>
       <Filters tags={tags} />
