@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Linkedin, Github, ExternalLink, Menu, X } from "lucide-react";
-import { links } from "@/lib/links";
-import ThemeToggle from "./ThemeToggle";
-import NavLinks, { navLinks } from "./NavLinks";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X } from "lucide-react";
+
+const NAV = [
+  { label: "Work", href: "/work" },
+  { label: "Writing", href: "/sidequests" },
+];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -24,111 +25,74 @@ export default function Header() {
         setOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
   useEffect(() => {
-    function trapFocus(e: KeyboardEvent) {
-      if (!open || !menuRef.current) return;
-      const focusable = menuRef.current.querySelectorAll<HTMLElement>("a, button");
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (e.key === "Tab") {
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      } else if (e.key === "Escape") {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) {
         setOpen(false);
         buttonRef.current?.focus();
       }
     }
-
-    document.addEventListener("keydown", trapFocus);
-    return () => document.removeEventListener("keydown", trapFocus);
-  }, [open]);
-
-  useEffect(() => {
-    if (open) {
-      const first = menuRef.current?.querySelector<HTMLElement>("a, button");
-      first?.focus();
-    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, [open]);
 
   return (
-    <div className="relative sticky top-0 w-full z-50 backdrop-blur bg-background border-b border-border">
-      <nav className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between text-foreground">
-        <a href="/" className="font-semibold tracking-tight text-foreground">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur">
+      <nav className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+        <Link href="/" className="text-sm font-medium tracking-tight text-foreground">
           Meerav Shah
-        </a>
-        <NavLinks />
-        <div className="flex items-center gap-3">
-          <button
-            ref={buttonRef}
-            className="p-2 rounded-xl hover:bg-card md:hidden"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label="Toggle menu"
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-          >
-            {open ? <X size={18} /> : <Menu size={18} />}
-          </button>
-          <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle />
-            <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
-              <Linkedin size={18} />
-            </a>
-            <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-card">
-              <Github size={18} />
-            </a>
-            <a href={links.notion} aria-label="Notion" className="p-2 rounded-xl hover:bg-card">
-              <Image src="/notion-w.png" alt="Notion logo" width={18} height={18} className="dark:block hidden" />
-              <Image src="/notion-b.png" alt="Notion logo" width={18} height={18} className="dark:hidden block" />
-            </a>
-          </div>
-          <a
-            href={links.resume}
-            className="inline-flex items-center gap-2 text-sm rounded-xl border border-accent px-3 py-1.5 bg-accent text-background hover:bg-link-hover"
-          >
-            Resume <ExternalLink size={14} />
-          </a>
+        </Link>
+
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-6">
+          {NAV.map(({ label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="text-sm text-muted hover:text-foreground transition-colors"
+            >
+              {label}
+            </Link>
+          ))}
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          ref={buttonRef}
+          className="md:hidden p-2 text-muted hover:text-foreground"
+          onClick={() => setOpen((p) => !p)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+        >
+          {open ? <X size={18} /> : <Menu size={18} />}
+        </button>
       </nav>
+
       {open && (
         <div
           ref={menuRef}
           id="mobile-nav"
-          className="md:hidden absolute top-full left-0 w-full bg-background border-b border-border"
+          className="md:hidden border-t border-border bg-background"
         >
-          <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-4">
-            {navLinks.map(({ label, href }) => (
-              <Link key={label} href={href} onClick={() => setOpen(false)} className="py-2">
+          <div className="mx-auto max-w-3xl px-6 py-4 flex flex-col gap-4">
+            {NAV.map(({ label, href }) => (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="text-sm text-muted hover:text-foreground py-1 transition-colors"
+              >
                 {label}
               </Link>
             ))}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <ThemeToggle />
-              <a href={links.linkedin} aria-label="LinkedIn" className="p-2 rounded-xl hover:bg-card">
-                <Linkedin size={18} />
-              </a>
-              <a href={links.github} aria-label="GitHub" className="p-2 rounded-xl hover:bg-card">
-                <Github size={18} />
-              </a>
-            </div>
           </div>
         </div>
       )}
-    </div>
+    </header>
   );
 }

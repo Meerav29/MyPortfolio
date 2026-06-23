@@ -1,0 +1,83 @@
+// components/StatementHero.tsx
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
+
+type Word = { text: string; dim?: boolean };
+
+const STATEMENT: Word[][] = [
+  [{ text: "I" }, { text: "remove", dim: true }],
+  [{ text: "friction." }],
+];
+
+const SUBLINES = [
+  "From products and the code behind them.",
+  "CS + Astrophysics · Penn State · Seeking full-time roles.",
+];
+
+export default function StatementHero() {
+  const prefersReduced = useReducedMotion();
+
+  const allWords = STATEMENT.flatMap((line) => line);
+  let wordIndex = 0;
+
+  return (
+    <section className="flex min-h-[calc(100vh-57px)] flex-col justify-center px-6 py-20 mx-auto max-w-3xl">
+      <div className="space-y-2">
+        {STATEMENT.map((line, lineIdx) => (
+          <div key={lineIdx} className="flex flex-wrap gap-x-3 gap-y-1">
+            {line.map((word) => {
+              const delay = prefersReduced ? 0 : wordIndex++ * 0.07;
+              return (
+                <motion.span
+                  key={`${lineIdx}-${word.text}`}
+                  className={`text-5xl md:text-7xl font-light leading-tight tracking-tight ${
+                    word.dim ? "text-muted" : "text-foreground"
+                  }`}
+                  initial={prefersReduced ? {} : { opacity: 0, y: 8 }}
+                  animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay }}
+                >
+                  {word.text}
+                </motion.span>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 space-y-1">
+        {SUBLINES.map((line, i) => (
+          <motion.p
+            key={i}
+            className="text-sm text-muted leading-relaxed"
+            initial={prefersReduced ? {} : { opacity: 0, y: 6 }}
+            animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.4,
+              ease: "easeOut",
+              delay: prefersReduced ? 0 : allWords.length * 0.07 + 0.1 + i * 0.08,
+            }}
+          >
+            {line}
+          </motion.p>
+        ))}
+      </div>
+
+      <motion.div
+        className="mt-2"
+        initial={prefersReduced ? {} : { opacity: 0 }}
+        animate={prefersReduced ? {} : { opacity: 1 }}
+        transition={{ delay: prefersReduced ? 0 : allWords.length * 0.07 + 0.3, duration: 0.5 }}
+      >
+        <a
+          href="#work"
+          className="mt-8 inline-block text-xs text-muted/50 hover:text-muted transition-colors tracking-widest uppercase"
+          aria-label="Scroll to selected work"
+        >
+          ↓
+        </a>
+      </motion.div>
+    </section>
+  );
+}
