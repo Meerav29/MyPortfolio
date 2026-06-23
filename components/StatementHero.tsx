@@ -33,7 +33,7 @@ export default function StatementHero() {
           <div key={lineIdx} className="flex flex-wrap gap-x-3 gap-y-1">
             {line.map((word, wordIdx) => (
               <motion.span
-                key={`${lineIdx}-${word.text}`}
+                key={`${lineIdx}-${wordIdx}`}
                 className={`text-5xl md:text-7xl font-light leading-tight tracking-tight ${
                   word.dim ? "text-muted" : "text-foreground"
                 }`}
@@ -55,7 +55,7 @@ export default function StatementHero() {
       <div className="mt-8 space-y-1">
         {SUBLINES.map((line, i) => (
           <motion.p
-            key={line}
+            key={i}
             className="text-sm text-muted leading-relaxed"
             initial={prefersReduced ? {} : { opacity: 0, y: 6 }}
             animate={prefersReduced ? {} : { opacity: 1, y: 0 }}

@@ -27,7 +27,7 @@ export default function Page() {
       <footer className="border-t border-border">
         <div className="mx-auto max-w-3xl px-6 py-6 flex items-center justify-between text-xs text-muted/50">
           <span>© {new Date().getFullYear()} Meerav Shah</span>
-          <span>{links.email}</span>
+          <a href={`mailto:${links.email}`} className="hover:text-muted/80 transition-colors">{links.email}</a>
         </div>
       </footer>
     </div>

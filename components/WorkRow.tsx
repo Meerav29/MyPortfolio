@@ -41,5 +41,5 @@ export function WorkRow({ item, linked = true }: WorkRowProps) {
     );
   }
 
-  return <div className="rounded-sm -mx-2 px-2">{inner}</div>;
+  return <div className="rounded-sm -mx-2 px-2 hover:bg-card/40 transition-colors">{inner}</div>;
 }
