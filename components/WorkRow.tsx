@@ -41,5 +41,5 @@ export function WorkRow({ item, linked = true }: WorkRowProps) {
     );
   }
 
-  return <div>{inner}</div>;
+  return inner;
 }
