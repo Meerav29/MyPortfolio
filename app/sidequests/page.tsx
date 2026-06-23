@@ -44,7 +44,7 @@ export default function Page({
       <Filters tags={tags} />
       {items.length ? (
         <>
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
+          <div>
             {items.map((p) => (
               <SidequestCard key={p.slug} post={p} />
             ))}
