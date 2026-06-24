@@ -15,7 +15,8 @@ export default function SphereCanvas() {
     if (!ctx) return;
 
     const isDark = theme === "dark";
-    let t = 0;
+    // Start with satellite at front of orbit (sin≈1, fully visible) so it appears immediately
+    let t = (Math.PI / 2) / 0.55;
 
     function resize() {
       if (!canvas) return;
