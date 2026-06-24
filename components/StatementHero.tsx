@@ -2,6 +2,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import SphereCanvas from "@/components/SphereCanvas";
 
 type Word = { text: string; dim?: boolean };
 
@@ -27,7 +28,9 @@ export default function StatementHero() {
   const prefersReduced = useReducedMotion();
 
   return (
-    <section className="flex min-h-[calc(100vh-57px)] flex-col justify-center px-6 py-20 mx-auto max-w-3xl">
+    <section className="relative flex min-h-[calc(100vh-57px)] flex-col justify-center overflow-hidden">
+      <SphereCanvas />
+      <div className="relative z-10 mx-auto w-full max-w-3xl px-6 py-20">
       <div className="space-y-2">
         {STATEMENT.map((line, lineIdx) => (
           <div key={lineIdx} className="flex flex-wrap gap-x-3 gap-y-1">
@@ -84,6 +87,7 @@ export default function StatementHero() {
           ↓
         </a>
       </motion.div>
+      </div>
     </section>
   );
 }
