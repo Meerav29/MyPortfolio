@@ -7,13 +7,13 @@ import SphereCanvas from "@/components/SphereCanvas";
 type Word = { text: string; dim?: boolean };
 
 const STATEMENT: Word[][] = [
-  [{ text: "I" }, { text: "remove", dim: true }],
-  [{ text: "friction." }],
+  [{ text: "Research-trained." }],
+  [{ text: "Product-minded." }],
+  [{ text: "I" }, { text: "build", dim: true }, { text: "AI." }],
 ];
 
 const SUBLINES = [
-  "From products and the code behind them.",
-  "CS + Astrophysics · Penn State · Seeking full-time roles.",
+  "Applied AI · CS + Astrophysics · Penn State.",
 ];
 
 // Pre-compute word delays to avoid mutation during render
