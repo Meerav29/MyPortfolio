@@ -7,77 +7,145 @@ export type WorkItem = {
   role: string;            // job title or researcher role
   description: string;     // 1–2 sentences, plain prose
   link?: string;           // optional external or internal URL
-  featured?: boolean;      // true = show on home page (max 3)
+  featured?: boolean;      // true = show on home page
+  category: "industry" | "research" | "early";
 };
 
 export const workItems: WorkItem[] = [
+  // ── Industry ──────────────────────────────────────────────────────────────
   {
-    id: "rolai",
-    period: "Jun 2025 – Present",
+    id: "rolai-engineer",
+    period: "Jun 2026–Present",
     org: "Rolai",
-    role: "AI Engineering & Applied Research Intern",
-    description:
-      "Deployed an academic advising chatbot on the Rolai platform with live web-scraping, cutting manual content maintenance by ~50%. Co-authored 3 white papers and leading a human-centered study measuring chatbot impact for 50+ students.",
+    role: "Applied AI Engineer",
+    description: "🚀",
     featured: true,
+    category: "industry",
   },
   {
-    id: "ist-research",
-    period: "Jun 2024 – Present",
-    org: "College of IST, Penn State",
-    role: "Undergraduate Researcher — AI Solutions for Advising",
+    id: "rolai-intern",
+    period: "Sep 2025–Jun 2026",
+    org: "Rolai",
+    role: "AI Engineering Intern",
     description:
-      "Built and evaluated an LLM-powered advising chatbot that reduced student advising load by ~35%. Published results at ACM SIGCSE 2025.",
-    link: "https://dl.acm.org/doi/10.1145/3641555.3705026",
+      "Built & deployed 32+ client-facing AI solutions on the Rolai platform; engineered Monday.com integration bringing 130+ API actions to end users; improved delivery time 20%.",
     featured: true,
+    category: "industry",
+  },
+  {
+    id: "rolai-research",
+    period: "Jun–Aug 2025",
+    org: "Rolai",
+    role: "Applied Research Intern",
+    description:
+      "Deployed an academic advising chatbot with live web-scraping, reducing content maintenance ~50%. Co-authored 3 white papers on AI in education; developed 45 AI automation use-cases.",
+    featured: false,
+    category: "industry",
+  },
+  {
+    id: "psu-avt",
+    period: "Jan–Mar 2026",
+    org: "Penn State Advanced Vehicle Team",
+    role: "Perception Engineer",
+    description:
+      "Refactored LiDAR–camera depth fusion pipeline to ±0.2m accuracy — 60% beyond spec. Implemented unit testing in ROS2-based perception stack.",
+    featured: false,
+    category: "industry",
   },
   {
     id: "perplexity",
-    period: "Jan 2024 – Present",
+    period: "Aug 2024–May 2025",
     org: "Perplexity",
-    role: "Campus Strategist — Penn State",
+    role: "Campus Strategist",
     description:
-      "Drove campus growth to 774 sign-ups through targeted outreach and community programming.",
+      "Grew Penn State to 774 sign-ups. Planned and organized campus PR events for Perplexity.ai.",
+    featured: false,
+    category: "industry",
   },
+
+  // ── Research & Leadership ─────────────────────────────────────────────────
   {
-    id: "learning-assistant",
-    period: "Jan 2024 – Present",
-    org: "IST 130 — Intro to AI & Art, Penn State",
-    role: "Lead Learning Assistant",
+    id: "ist-research",
+    period: "Jun 2024–Jun 2026",
+    org: "College of IST, Penn State",
+    role: "Undergraduate Research Assistant",
     description:
-      "Lead a team of 14 LAs; manage operations, grading, and correspondence for an AI literacy course.",
+      "Built LLM-powered academic advising chatbot reducing advising load 35%. Published at ACM SIGCSE 2025.",
+    link: "https://dl.acm.org/doi/10.1145/3641555.3705026",
+    featured: false,
+    category: "research",
   },
   {
     id: "uav-icing",
-    period: "Jun 2024 – Aug 2024",
-    org: "Vertical Lift Research Center (MCREU), Penn State",
-    role: "Undergraduate Researcher — Autonomous UAV Icing",
+    period: "Jun–Jul 2024",
+    org: "Penn State College of Engineering (MC REU)",
+    role: "Researcher",
     description:
-      "Analyzed torque and RPM signals to estimate icing impact on UAV performance. Proposed real-time mitigation algorithms; presented at ASEE MidAtlantic 2025.",
+      "Investigated UAV icing detection using torque and RPM loss signals. Presented at ASEE MidAtlantic 2025.",
     link: "https://sites.google.com/psu.edu/meeravshah/mc-reu-research",
-    featured: true,
+    featured: false,
+    category: "research",
   },
   {
-    id: "nasa",
-    period: "Oct 2023 – Feb 2024",
+    id: "av-research",
+    period: "Aug 2023–May 2024",
+    org: "Penn State Research",
+    role: "Undergraduate Researcher",
+    description:
+      "Driving simulator study on human–AV interaction using STISIM3. Built 4 road scenarios to test driver behavior around autonomous vehicles.",
+    featured: false,
+    category: "research",
+  },
+  {
+    id: "nasa-big-idea",
+    period: "Oct 2023–May 2024",
     org: "NASA BIG Idea Challenge — SSPL",
     role: "Team Lead & Researcher",
     description:
-      "Led a 15-member team developing inflatable lunar regolith construction concepts for the NASA BIG Idea Challenge.",
+      "Led 15-person team on lunar regolith 3D printing system — inflatable dome enclosing a robotic arm 3D printer, fully self-deployed.",
+    featured: false,
+    category: "research",
   },
   {
-    id: "hti-lab",
-    period: "Sep 2023 – May 2024",
-    org: "Human–Technology Interaction Lab, Penn State",
-    role: "Undergraduate Researcher — Autonomous Vehicle Studies",
+    id: "ist-la",
+    period: "Jan 2024–May 2025",
+    org: "Penn State College of IST",
+    role: "Lead Learning Assistant",
     description:
-      "Built four STISIM3 road scenarios and ran simulator studies across AV market-penetration levels to model human–AV interaction.",
+      "Led team of 14 LAs for IST 130 (AI & Art). Managed grading, operations, correspondence. Curated 50+ AI tools for 500+ students.",
+    featured: false,
+    category: "research",
   },
+
+  // ── Early Projects ────────────────────────────────────────────────────────
   {
     id: "lirem",
     period: "2020",
     org: "Lirem",
     role: "Founder",
     description:
-      "Launched a neighborhood reading program that grew into a city-wide volunteer network before COVID halted operations.",
+      "Launched a neighborhood reading program; grew city-wide volunteer network until COVID halted ops. Learned ownership, rapid decision-making, and validation.",
+    featured: false,
+    category: "early",
+  },
+  {
+    id: "code-warriors",
+    period: "Jun 2020–Jun 2021",
+    org: "Code Warriors Club, DPS Bopal",
+    role: "Director",
+    description:
+      "Grew club to 100+ members during COVID by going fully online. Ran Technovanza — city-wide tech-fest with 1,000+ attendees.",
+    featured: false,
+    category: "early",
+  },
+  {
+    id: "electrobotic",
+    period: "Sep–Oct 2019",
+    org: "Electrobotic Manufacturing",
+    role: "Intern",
+    description:
+      "Built AWD robot with 4-axis arm. Led team to national finals at Nirma University Robocon — ranked 9th overall.",
+    featured: false,
+    category: "early",
   },
 ];
