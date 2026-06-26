@@ -29,10 +29,10 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     document.documentElement.classList.toggle("dark", initial === "dark");
 
     const handleChange = (e: MediaQueryListEvent) => {
+      if (window.localStorage.getItem("theme")) return;
       const sys: Theme = e.matches ? "dark" : "light";
       setTheme(sys);
       document.documentElement.classList.toggle("dark", sys === "dark");
-      window.localStorage.setItem("theme", sys);
     };
     mql.addEventListener("change", handleChange);
     return () => mql.removeEventListener("change", handleChange);
