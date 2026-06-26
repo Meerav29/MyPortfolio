@@ -27,11 +27,11 @@ export default function Page() {
           <h2 className="text-xs uppercase tracking-widest text-muted/60 mb-4">Get in touch</h2>
           <div className="flex items-center gap-3 text-sm text-muted flex-wrap">
             <a href={`mailto:${links.email}`} className="hover:text-foreground transition-colors">Email</a>
-            <span className="text-muted/30">·</span>
+            <span className="text-muted/30" aria-hidden="true">·</span>
             <a href={links.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">LinkedIn</a>
-            <span className="text-muted/30">·</span>
+            <span className="text-muted/30" aria-hidden="true">·</span>
             <a href={links.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
-            <span className="text-muted/30">·</span>
+            <span className="text-muted/30" aria-hidden="true">·</span>
             <a href={links.resume} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Resume</a>
           </div>
         </section>
