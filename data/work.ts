@@ -39,7 +39,6 @@ export const workItems: WorkItem[] = [
     role: "Applied Research Intern",
     description:
       "Deployed an academic advising chatbot with live web-scraping, reducing content maintenance ~50%. Co-authored 3 white papers on AI in education; developed 45 AI automation use-cases.",
-    featured: false,
     category: "industry",
   },
   {
@@ -49,7 +48,6 @@ export const workItems: WorkItem[] = [
     role: "Perception Engineer",
     description:
       "Refactored LiDAR–camera depth fusion pipeline to ±0.2m accuracy — 60% beyond spec. Implemented unit testing in ROS2-based perception stack.",
-    featured: false,
     category: "industry",
   },
   {
@@ -59,7 +57,6 @@ export const workItems: WorkItem[] = [
     role: "Campus Strategist",
     description:
       "Grew Penn State to 774 sign-ups. Planned and organized campus PR events for Perplexity.ai.",
-    featured: false,
     category: "industry",
   },
 
@@ -72,7 +69,6 @@ export const workItems: WorkItem[] = [
     description:
       "Built LLM-powered academic advising chatbot reducing advising load 35%. Published at ACM SIGCSE 2025.",
     link: "https://dl.acm.org/doi/10.1145/3641555.3705026",
-    featured: false,
     category: "research",
   },
   {
@@ -83,7 +79,6 @@ export const workItems: WorkItem[] = [
     description:
       "Investigated UAV icing detection using torque and RPM loss signals. Presented at ASEE MidAtlantic 2025.",
     link: "https://sites.google.com/psu.edu/meeravshah/mc-reu-research",
-    featured: false,
     category: "research",
   },
   {
@@ -93,7 +88,6 @@ export const workItems: WorkItem[] = [
     role: "Undergraduate Researcher",
     description:
       "Driving simulator study on human–AV interaction using STISIM3. Built 4 road scenarios to test driver behavior around autonomous vehicles.",
-    featured: false,
     category: "research",
   },
   {
@@ -103,7 +97,6 @@ export const workItems: WorkItem[] = [
     role: "Team Lead & Researcher",
     description:
       "Led 15-person team on lunar regolith 3D printing system — inflatable dome enclosing a robotic arm 3D printer, fully self-deployed.",
-    featured: false,
     category: "research",
   },
   {
@@ -113,7 +106,6 @@ export const workItems: WorkItem[] = [
     role: "Lead Learning Assistant",
     description:
       "Led team of 14 LAs for IST 130 (AI & Art). Managed grading, operations, correspondence. Curated 50+ AI tools for 500+ students.",
-    featured: false,
     category: "research",
   },
 
@@ -125,7 +117,6 @@ export const workItems: WorkItem[] = [
     role: "Founder",
     description:
       "Launched a neighborhood reading program; grew city-wide volunteer network until COVID halted ops. Learned ownership, rapid decision-making, and validation.",
-    featured: false,
     category: "early",
   },
   {
@@ -135,7 +126,6 @@ export const workItems: WorkItem[] = [
     role: "Director",
     description:
       "Grew club to 100+ members during COVID by going fully online. Ran Technovanza — city-wide tech-fest with 1,000+ attendees.",
-    featured: false,
     category: "early",
   },
   {
@@ -145,7 +135,6 @@ export const workItems: WorkItem[] = [
     role: "Intern",
     description:
       "Built AWD robot with 4-axis arm. Led team to national finals at Nirma University Robocon — ranked 9th overall.",
-    featured: false,
     category: "early",
   },
 ];
