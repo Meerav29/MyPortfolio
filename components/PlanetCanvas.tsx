@@ -141,9 +141,12 @@ function Scene({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", sc
     driftRef.current.traverse((obj) => {
       if (obj instanceof THREE.Mesh) {
         const mat = obj.material as THREE.Material & { opacity?: number; transparent?: boolean };
-        if (mat) {
+        // Only meshes deliberately opted into the fade (Planet's three meshes, via
+        // userData.baseOpacity set at creation) are touched here. This excludes
+        // Satellite's meshes, which must remain fully opaque and unaffected by scroll.
+        if (mat && mat.userData.baseOpacity !== undefined) {
           mat.transparent = true;
-          mat.opacity = opacityRef.current * (mat.userData.baseOpacity ?? 1);
+          mat.opacity = opacityRef.current * mat.userData.baseOpacity;
         }
       }
     });
