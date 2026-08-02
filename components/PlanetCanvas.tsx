@@ -1,11 +1,51 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Suspense, useEffect, useMemo, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Stars, Trail, useFBO } from "@react-three/drei";
+import { Canvas, useFrame, useThree, extend, Object3DNode } from "@react-three/fiber";
+import { Stars, Trail, useFBO, shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
+
+const GlowMaterial = shaderMaterial(
+  { map: null, heatmap: null, glowColor: new THREE.Color("#ffffff"), glowStrength: 0.9 },
+  `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  `
+    uniform sampler2D map;
+    uniform sampler2D heatmap;
+    uniform vec3 glowColor;
+    uniform float glowStrength;
+    varying vec2 vUv;
+    void main() {
+      vec3 base = texture2D(map, vUv).rgb;
+      float heat = texture2D(heatmap, vUv).r;
+      vec3 result = base + glowColor * heat * glowStrength;
+      gl_FragColor = vec4(clamp(result, 0.0, 1.0), 1.0);
+    }
+  `
+);
+
+extend({ GlowMaterial });
+
+type GlowMaterialUniforms = {
+  map?: THREE.Texture | null;
+  heatmap?: THREE.Texture | null;
+  glowColor?: THREE.Color | string;
+  glowStrength?: number;
+};
+
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    glowMaterial: Object3DNode<InstanceType<typeof GlowMaterial>, typeof GlowMaterial> &
+      GlowMaterialUniforms;
+  }
+}
 
 // Generate a starry canvas texture using the provided base color.
 function useCosmicTexture(base: string, size = 1024) {
@@ -120,12 +160,31 @@ function useHeatmap(enabled: boolean) {
   return { texture: swapRef.current.read.texture, stamp, getTexture: () => swapRef.current.read.texture };
 }
 
+function useBlackTexture() {
+  return useMemo(() => {
+    const data = new Uint8Array([0, 0, 0, 255]);
+    const tex = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
+    tex.needsUpdate = true;
+    return tex;
+  }, []);
+}
+
 // --- Planet: cosmic sphere with subtle glow
-function Planet({ radius = 0.9, darkColor = "#3D4A5C" }: { radius?: number; darkColor?: string }) {
+function Planet({
+  radius = 0.9,
+  darkColor = "#3D4A5C",
+  heatmapTexture = null,
+}: {
+  radius?: number;
+  darkColor?: string;
+  heatmapTexture?: THREE.Texture | null;
+}) {
   const { background } = useThemeColors();
   const { theme } = useTheme();
   const base = theme === "dark" ? "#8EC5FC" : "#000000";
   const texture = useCosmicTexture(base);
+  const blackTex = useBlackTexture();
+  const heatmap = heatmapTexture ?? blackTex;
   const planetRef = useRef<THREE.Group>(null!);
 
   useFrame((_, dt) => {
@@ -147,7 +206,13 @@ function Planet({ radius = 0.9, darkColor = "#3D4A5C" }: { radius?: number; dark
       {/* textured body */}
       <mesh castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
-        <meshStandardMaterial map={texture} roughness={1} metalness={0} userData={{ baseOpacity: 1 }} />
+        <glowMaterial
+          map={texture}
+          heatmap={heatmap}
+          glowColor={"#ffffff"}
+          glowStrength={0.9}
+          userData={{ baseOpacity: 1 }}
+        />
       </mesh>
 
       {/* soft atmosphere */}
@@ -199,9 +264,17 @@ type PlanetProps = {
   radius?: number;
   darkColor?: string;
   scrollProgress?: number;
+  heatmapTexture?: THREE.Texture | null;
 };
 
-function Scene({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: PlanetProps) {
+function Scene({
+  offsetX = 0,
+  scale = 1,
+  radius = 0.9,
+  darkColor = "#3D4A5C",
+  scrollProgress = 0,
+  heatmapTexture = null,
+}: PlanetProps) {
   const driftRef = useRef<THREE.Group>(null!);
   const opacityRef = useRef(1);
 
@@ -236,7 +309,7 @@ function Scene({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", sc
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <group ref={driftRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <Planet radius={radius} darkColor={darkColor} />
+        <Planet radius={radius} darkColor={darkColor} heatmapTexture={heatmapTexture} />
         <Satellite />
       </group>
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
