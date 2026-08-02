@@ -8,7 +8,7 @@ import { useThemeColors, lighten, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
 
 const GlowMaterial = shaderMaterial(
-  { map: null, heatmap: null, glowColor: new THREE.Color("#ffffff"), glowStrength: 0.9 },
+  { map: null, heatmap: null, glowColor: new THREE.Color("#ffffff"), glowStrength: 0.9, opacity: 1.0 },
   `
     varying vec2 vUv;
     void main() {
@@ -21,12 +21,13 @@ const GlowMaterial = shaderMaterial(
     uniform sampler2D heatmap;
     uniform vec3 glowColor;
     uniform float glowStrength;
+    uniform float opacity;
     varying vec2 vUv;
     void main() {
       vec3 base = texture2D(map, vUv).rgb;
       float heat = texture2D(heatmap, vUv).r;
       vec3 result = base + glowColor * heat * glowStrength;
-      gl_FragColor = vec4(clamp(result, 0.0, 1.0), 1.0);
+      gl_FragColor = vec4(clamp(result, 0.0, 1.0), opacity);
     }
   `
 );
