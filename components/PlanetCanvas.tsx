@@ -42,7 +42,7 @@ function useCosmicTexture(base: string, size = 1024) {
 }
 
 // --- Planet: cosmic sphere with subtle glow
-function Planet() {
+function Planet({ radius = 0.9, darkColor = "#3D4A5C" }: { radius?: number; darkColor?: string }) {
   const { background } = useThemeColors();
   const { theme } = useTheme();
   const base = theme === "dark" ? "#8EC5FC" : "#000000";
@@ -61,13 +61,14 @@ function Planet() {
         <meshBasicMaterial
           color={theme === "dark" ? "#000000" : darken(background, 0.6)}
           side={THREE.BackSide}
+          userData={{ baseOpacity: 1 }}
         />
       </mesh>
 
       {/* textured body */}
       <mesh castShadow receiveShadow>
         <sphereGeometry args={[1.2, 64, 64]} />
-        <meshStandardMaterial map={texture} roughness={1} metalness={0} />
+        <meshStandardMaterial map={texture} roughness={1} metalness={0} userData={{ baseOpacity: 1 }} />
       </mesh>
 
       {/* soft atmosphere */}
@@ -78,6 +79,7 @@ function Planet() {
           transparent
           opacity={0.08}
           blending={THREE.AdditiveBlending}
+          userData={{ baseOpacity: 0.08 }}
         />
       </mesh>
     </group>
@@ -112,13 +114,47 @@ function Satellite() {
   );
 }
 
-function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+type PlanetProps = {
+  offsetX?: number;
+  scale?: number;
+  radius?: number;
+  darkColor?: string;
+  scrollProgress?: number;
+};
+
+function Scene({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: PlanetProps) {
+  const driftRef = useRef<THREE.Group>(null!);
+  const opacityRef = useRef(1);
+
+  useFrame((_, dt) => {
+    if (!driftRef.current) return;
+    const lerpSpeed = 1 - Math.pow(0.001, dt); // frame-rate independent ease
+
+    const targetX = offsetX - scrollProgress * 3; // drift further left
+    const targetScale = scale * (1 - scrollProgress * 0.35); // ease down to 65%
+    opacityRef.current += (Math.max(0, 1 - scrollProgress * 1.4) - opacityRef.current) * lerpSpeed;
+
+    driftRef.current.position.x += (targetX - driftRef.current.position.x) * lerpSpeed;
+    const s = driftRef.current.scale.x + (targetScale - driftRef.current.scale.x) * lerpSpeed;
+    driftRef.current.scale.set(s, s, s);
+
+    driftRef.current.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        const mat = obj.material as THREE.Material & { opacity?: number; transparent?: boolean };
+        if (mat) {
+          mat.transparent = true;
+          mat.opacity = opacityRef.current * (mat.userData.baseOpacity ?? 1);
+        }
+      }
+    });
+  });
+
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
-      <group position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <Planet />
+      <group ref={driftRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
+        <Planet radius={radius} darkColor={darkColor} />
         <Satellite />
       </group>
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
@@ -131,7 +167,7 @@ function Scene({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number })
 const R3FCanvas = dynamic(
   () =>
     Promise.resolve(
-      ({ className, offsetX = 0, scale = 1 }: { className?: string; offsetX?: number; scale?: number }) => (
+      ({ className, offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: { className?: string } & PlanetProps) => (
       <Canvas
         className={className}
         dpr={[1, 2]}
@@ -139,7 +175,7 @@ const R3FCanvas = dynamic(
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <Scene offsetX={offsetX} scale={scale} />
+          <Scene offsetX={offsetX} scale={scale} radius={radius} darkColor={darkColor} scrollProgress={scrollProgress} />
         </Suspense>
       </Canvas>
       )
@@ -147,7 +183,7 @@ const R3FCanvas = dynamic(
   { ssr: false }
 );
 
-export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: number; scale?: number }) {
+export default function PlanetCanvas({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: PlanetProps) {
   return (
     <div className="relative w-full h-full" aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
@@ -157,7 +193,14 @@ export default function PlanetCanvas({ offsetX = 0, scale = 1 }: { offsetX?: num
         }
       `}</style>
       {/* override global canvas pointer-events to allow interaction */}
-      <R3FCanvas className="absolute inset-0 pointer-events-auto" offsetX={offsetX} scale={scale} />
+      <R3FCanvas
+        className="absolute inset-0 pointer-events-auto"
+        offsetX={offsetX}
+        scale={scale}
+        radius={radius}
+        darkColor={darkColor}
+        scrollProgress={scrollProgress}
+      />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
     </div>

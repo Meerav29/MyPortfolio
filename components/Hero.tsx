@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import PlanetCanvas from "./PlanetCanvas";
 import ScrollIndicator from "./ScrollIndicator";
+import { useScrollProgress } from "../lib/useScrollProgress";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -21,11 +23,18 @@ function useMediaQuery(query: string) {
 
 export default function Hero({ id }: { id?: string }) {
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const scrollProgress = useScrollProgress();
+  const reducedMotion = useReducedMotion();
+  const effectiveScrollProgress = reducedMotion ? 0 : scrollProgress;
   return (
     <section id={id} className="relative h-screen w-full overflow-hidden">
       {/* Full-screen background animation */}
       <div className="absolute inset-0">
-        <PlanetCanvas offsetX={isMobile ? 0.5 : 2} scale={isMobile ? 0.8 : 1} />
+        <PlanetCanvas
+          offsetX={isMobile ? 0.5 : 2}
+          scale={isMobile ? 0.8 : 1}
+          scrollProgress={effectiveScrollProgress}
+        />
       </div>
       {/* Bottom fade to page background for cohesion */}
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent to-[var(--background)]" />
