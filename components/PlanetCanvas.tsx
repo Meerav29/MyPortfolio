@@ -174,22 +174,36 @@ function useBlackTexture() {
 function Planet({
   radius = 0.9,
   darkColor = "#3D4A5C",
-  heatmapTexture = null,
+  getHeatmapTexture,
+  onSurfacePointerMove,
+  onSurfacePointerOut,
 }: {
   radius?: number;
   darkColor?: string;
-  heatmapTexture?: THREE.Texture | null;
+  getHeatmapTexture?: () => THREE.Texture | null;
+  onSurfacePointerMove?: (uv: THREE.Vector2) => void;
+  onSurfacePointerOut?: () => void;
 }) {
   const { background } = useThemeColors();
   const { theme } = useTheme();
   const base = theme === "dark" ? "#8EC5FC" : "#000000";
   const texture = useCosmicTexture(base);
   const blackTex = useBlackTexture();
-  const heatmap = heatmapTexture ?? blackTex;
   const planetRef = useRef<THREE.Group>(null!);
+  const glowMatRef = useRef<InstanceType<typeof GlowMaterial> & GlowMaterialUniforms>(null!);
 
   useFrame((_, dt) => {
     if (planetRef.current) planetRef.current.rotation.y += dt * 0.1;
+
+    // Read the heat-map texture fresh every frame (never hold a stale
+    // React-render-time reference — see useHeatmap's swapRef gotcha) and
+    // assign it directly to the material's uniform via the material ref,
+    // bypassing React prop diffing/JSX entirely so it can never lag behind
+    // Scene's (infrequent) React re-render cadence.
+    if (glowMatRef.current) {
+      const live = getHeatmapTexture ? getHeatmapTexture() : null;
+      glowMatRef.current.heatmap = live ?? blackTex;
+    }
   });
 
   return (
@@ -205,11 +219,23 @@ function Planet({
       </mesh>
 
       {/* textured body */}
-      <mesh castShadow receiveShadow>
+      <mesh
+        castShadow
+        receiveShadow
+        onPointerMove={(e) => {
+          e.stopPropagation();
+          if (e.uv && onSurfacePointerMove) onSurfacePointerMove(e.uv);
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onSurfacePointerOut?.();
+        }}
+      >
         <sphereGeometry args={[1.2, 64, 64]} />
         <glowMaterial
+          ref={glowMatRef}
           map={texture}
-          heatmap={heatmap}
+          heatmap={blackTex}
           glowColor={"#ffffff"}
           glowStrength={0.9}
           userData={{ baseOpacity: 1 }}
@@ -265,7 +291,7 @@ type PlanetProps = {
   radius?: number;
   darkColor?: string;
   scrollProgress?: number;
-  heatmapTexture?: THREE.Texture | null;
+  glowEnabled?: boolean;
 };
 
 function Scene({
@@ -274,10 +300,11 @@ function Scene({
   radius = 0.9,
   darkColor = "#3D4A5C",
   scrollProgress = 0,
-  heatmapTexture = null,
+  glowEnabled = false,
 }: PlanetProps) {
   const driftRef = useRef<THREE.Group>(null!);
   const opacityRef = useRef(1);
+  const heatmap = useHeatmap(glowEnabled);
 
   useFrame((_, dt) => {
     if (!driftRef.current) return;
@@ -310,7 +337,13 @@ function Scene({
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 5, 4]} intensity={1.1} castShadow />
       <group ref={driftRef} position={[offsetX, 0, 0]} scale={[scale, scale, scale]}>
-        <Planet radius={radius} darkColor={darkColor} heatmapTexture={heatmapTexture} />
+        <Planet
+          radius={radius}
+          darkColor={darkColor}
+          getHeatmapTexture={glowEnabled ? heatmap.getTexture : undefined}
+          onSurfacePointerMove={glowEnabled ? (uv) => heatmap.stamp(uv) : undefined}
+          onSurfacePointerOut={glowEnabled ? () => heatmap.stamp(null) : undefined}
+        />
         <Satellite />
       </group>
       <Stars radius={50} depth={30} count={1200} factor={2} fade />
@@ -323,7 +356,7 @@ function Scene({
 const R3FCanvas = dynamic(
   () =>
     Promise.resolve(
-      ({ className, offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: { className?: string } & PlanetProps) => (
+      ({ className, offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0, glowEnabled = false }: { className?: string } & PlanetProps) => (
       <Canvas
         className={className}
         dpr={[1, 2]}
@@ -331,7 +364,7 @@ const R3FCanvas = dynamic(
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <Scene offsetX={offsetX} scale={scale} radius={radius} darkColor={darkColor} scrollProgress={scrollProgress} />
+          <Scene offsetX={offsetX} scale={scale} radius={radius} darkColor={darkColor} scrollProgress={scrollProgress} glowEnabled={glowEnabled} />
         </Suspense>
       </Canvas>
       )
@@ -339,16 +372,30 @@ const R3FCanvas = dynamic(
   { ssr: false }
 );
 
-export default function PlanetCanvas({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0 }: PlanetProps) {
+export default function PlanetCanvas({ offsetX = 0, scale = 1, radius = 0.9, darkColor = "#3D4A5C", scrollProgress = 0, glowEnabled = false }: PlanetProps) {
   return (
-    <div className="relative w-full h-full" aria-hidden="true">
+    <div className="relative w-full h-full" data-glow-enabled={glowEnabled} aria-hidden="true">
       {/* prefers-reduced-motion: pause auto-rotate */}
       <style>{`
         @media (prefers-reduced-motion: reduce) {
           canvas { animation: none !important; }
         }
       `}</style>
-      {/* override global canvas pointer-events to allow interaction */}
+      {/*
+        globals.css applies `canvas { pointer-events: none }` site-wide as a
+        decorative-layer safeguard. R3F's <Canvas> forwards className/style
+        props to its own outer wrapper div, not to the underlying <canvas>
+        DOM node itself, so a pointer-events-auto utility class or inline
+        style on <Canvas> cannot win against that global rule (which targets
+        the canvas element directly). This scoped selector re-enables pointer
+        events on the canvas specifically within this component instance,
+        and only when glow is active -- canvases rendered with
+        glowEnabled=false (mobile / reduced-motion) keep the original
+        non-interactive behavior.
+      */}
+      <style>{`
+        [data-glow-enabled=true] canvas { pointer-events: auto; }
+      `}</style>
       <R3FCanvas
         className="absolute inset-0 pointer-events-auto"
         offsetX={offsetX}
@@ -356,6 +403,7 @@ export default function PlanetCanvas({ offsetX = 0, scale = 1, radius = 0.9, dar
         radius={radius}
         darkColor={darkColor}
         scrollProgress={scrollProgress}
+        glowEnabled={glowEnabled}
       />
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(transparent,rgba(0,0,0,0.35))]" />
