@@ -1,8 +1,8 @@
 "use client";
 import dynamic from "next/dynamic";
-import { Suspense, useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars, Trail } from "@react-three/drei";
+import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Stars, Trail, useFBO } from "@react-three/drei";
 import * as THREE from "three";
 import { useThemeColors, lighten, darken } from "../lib/theme";
 import { useTheme } from "./ThemeProvider";
@@ -39,6 +39,85 @@ function useCosmicTexture(base: string, size = 1024) {
 
     return new THREE.CanvasTexture(canvas);
   }, [base, size]);
+}
+
+const HEATMAP_SIZE = 256;
+
+// Offscreen heat-map render target: accumulates a decaying glow at a stamped
+// UV position every frame. Not yet wired to any consumer (Tasks 5/6 will read
+// `texture` in a shader and call `stamp` from a pointer-raycast handler).
+function useHeatmap(enabled: boolean) {
+  const { gl } = useThree();
+  const fboA = useFBO(HEATMAP_SIZE, HEATMAP_SIZE);
+  const fboB = useFBO(HEATMAP_SIZE, HEATMAP_SIZE);
+  const swapRef = useRef({ read: fboA, write: fboB });
+
+  const stampUv = useRef<THREE.Vector2 | null>(null);
+
+  const scene = useMemo(() => new THREE.Scene(), []);
+  const camera = useMemo(() => new THREE.OrthographicCamera(0, 1, 1, 0, 0, 1), []);
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          uPrev: { value: null },
+          uStamp: { value: new THREE.Vector2(-1, -1) },
+          uDecay: { value: 0.95 },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = vec4(position.xy * 2.0 - 1.0, 0.0, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uPrev;
+          uniform vec2 uStamp;
+          uniform float uDecay;
+          varying vec2 vUv;
+          void main() {
+            vec3 prev = texture2D(uPrev, vUv).rgb * uDecay;
+            float glow = 0.0;
+            if (uStamp.x >= 0.0) {
+              float d = distance(vUv, uStamp);
+              glow = smoothstep(0.12, 0.0, d);
+            }
+            vec3 result = clamp(prev + glow, 0.0, 1.0);
+            gl_FragColor = vec4(result, 1.0);
+          }
+        `,
+      }),
+    []
+  );
+  const quad = useMemo(() => new THREE.Mesh(new THREE.PlaneGeometry(1, 1).translate(0.5, 0.5, 0), material), [material]);
+
+  useEffect(() => {
+    scene.add(quad);
+    return () => {
+      scene.remove(quad);
+    };
+  }, [scene, quad]);
+
+  useFrame(() => {
+    if (!enabled) return;
+    const { read, write } = swapRef.current;
+
+    material.uniforms.uPrev.value = read.texture;
+    material.uniforms.uStamp.value = stampUv.current ?? new THREE.Vector2(-1, -1);
+
+    gl.setRenderTarget(write);
+    gl.render(scene, camera);
+    gl.setRenderTarget(null);
+
+    swapRef.current = { read: write, write: read };
+  });
+
+  const stamp = (uv: THREE.Vector2 | null) => {
+    stampUv.current = uv;
+  };
+
+  return { texture: swapRef.current.read.texture, stamp, getTexture: () => swapRef.current.read.texture };
 }
 
 // --- Planet: cosmic sphere with subtle glow
