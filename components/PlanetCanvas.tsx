@@ -83,10 +83,12 @@ function useCosmicTexture(base: string, size = 1024) {
 }
 
 const HEATMAP_SIZE = 256;
+const OFF_SCREEN_UV = new THREE.Vector2(-1, -1);
 
 // Offscreen heat-map render target: accumulates a decaying glow at a stamped
-// UV position every frame. Not yet wired to any consumer (Tasks 5/6 will read
-// `texture` in a shader and call `stamp` from a pointer-raycast handler).
+// UV position every frame. Consumers call `getTexture()` each frame to read
+// the latest render target (never hold a stale reference to it) and call
+// `stamp` from a pointer-raycast handler to set the glow position.
 function useHeatmap(enabled: boolean) {
   const { gl } = useThree();
   const fboA = useFBO(HEATMAP_SIZE, HEATMAP_SIZE);
@@ -137,15 +139,17 @@ function useHeatmap(enabled: boolean) {
     scene.add(quad);
     return () => {
       scene.remove(quad);
+      material.dispose();
+      quad.geometry.dispose();
     };
-  }, [scene, quad]);
+  }, [scene, quad, material]);
 
   useFrame(() => {
     if (!enabled) return;
     const { read, write } = swapRef.current;
 
     material.uniforms.uPrev.value = read.texture;
-    material.uniforms.uStamp.value = stampUv.current ?? new THREE.Vector2(-1, -1);
+    material.uniforms.uStamp.value = stampUv.current ?? OFF_SCREEN_UV;
 
     gl.setRenderTarget(write);
     gl.render(scene, camera);
@@ -158,7 +162,7 @@ function useHeatmap(enabled: boolean) {
     stampUv.current = uv;
   };
 
-  return { texture: swapRef.current.read.texture, stamp, getTexture: () => swapRef.current.read.texture };
+  return { stamp, getTexture: () => swapRef.current.read.texture };
 }
 
 function useBlackTexture() {
@@ -388,10 +392,10 @@ export default function PlanetCanvas({ offsetX = 0, scale = 1, radius = 0.9, dar
         DOM node itself, so a pointer-events-auto utility class or inline
         style on <Canvas> cannot win against that global rule (which targets
         the canvas element directly). This scoped selector re-enables pointer
-        events on the canvas specifically within this component instance,
-        and only when glow is active -- canvases rendered with
-        glowEnabled=false (mobile / reduced-motion) keep the original
-        non-interactive behavior.
+        events on the canvas within any glow-enabled wrapper (i.e. any
+        element carrying data-glow-enabled="true"), and only when glow is
+        active -- canvases rendered with glowEnabled=false (mobile /
+        reduced-motion) keep the original non-interactive behavior.
       */}
       <style>{`
         [data-glow-enabled=true] canvas { pointer-events: auto; }
