@@ -119,12 +119,31 @@ function useHeatmap(enabled: boolean) {
           uniform vec2 uStamp;
           uniform float uDecay;
           varying vec2 vUv;
+
+          // Standard equirectangular UV -> unit direction on the sphere.
+          vec3 uvToDir(vec2 uv) {
+            float theta = uv.x * 2.0 * 3.14159265;
+            float phi = uv.y * 3.14159265;
+            return vec3(sin(phi) * cos(theta), cos(phi), sin(phi) * sin(theta));
+          }
+
           void main() {
             vec3 prev = texture2D(uPrev, vUv).rgb * uDecay;
             float glow = 0.0;
             if (uStamp.x >= 0.0) {
-              float d = distance(vUv, uStamp);
-              glow = smoothstep(0.12, 0.0, d);
+              // A flat UV-space distance is not round on the sphere's surface
+              // (U wraps 360 degrees, V only spans pole-to-pole, and the
+              // mapping is singular at the poles), so no per-latitude weight
+              // on UV distance can fully correct it. Instead compare true
+              // angular distance between two points on the unit sphere via
+              // their dot product - this is exact and viewpoint-independent
+              // at every latitude, so the stamp reads as a round point
+              // everywhere on the surface.
+              vec3 a = uvToDir(vUv);
+              vec3 b = uvToDir(uStamp);
+              float angle = acos(clamp(dot(a, b), -1.0, 1.0));
+              // Tiny, tight dot rather than a soft blob.
+              glow = smoothstep(0.012, 0.0, angle);
             }
             vec3 result = clamp(prev + glow, 0.0, 1.0);
             gl_FragColor = vec4(result, 1.0);
@@ -269,7 +288,7 @@ function Satellite() {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (groupRef.current) {
-      groupRef.current.rotation.y = t * 0.25;
+      groupRef.current.rotation.y = -t * 0.25;
     }
   });
 
