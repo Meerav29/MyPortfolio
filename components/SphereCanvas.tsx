@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 
-export default function SphereCanvas() {
+export default function SphereCanvas({ compact = false }: { compact?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
   const { theme } = useTheme();
@@ -31,8 +31,11 @@ export default function SphereCanvas() {
       ctx.clearRect(0, 0, W, H);
 
       // ── Main sphere ──────────────────────────────────────
-      const R  = H * 0.58;
-      const cx = W - R * 0.22;
+      // Compact mode: centered sphere, radius fit to the smaller dimension so
+      // the sphere + satellite orbit (which extends to R*1.38 either side)
+      // stays inside a roughly square box instead of a wide letterboxed one.
+      const R  = compact ? Math.min(W, H) * 0.34 : H * 0.58;
+      const cx = compact ? W * 0.5 : W - R * 0.22;
       const cy = H * 0.50;
 
       // 1. Body gradient
