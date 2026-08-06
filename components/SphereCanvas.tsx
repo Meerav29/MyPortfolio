@@ -195,7 +195,7 @@ export default function SphereCanvas({ compact = false }: { compact?: boolean })
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
     };
-  }, [theme]);
+  }, [theme, compact]);
 
   return (
     <canvas

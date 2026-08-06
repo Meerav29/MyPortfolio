@@ -1,6 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
-import StatementHero from "@/components/StatementHero";
+import Hero2 from "@/components/Hero2";
 import { WorkRow } from "@/components/WorkRow";
 import { workItems } from "@/data/work";
 import { links } from "@/lib/links";
@@ -10,7 +10,7 @@ const featured = workItems.filter((w) => w.featured);
 export default function Page() {
   return (
     <div>
-      <StatementHero />
+      <Hero2 />
       <main className="mx-auto max-w-3xl px-6 pb-24" id="work">
         <section>
           <div className="flex items-baseline justify-between mb-2">
