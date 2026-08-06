@@ -9,9 +9,9 @@ export default function Hero2() {
 
   return (
     <div>
-      {/* Mobile: small centered planet up top, text flows below in normal layout */}
-      <section className="relative md:hidden">
-        <div className="relative mx-auto mt-8 h-56 w-full max-w-xs">
+      {/* Mobile: large centered planet, vertically centered in the viewport */}
+      <section className="relative flex min-h-[calc(100vh-57px)] flex-col justify-center md:hidden">
+        <div className="relative mx-auto h-80 w-full max-w-sm">
           <SphereCanvas compact />
         </div>
         <div className="relative z-10 mx-auto w-full px-6 pt-4 pb-4 text-center">
