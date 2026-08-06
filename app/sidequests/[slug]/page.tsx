@@ -6,6 +6,7 @@ import {
 } from "@/lib/sidequests";
 import { PostHeader } from "@/components/sidequests/PostHeader";
 import { Prose } from "@/components/sidequests/Prose";
+import { Breadcrumbs } from "@/components/sidequests/Breadcrumbs";
 import Link from "next/link";
 
 export async function generateMetadata({
@@ -35,6 +36,9 @@ export default async function SidequestPage({
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-14">
+      <Breadcrumbs
+        items={[{ label: "Home", href: "/" }, { label: "Sidequests", href: "/sidequests" }, { label: post.title }]}
+      />
       <PostHeader post={post} />
       <Prose>{post.body}</Prose>
       <div className="mt-8 flex justify-between text-sm">
