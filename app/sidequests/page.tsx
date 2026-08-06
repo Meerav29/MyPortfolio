@@ -10,6 +10,7 @@ import { Filters } from "@/components/sidequests/Filters";
 import { SidequestCard } from "@/components/sidequests/SidequestCard";
 import { EmptyState } from "@/components/sidequests/EmptyState";
 import { Pagination } from "@/components/sidequests/Pagination";
+import { Breadcrumbs } from "@/components/sidequests/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Sidequests — Meerav Shah",
@@ -39,6 +40,7 @@ export default function Page({
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-14">
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sidequests" }]} />
       <h1 className="text-3xl font-semibold">Sidequests</h1>
       <p className="text-muted mb-6">Explorations off the main path.</p>
       <Filters tags={tags} />

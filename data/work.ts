@@ -18,7 +18,7 @@ export const workItems: WorkItem[] = [
     period: "Jun 2026–Present",
     org: "Rolai",
     role: "Applied AI Engineer",
-    description: "🚀",
+    description: "Leading development of new product offering :)",
     featured: true,
     category: "industry",
   },
