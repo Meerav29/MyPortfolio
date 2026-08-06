@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Microscope, Building2, Trophy, Rocket, Search, X, CalendarDays, GraduationCap } from "lucide-react";
+import { Microscope, Building2, Trophy, Rocket, CalendarDays, GraduationCap } from "lucide-react";
 
 
 const CATEGORY_STYLES = {
@@ -427,7 +427,6 @@ function SectionBlock({ title, items }: { title: Section; items: Item[] }) {
 }
 
 export default function CareerTimeline() {
-  const [query, setQuery] = useState("");
   const [activeCats, setActiveCats] = useState<Category[]>([]);
 
   const categories = Object.keys(CATEGORY_STYLES) as Category[];
@@ -435,53 +434,19 @@ export default function CareerTimeline() {
   const filtered = useMemo(() => {
     let list = [...ITEMS];
     if (activeCats.length) list = list.filter((i) => activeCats.some((c) => i.categories.includes(c)));
-    if (query) {
-      const q = query.toLowerCase();
-      list = list.filter((i) =>
-        [
-          i.org,
-          i.role,
-          i.summary,
-          ...(i.highlights || []),
-          ...(i.roles ? i.roles.flatMap((r) => [r.title, ...r.highlights]) : []),
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase()
-          .includes(q)
-      );
-    }
     return list;
-  }, [activeCats, query]);
+  }, [activeCats]);
 
   const grouped = useMemo(() => groupBySection(filtered), [filtered]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       {/* Header */}
-      <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Career Timeline</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Filter by category; newest entries appear first within each section.
-          </p>
-        </div>
-
-        {/* Search */}
-        <div className="relative w-full sm:max-w-sm">
-          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search orgs, roles, highlights…"
-            className="w-full rounded-xl border border-foreground/10 bg-background px-9 py-2 text-sm outline-none ring-0 placeholder:text-muted-foreground focus:border-foreground/20"
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="absolute right-2 top-2 rounded-full p-1 hover:bg-foreground/10" aria-label="Clear search">
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Career Timeline</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Filter by category; newest entries appear first within each section.
+        </p>
       </div>
 
       {/* Category filter chips */}

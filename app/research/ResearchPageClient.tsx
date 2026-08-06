@@ -9,7 +9,6 @@ type Props = {
 };
 
 export default function ResearchPageClient({ items }: Props) {
-  const [query, setQuery] = useState("");
   const [year, setYear] = useState("");
   const [sort, setSort] = useState("newest");
 
@@ -45,16 +44,8 @@ export default function ResearchPageClient({ items }: Props) {
   const filtered = useMemo(() => {
     return items
       .filter((item: any) => {
-        const q = query.toLowerCase();
-        const matchesQuery = [item.title, item.venue, ...(item.tags ?? [])]
-          .join(" ")
-          .toLowerCase()
-          .includes(q);
-
         const itemYear = new Date(item.date).getFullYear().toString();
-        const matchesYear = year ? itemYear === year : true;
-
-        return matchesQuery && matchesYear;
+        return year ? itemYear === year : true;
       })
       .sort((a: any, b: any) => {
         if (sort === "newest")
@@ -64,7 +55,7 @@ export default function ResearchPageClient({ items }: Props) {
         if (sort === "az") return a.title.localeCompare(b.title);
         return 0;
       });
-  }, [items, query, year, sort]);
+  }, [items, year, sort]);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-14">
@@ -74,19 +65,6 @@ export default function ResearchPageClient({ items }: Props) {
       <section className="mt-8 space-y-4">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            <div className="flex-1">
-              <label htmlFor="search" className="sr-only">
-                Search
-              </label>
-              <input
-                id="search"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 ring-accent"
-              />
-            </div>
             <div>
               <label htmlFor="year" className="sr-only">
                 Filter by year
