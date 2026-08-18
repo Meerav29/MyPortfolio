@@ -1,0 +1,34 @@
+---
+title: "The Trash Classifier That Was Broken the Whole Time"
+slug: "re-sike-beta-broken-in-prod"
+publishedAt: "2026-08-18"
+excerpt: "I audited 20 side projects to find today's bug, and the one I picked was quietly throwing on every single production request."
+tags: ["Project"]
+status: "draft"
+---
+
+I've been trying to keep a streak going -- one meaningful commit a day, across whatever side project needs it most, main branch, no excuses. The hard part was never doing the work, it's picking *which* project deserves the day. So today I did something slightly overkill and had an agent audit basically every repo I own -- all ~20 of them -- looking for TODOs, doc claims with no code behind them, stale checklists, that kind of thing. Most of it came back boring in a good way (fully implemented, needs a README update, sure, whatever). Then re-sike-beta came back with something actually broken, and I knew that was the one.
+
+re-sike-beta is a little camera app I built a while back -- point your phone at something you're about to throw away, it tells you if it's recycling, landfill, compost, or special disposal, using Gemini Vision on the backend. Cute idea, worked fine when I built it. Except it didn't, apparently, because the production function had been silently dead for who knows how long.
+
+## the bug itself
+
+Here's the thing that got me: `api/classify.ts`, which is the actual serverless function Vercel runs in production, was importing `GoogleGenerativeAI` and calling `.getGenerativeModel(...)` on it -- which is the old SDK's API shape. But the package actually installed in this project is `@google/genai`, the new one, whose real API looks completely different: you do `new GoogleGenAI({apiKey})` and then `genAI.models.generateContent({model, contents, config})`. Different constructor, different method, different everything. So every single request to that endpoint would've thrown immediately.
+
+And I never caught it locally, because `dev-server.js` -- the little Express server I wrote to simulate the Vercel function on my machine -- was written *correctly*, using the new SDK shape, the whole time. Two files, same job, and they'd quietly drifted into two different implementations, one of which happened to work and one of which didn't. I tested locally, it worked, I felt good about it, and meanwhile the deployed version was just... not functioning. Classic.
+
+## fixing it (and then fixing it again)
+
+Rewriting `api/classify.ts` to match `dev-server.js`'s pattern was the easy part. Then I actually tried to verify it worked -- not just "looks right," but actually called the real API with a real key -- and immediately hit a second problem: the model I was calling, `gemini-2.0-flash-exp`, doesn't exist anymore. 404, not found. Tried the next logical name, `gemini-2.5-flash` -- also gone, except this time the error message straight up told me what to do instead: "no longer available to new users, use gemini-3.6-flash." Which, honestly, more APIs should do that. Swapped both files over to `gemini-3.6-flash` and moved on with my life.
+
+To actually prove this worked I wrote a throwaway test script that imports the handler directly and calls it with a fake request object, no Vercel needed. First pass I used a tiny synthetic red square just to see if the SDK call itself would go through -- and it did, no more "is not a function" nonsense, just a real (and correct) 400 from Gemini complaining about the image. Then I grabbed an actual JPEG (a Windows default wallpaper, don't ask) and ran it through the full pipeline -- auth, the model call, parsing the response text, parsing the JSON out of that -- and it all worked end to end. Gemini correctly said the wallpaper wasn't a valid trash item (fair), and a follow-up test forcing it through the classification prompt anyway gave me back clean, parsed JSON. Good enough for me.
+
+While I was in there I also quietly deleted two debug log lines that were printing the API key's prefix and dumping the names of any env vars containing "API" or "GEMINI" into the logs. Not catastrophic, but not something that needs to be sitting in a Vercel log stream either.
+
+## what actually got committed
+
+Just the two files that mattered -- `api/classify.ts` and `dev-server.js`. There was an unrelated, half-finished camera-switch feature sitting in `App.tsx` from some earlier session that I left completely alone, because it wasn't part of this and I didn't want today's clean fix tangled up with someone else's (mine, past-me's) in-progress work. Pushed to main, done.
+
+The actual lesson here, if there is one: your local dev environment can lie to you with total confidence if it's not running the *same code* as production, just code that's supposed to do the same thing. `dev-server.js` and `api/classify.ts` were never the same file, they were two people's homework on the same assignment, and one of them cheated off outdated notes. If I'd had the dev server literally import and call the production handler instead of reimplementing it, this bug would've been impossible to miss. Something to actually fix next time I'm back in this repo.
+
+Also, apparently Gemini model names have the shelf life of a banana. Worth remembering before I trust a hardcoded model string ever again.
