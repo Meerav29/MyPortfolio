@@ -1,0 +1,73 @@
+---
+title: "Grid Prophet Got Smarter (and Ran Into the Real World)"
+slug: "grid-prophet-update"
+publishedAt: "2026-08-17"
+excerpt: "Adding features, hitting FastF1 rate limits, and watching a fully green test suite break on the first real run."
+tags: ["F1", "AI", "Machine Learning"]
+status: "draft"
+---
+
+If you haven't seen Grid Prophet before -- it's my model that tries to predict the 2026 F1 Constructor Championship standings before the season is anywhere close to over. If you haven't read the story behind this one, check it out here: [LINK TO ORIGINAL POST]. The core bet it's making is that 2026 is a big regulation-change year, and in rule-change seasons the pecking order gets set early and barely moves after that. So instead of waiting for 24 races to play out, the model leans on however many rounds have actually happened and tries to extrapolate from there.
+
+This update started because two things were true at the same time. Summer break hit, which meant I finally had more of the 2026 season to actually train on. And I'd been staring at the feature list for a while thinking, this is too simple. So I sat down to fix both at once.
+
+## The window was hardcoded and that was a problem
+
+The "early season signal" the model leans on was locked to the first 2 rounds of any season -- no matter what season, no matter how much data existed. That was fine back when 2 rounds was genuinely all we had for 2026. It stopped being fine the moment more races happened, because the `update` command would go predict 2026 using, say, 11 rounds of live data, while the model underneath it was still trained on a fixed 2-round window from every historical season. Train on one thing, predict on another. Not a great look.
+
+So the window is dynamic now. There's a `latest_completed_round(year)` function that checks FastF1's schedule and figures out how many rounds of the current season have actually run. And -- this is the part I almost missed -- that same round count now gets used to rebuild the historical training features too, not just the live prediction row. Both the `run` and `update` commands got rewritten around this: one round count, detected once per invocation, threaded through rebuild, retrain, and predict in sequence. One source of truth per run.
+
+## Making the model less simple, without breaking the one decision I'd already made
+
+The project has a locked decision in its design docs: model at the season level, one row per constructor per season, not race by race. I made that call early on specifically to keep weather, incidents, and one-off strategy calls from drowning out the actual signal. "Too simple" didn't mean revisiting that -- it meant asking what I was leaving on the table within that structure.
+
+Turns out, a decent amount. FastF1 was already handing me grid position, finish position, and DNF status, and I just wasn't using any of it. So I added four features, all computable from data I was already pulling (no new collection needed):
+
+- **`constructor_dnf_rate`** -- how often a team's cars actually finish. Reliability, basically.
+- **`avg_grid_to_finish_delta`** -- grid position minus finish position, averaged. A proxy for who's actually racing well versus who's just starting well.
+- **`teammate_head_to_head`** -- fraction of races where one teammate beats the other. I computed this by alphabetical tiebreak specifically so it doesn't encode "driver X is good," just "one side of this garage is currently winning."
+- **`development_trend`** -- the slope of a team's average finish across the window. Not where they are, but which direction they're heading.
+
+That took the feature count from 8 to 12, against a training set of roughly 120 rows total (2014-2025, one row per constructor per season). More features and not much more data is a textbook way to overfit, so I added LassoCV ahead of the usual Ridge-vs-XGBoost comparison, and let it drop whatever coefficients shrink to zero before the real model comparison even happens. One feature, `is_rule_change_year`, is exempt -- the sample-weighting logic elsewhere depends on it existing, so it stays no matter what Lasso thinks of it. Against the real data, Lasso ended up cutting four of the twelve -- `early_avg_finish`, `rule_change_adaptation_score`, `prev_year_points_share`, and `constructor_win_rate_5yr` -- before Ridge and XGBoost ever got compared on what was left.
+
+I did the whole thing properly too -- design doc, then a 7-task plan, then test-first for every task: write the failing test, watch it fail for the right reason, implement, watch it go green, commit. All 6 code tasks landed clean, 55 tests passing. Felt good.
+
+## Then I ran it for real and it broke immediately
+
+`ValueError: X has 8 features, but SimpleImputer is expecting 12 features as input.`
+
+Here's the thing about a fully green test suite: it only tells you the code does what your tests expect. My synthetic test fixtures always happened to use the full 12-column feature list, so there was no test where LassoCV actually dropped something. Against real FastF1 data, it dropped 4 columns, which is exactly what it's supposed to do -- and the bootstrap confidence-interval step in `predict.py` was still loading training data with all 12 columns to resample from, while the model bundle it was feeding into only knew about 8. One line fixed it (filter the training data down to the bundle's selected columns before bootstrapping), but it's a good reminder that "tests pass" and "it works" are different bars, and the gap between them is usually exactly the case your fixtures didn't think to cover.
+
+And then, because the universe wanted one more lesson in this session: re-collecting 2014-2025 from FastF1 hit their 500-calls-per-hour rate limit. Twice. Had to split the collection into stages (2014-2019, then 2020-2022, then 2023-2025), and 2025 needed a manual nudge too, since the `--resume` logic just does `max(year) + 1`, which would've quietly skipped the rest of a partially-collected 2025 season. Nothing clever about the fix, just annoying in the way real-world constraints always are when you're used to synthetic data behaving itself.
+
+## What it says now
+
+After all that, the model retrained on rounds 1-11 of 2026 (auto-detected, which lines up with where the season actually is mid-summer-break). XGBoost won leave-one-season-out CV clearly -- 0.9689 average Spearman correlation versus Ridge's 0.9248, with weight 2.5 on the rule-change-year sample weighting. And `early_points_share` is still doing almost all of the work: 0.962 feature importance, miles ahead of anything else. The new features I added are contributing, just modestly -- `constructor_dnf_rate` at 0.012, `teammate_head_to_head` at 0.009, `avg_grid_to_finish_delta` at 0.005, `development_trend` at 0.003.
+
+The actual predictions, points share with an 80% confidence interval:
+
+| Rank | Constructor | Predicted Share | 80% CI |
+|---|---|---|---|
+| 1 | Mercedes | 26.2% | ±2.3% |
+| 2 | Ferrari | 23.6% | ±1.2% |
+| 3 | McLaren | 15.0% | ±1.2% |
+| 4 | Red Bull Racing | 15.0% | ±1.1% |
+| 5 | Alpine | 4.9% | ±0.5% |
+| 6 | Racing Bulls | 4.7% | ±0.5% |
+| 7 | Haas F1 Team | 1.7% | ±0.3% |
+| 8 | Audi | 1.5% | ±0.3% |
+| 9 | Williams | 1.4% | ±0.3% |
+| 10 | Cadillac | 0.2% | ±0.2% |
+| 11 | Aston Martin | 0.1% | ±0.1% |
+
+For comparison, back when this was only trained on rounds 1-2, Mercedes was sitting at 30.4% and Ferrari at 22.5%. More data pulled McLaren and Red Bull up into a genuinely tight mid-pack and narrowed the gap at the top. Which, honestly, matches what's actually happening on track better than a 2-round snapshot ever could.
+
+## Work in Progress
+
+The `--resume` flag is still the rough edge I haven't actually fixed, just worked around. It resumes collection from `max(year) + 1`, which is fine when every prior season in the dataset is fully collected -- it's not fine when the most recent one is only partially there, which is exactly the situation 2025 was in this time. I caught it and fixed it by hand for this run. I haven't gone back and made that logic actually handle partial seasons on its own, so next time I re-collect mid-season, I'll probably hit the same thing again.
+
+## What's next
+
+The code and the full run are up on GitHub if you want to see the diff: [grid-prophet](https://github.com/Meerav29/grid-prophet), [PR #1](https://github.com/Meerav29/grid-prophet/pull/1).
+
+Whether any of this actually holds up is a different question than whether it's better engineered, and I don't get to answer it -- round 24 does. Rounds 1-11 have Mercedes and Ferrari out front with McLaren and Red Bull closing the gap behind them. If the rest of the season makes a liar out of this model, that's what the next update log is for.
