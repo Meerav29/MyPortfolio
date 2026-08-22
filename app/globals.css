@@ -26,6 +26,12 @@ html, body {
   height: 100%;
 }
 
+html {
+  /* Reserve equal gutter on both edges so a vertical scrollbar doesn't
+     visually shift mx-auto-centered content off-center. */
+  scrollbar-gutter: stable both-edges;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
