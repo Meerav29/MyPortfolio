@@ -24,6 +24,11 @@ status: "published"
 
 3. Add any referenced thumbnail under `public/images/sidequests/`.
 
+## Substack posts
+
+* Posts from https://meeravshah.substack.com/feed are merged into the listing automatically at build time (cached for an hour). They link out to Substack in a new tab and have no page on this site. If the feed is unreachable, only local posts are shown.
+* To feature a Substack post by hand (e.g. with a custom thumbnail or tags), add an `.mdx` with `externalUrl: "https://..."` in the frontmatter. It replaces the feed's copy of the same URL, links out, and `/sidequests/<slug>` returns 404.
+
 ## Previewing
 
 Run the development server and visit `/sidequests` to see listings or `/sidequests/<slug>` for an individual post.

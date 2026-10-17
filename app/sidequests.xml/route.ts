@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAllSidequests } from "@/lib/sidequests";
+import { getAllSidequestsWithSubstack } from "@/lib/sidequests";
 import { generateSidequestsRss } from "@/lib/rss";
 
+export const revalidate = 3600;
+
 export async function GET() {
-  const posts = getAllSidequests();
+  const posts = await getAllSidequestsWithSubstack();
   const xml = generateSidequestsRss(posts);
   return new NextResponse(xml, {
     headers: {

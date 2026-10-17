@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import {
-  getAllSidequests,
+  getAllSidequestsWithSubstack,
   getAllTags,
   searchSidequests,
   filterByTags,
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   description: "Explorations off the main path.",
 };
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const all = getAllSidequests();
-  const tags = getAllTags();
+  const all = await getAllSidequestsWithSubstack();
+  const tags = getAllTags(all);
   const q = typeof searchParams.q === "string" ? searchParams.q : "";
   const selectedTags = Array.isArray(searchParams.tag)
     ? (searchParams.tag as string[])
