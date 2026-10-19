@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: "AI x EdTech x SpaceTech.",
     url: "/",
     siteName: "Meerav Shah",
-    images: ["/headshot.png"], // put headshot.png in /public
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Meerav Shah — Applied AI Engineer" }],
     locale: "en_US",
     type: "website",
   },
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Meerav Shah Portfolio",
     description: "AI x EdTech x SpaceTech.",
-    images: ["/headshot.png"],
+    images: ["/og-image.png"],
   },
 };
 
