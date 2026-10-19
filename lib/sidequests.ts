@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import readingTime from "reading-time";
 import { z } from "zod";
 import { mdxToContent } from "./mdx";
+import { getSubstackSidequests, normalizeUrl } from "./substack";
 
 export type Sidequest = {
   title: string;
@@ -14,6 +15,7 @@ export type Sidequest = {
   tags: string[];
   thumbnail?: string;
   status: "draft" | "published" | "archived";
+  externalUrl?: string;
   readingTime?: number;
   body?: any;
 };
@@ -27,6 +29,7 @@ const frontmatterSchema = z.object({
   tags: z.array(z.string()),
   thumbnail: z.string().optional(),
   status: z.enum(["draft", "published", "archived"]),
+  externalUrl: z.string().url().optional(),
   readingTime: z.number().optional(),
 });
 
@@ -80,18 +83,38 @@ export function getAllSidequests(opts: { includeDrafts?: boolean } = {}) {
     ? posts
     : posts.filter((p) => p.status === "published");
 
-  return filtered.sort((a, b) => {
-    if (a.publishedAt === b.publishedAt) {
-      return a.slug.localeCompare(b.slug);
-    }
-    return a.publishedAt < b.publishedAt ? 1 : -1;
-  });
+  return filtered.sort(byNewest);
+}
+
+function byNewest(a: Sidequest, b: Sidequest) {
+  if (a.publishedAt === b.publishedAt) {
+    return a.slug.localeCompare(b.slug);
+  }
+  return a.publishedAt < b.publishedAt ? 1 : -1;
+}
+
+/** Local published posts plus Substack feed posts, de-duplicated on URL, newest first. */
+export async function getAllSidequestsWithSubstack() {
+  const local = getAllSidequests();
+  const seen = new Set(
+    local.filter((p) => p.externalUrl).map((p) => normalizeUrl(p.externalUrl!))
+  );
+  const remote = (await getSubstackSidequests())
+    .filter((p) => {
+      const key = normalizeUrl(p.externalUrl!);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map((p) => ({ ...p, tags: Array.from(new Set(p.tags.map(normalizeTag))) }));
+  return [...local, ...remote].sort(byNewest);
 }
 
 export async function getSidequestBySlug(slug: string) {
   const posts = getAllSidequests({ includeDrafts: true });
   const post = posts.find((p) => p.slug === slug);
-  if (!post) return undefined;
+  // Externally hosted posts have no page on this site.
+  if (!post || post.externalUrl) return undefined;
 
   // Find the actual file by matching the computed slug for each file
   const files = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith(".mdx"));
@@ -115,8 +138,7 @@ export async function getSidequestBySlug(slug: string) {
   return { ...post, body };
 }
 
-export function getAllTags() {
-  const posts = getAllSidequests();
+export function getAllTags(posts: Sidequest[] = getAllSidequests()) {
   const counts: Record<string, number> = {};
   posts.forEach((p) => {
     p.tags.forEach((t) => {

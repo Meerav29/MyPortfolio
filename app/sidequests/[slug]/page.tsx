@@ -29,7 +29,7 @@ export default async function SidequestPage({
   const post = await getSidequestBySlug(params.slug);
   if (!post) notFound();
 
-  const all = getAllSidequests({ includeDrafts: true });
+  const all = getAllSidequests({ includeDrafts: true }).filter((p) => !p.externalUrl);
   const index = all.findIndex((p) => p.slug === post.slug);
   const prev = index > 0 ? all[index - 1] : undefined;
   const next = index < all.length - 1 ? all[index + 1] : undefined;
