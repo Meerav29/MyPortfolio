@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getSidequestBySlug,
@@ -28,8 +28,11 @@ export default async function SidequestPage({
 }) {
   const post = await getSidequestBySlug(params.slug);
   if (!post) notFound();
+  if (post.externalUrl) redirect(post.externalUrl);
 
-  const all = getAllSidequests({ includeDrafts: true });
+  const all = getAllSidequests({ includeDrafts: true }).filter(
+    (p) => !p.externalUrl
+  );
   const index = all.findIndex((p) => p.slug === post.slug);
   const prev = index > 0 ? all[index - 1] : undefined;
   const next = index < all.length - 1 ? all[index + 1] : undefined;

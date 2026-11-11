@@ -13,6 +13,8 @@ export type Sidequest = {
   excerpt: string;
   tags: string[];
   thumbnail?: string;
+  /** If set, the post lives elsewhere (e.g. Substack) and its card links out. */
+  externalUrl?: string;
   status: "draft" | "published" | "archived";
   readingTime?: number;
   body?: any;
@@ -26,6 +28,7 @@ const frontmatterSchema = z.object({
   excerpt: z.string(),
   tags: z.array(z.string()),
   thumbnail: z.string().optional(),
+  externalUrl: z.string().url().optional(),
   status: z.enum(["draft", "published", "archived"]),
   readingTime: z.number().optional(),
 });

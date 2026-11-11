@@ -3,7 +3,8 @@ import { getAllSidequests } from "@/lib/sidequests";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://meeravshah.vercel.app";
-  const posts = getAllSidequests();
+  // External (e.g. Substack) posts have no page on this site.
+  const posts = getAllSidequests().filter((p) => !p.externalUrl);
   return [
     { url: `${base}/`, lastModified: new Date() },
     { url: `${base}/research`, lastModified: new Date() },

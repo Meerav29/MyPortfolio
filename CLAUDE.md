@@ -118,6 +118,7 @@ status: "published"        # "draft" hides from listing; "archived" also hides
 - `slug` — derived from filename if omitted
 - `thumbnail` — path under `public/` (e.g., `/images/sidequests/example.png`)
 - `updatedAt` — shown if different from `publishedAt`
+- `externalUrl` — for posts published elsewhere (e.g. Substack). The card links out in a new tab, `/sidequests/<slug>` redirects there, and the post is left out of the sitemap. No body needed.
 
 **Rules:**
 - `readingTime` is computed automatically.
