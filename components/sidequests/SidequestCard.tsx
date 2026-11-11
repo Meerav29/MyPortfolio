@@ -6,10 +6,7 @@ import { formatDate } from "@/lib/utils";
 
 export function SidequestCard({ post }: { post: Sidequest }) {
   return (
-    <Link
-      href={`/sidequests/${post.slug}`}
-      className="flex flex-col rounded-lg border hover:ring overflow-hidden h-full"
-    >
+    <div className="relative flex flex-col rounded-lg border hover:ring overflow-hidden h-full">
       {post.thumbnail ? (
         <div
           className="relative w-full"
@@ -24,7 +21,14 @@ export function SidequestCard({ post }: { post: Sidequest }) {
         </div>
       ) : null}
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="font-semibold line-clamp-2">{post.title}</h3>
+        <h3 className="font-semibold line-clamp-2">
+          <Link
+            href={`/sidequests/${post.slug}`}
+            className="after:absolute after:inset-0 after:content-['']"
+          >
+            {post.title}
+          </Link>
+        </h3>
         <p className="text-sm text-muted line-clamp-3 mt-2 flex-grow">
           {post.excerpt}
         </p>
@@ -35,6 +39,6 @@ export function SidequestCard({ post }: { post: Sidequest }) {
           ))}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
