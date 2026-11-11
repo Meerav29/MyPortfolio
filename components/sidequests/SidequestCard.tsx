@@ -5,6 +5,7 @@ import { TagPill } from "./TagPill";
 import { formatDate } from "@/lib/utils";
 
 export function SidequestCard({ post }: { post: Sidequest }) {
+  const isExternal = Boolean(post.externalUrl);
   return (
     <div className="relative flex flex-col rounded-lg border hover:ring overflow-hidden h-full">
       {post.thumbnail ? (
@@ -23,7 +24,8 @@ export function SidequestCard({ post }: { post: Sidequest }) {
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="font-semibold line-clamp-2">
           <Link
-            href={`/sidequests/${post.slug}`}
+            href={post.externalUrl ?? `/sidequests/${post.slug}`}
+            {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             className="after:absolute after:inset-0 after:content-['']"
           >
             {post.title}
@@ -34,6 +36,9 @@ export function SidequestCard({ post }: { post: Sidequest }) {
         </p>
         <div className="mt-4 flex flex-wrap gap-2 items-center text-xs text-muted">
           <span>{formatDate(post.publishedAt)}</span>
+          {isExternal ? (
+            <span className="rounded-full border px-2 py-0.5">Substack ↗</span>
+          ) : null}
           {post.tags.map((tag) => (
             <TagPill key={tag} tag={tag} />
           ))}
