@@ -3,5 +3,6 @@ export function formatDate(date: string) {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
